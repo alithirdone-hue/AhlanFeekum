@@ -1,6 +1,14 @@
-﻿using System;
+﻿using AhlanFeekum.FavoriteProperties;
+using AhlanFeekum.PersonEvaluations;
+using AhlanFeekum.PropertyEvaluations;
+using AhlanFeekum.PropertyFeatures;
+using AhlanFeekum.PropertyMedias;
+using AhlanFeekum.PropertyTypes;
+using AhlanFeekum.SiteProperties;
+using AhlanFeekum.UserProfiles;
+using AhlanFeekum.VerificationCodes;
 using Microsoft.Extensions.DependencyInjection;
-using Volo.Abp.Uow;
+using System;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
@@ -12,6 +20,7 @@ using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
+using Volo.Abp.Uow;
 
 namespace AhlanFeekum.EntityFrameworkCore;
 
@@ -41,6 +50,23 @@ public class AhlanFeekumEntityFrameworkCoreModule : AbpModule
                 /* Remove "includeAllEntities: true" to create
                  * default repositories only for aggregate roots */
             options.AddDefaultRepositories(includeAllEntities: true);
+            options.AddRepository<UserProfile, UserProfiles.EfCoreUserProfileRepository>();
+
+            options.AddRepository<PropertyFeature, PropertyFeatures.EfCorePropertyFeatureRepository>();
+
+            options.AddRepository<PropertyType, PropertyTypes.EfCorePropertyTypeRepository>();
+
+            options.AddRepository<SiteProperty, SiteProperties.EfCoreSitePropertyRepository>();
+
+            options.AddRepository<FavoriteProperty, FavoriteProperties.EfCoreFavoritePropertyRepository>();
+
+            options.AddRepository<PersonEvaluation, PersonEvaluations.EfCorePersonEvaluationRepository>();
+
+            options.AddRepository<PropertyEvaluation, PropertyEvaluations.EfCorePropertyEvaluationRepository>();
+
+            options.AddRepository<PropertyMedia, PropertyMedias.EfCorePropertyMediaRepository>();
+
+            options.AddRepository<VerificationCode, VerificationCodes.EfCoreVerificationCodeRepository>();
         });
 
         Configure<AbpDbContextOptions>(options =>

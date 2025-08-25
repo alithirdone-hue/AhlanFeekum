@@ -1,28 +1,30 @@
-using System;
-using System.IO;
+using AhlanFeekum.Blazor.Components;
+using AhlanFeekum.Blazor.Helpers;
+using AhlanFeekum.Blazor.Menus;
+using AhlanFeekum.EntityFrameworkCore;
+using AhlanFeekum.Localization;
+using AhlanFeekum.MultiTenancy;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using AhlanFeekum.Blazor.Components;
-using AhlanFeekum.Blazor.Menus;
-using AhlanFeekum.EntityFrameworkCore;
-using AhlanFeekum.Localization;
-using AhlanFeekum.MultiTenancy;
 using OpenIddict.Validation.AspNetCore;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using Volo.Abp;
 using Volo.Abp.Account.Web;
-using Volo.Abp.AspNetCore.Components.Web;
 using Volo.Abp.AspNetCore.Components.Server.LeptonXLiteTheme;
 using Volo.Abp.AspNetCore.Components.Server.LeptonXLiteTheme.Bundling;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
+using Volo.Abp.AspNetCore.Components.Web;
 using Volo.Abp.AspNetCore.Components.Web.Theming.Routing;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.Localization;
@@ -30,16 +32,20 @@ using Volo.Abp.AspNetCore.Mvc.UI;
 using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap;
 using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
 using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy;
+using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
+using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.Autofac;
 using Volo.Abp.AutoMapper;
+using Volo.Abp.BlobStoring;
+using Volo.Abp.BlobStoring.FileSystem;
 using Volo.Abp.Identity.Blazor.Server;
 using Volo.Abp.Modularity;
+using Volo.Abp.OpenIddict;
 using Volo.Abp.Security.Claims;
 using Volo.Abp.SettingManagement.Blazor.Server;
 using Volo.Abp.Swashbuckle;
 using Volo.Abp.TenantManagement.Blazor.Server;
-using Volo.Abp.OpenIddict;
 using Volo.Abp.UI;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.UI.Navigation.Urls;
@@ -100,6 +106,9 @@ public class AhlanFeekumBlazorModule : AbpModule
             PreConfigure<OpenIddictServerBuilder>(serverBuilder =>
             {
                 serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", "d6af8d31-b318-4eb3-97ef-84624926d5da");
+                serverBuilder.SetIssuer(new Uri(configuration["AuthServer:Authority"]));
+                serverBuilder.SetAccessTokenLifetime(TimeSpan.FromDays(30));
+                serverBuilder.UseAspNetCore().DisableTransportSecurityRequirement();
             });
         }
 
@@ -123,11 +132,23 @@ public class AhlanFeekumBlazorModule : AbpModule
         ConfigureBundles();
         ConfigureAutoMapper();
         ConfigureVirtualFileSystem(hostingEnvironment);
-        ConfigureSwaggerServices(context.Services);
+        ConfigureSwaggerServices(context.Services, configuration);
         ConfigureAutoApiControllers();
         ConfigureBlazorise(context);
         ConfigureRouter(context);
         ConfigureMenu(context);
+
+        Configure<AbpBlobStoringOptions>(options =>
+        {
+            options.Containers.ConfigureDefault(container =>
+            {
+                container.UseFileSystem(fileSystem =>
+                {
+                    fileSystem.BasePath = Path.Combine(hostingEnvironment.WebRootPath, "ahlanfeekumassets");
+                });
+            });
+        });
+        context.Services.AddSingleton<IActionResultExecutor<ObjectResult>, AhlanFeekumWrapResultExecutor>();
     }
 
     private void ConfigureAuthentication(ServiceConfigurationContext context)
@@ -189,16 +210,32 @@ public class AhlanFeekumBlazorModule : AbpModule
         }
     }
 
-    private void ConfigureSwaggerServices(IServiceCollection services)
+    private void ConfigureSwaggerServices(IServiceCollection services, IConfiguration configuration)
     {
-        services.AddAbpSwaggerGen(
-            options =>
-            {
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = "AhlanFeekum API", Version = "v1" });
-                options.DocInclusionPredicate((docName, description) => true);
-                options.CustomSchemaIds(type => type.FullName);
-            }
-        );
+        //services.AddAbpSwaggerGen(
+        //    options =>
+        //    {
+        //        options.SwaggerDoc("v1", new OpenApiInfo { Title = "AhlanFeekum API", Version = "v1" });
+        //        options.DocInclusionPredicate((docName, description) => true);
+        //        options.CustomSchemaIds(type => type.FullName);
+        //    }
+        //);
+
+        services.AddAbpSwaggerGenWithOAuth(
+configuration["AuthServer:Authority"],
+new Dictionary<string, string>
+{
+                    {"AhlanFeekum", "AhlanFeekum API"}
+},
+options =>
+{
+options.DocumentFilter<CustomSwaggerFilterHelper>();
+options.OperationFilter<AddRequiredHeaderParameterHelper>();
+options.SwaggerDoc("v1", new OpenApiInfo { Title = "AhlanFeekum API", Version = "v1" });
+options.SwaggerDoc("v2", new OpenApiInfo { Title = "AhlanFeekum API For Mobile", Version = "v1" });
+options.DocInclusionPredicate((docName, description) => true);
+options.CustomSchemaIds(type => type.FullName);
+});
     }
 
     private void ConfigureBlazorise(ServiceConfigurationContext context)
@@ -274,11 +311,19 @@ public class AhlanFeekumBlazorModule : AbpModule
         app.UseAuthorization();
 
         app.UseSwagger();
+        //app.UseAbpSwaggerUI(options =>
+        //{
+        //    options.SwaggerEndpoint("/swagger/v1/swagger.json", "AhlanFeekum API");
+        //});
         app.UseAbpSwaggerUI(options =>
         {
             options.SwaggerEndpoint("/swagger/v1/swagger.json", "AhlanFeekum API");
-        });
+            options.SwaggerEndpoint("/swagger/v2/swagger.json", "AhlanFeekum API For Mobile");
 
+            var configuration = context.ServiceProvider.GetRequiredService<IConfiguration>();
+            options.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);
+            // options.OAuthClientSecret(configuration["AuthServer:SwaggerClientSecret"]);
+        });
         app.UseConfiguredEndpoints(builder =>
         {
             builder.MapRazorComponents<App>()
