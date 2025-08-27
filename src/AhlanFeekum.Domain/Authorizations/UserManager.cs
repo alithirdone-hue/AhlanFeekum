@@ -125,6 +125,7 @@ namespace AhlanFeekum.Authorizations
         public Task<Volo.Abp.Identity.IdentityUser> FindByEmailAsync(string email)
         {
             return _identityUserManager.FindByEmailAsync(email);
+            
         }
 
         public Task<IList<string>> GetUserRoles(IdentityUser user)

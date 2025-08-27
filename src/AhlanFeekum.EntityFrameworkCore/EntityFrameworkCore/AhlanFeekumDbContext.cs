@@ -6,7 +6,6 @@ using AhlanFeekum.PropertyMedias;
 using AhlanFeekum.PropertyTypes;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.UserProfiles;
-using AhlanFeekum.VerificationCodes;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -34,7 +33,6 @@ public class AhlanFeekumDbContext :
     ITenantManagementDbContext
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
-    public DbSet<VerificationCode> VerificationCodes { get; set; } = null!;
     public DbSet<PropertyMedia> PropertyMedias { get; set; } = null!;
     public DbSet<PropertyEvaluation> PropertyEvaluations { get; set; } = null!;
     public DbSet<PersonEvaluation> PersonEvaluations { get; set; } = null!;
@@ -242,18 +240,6 @@ public class AhlanFeekumDbContext :
                 b.Property(x => x.Order).HasColumnName(nameof(PropertyMedia.Order));
                 b.Property(x => x.isActive).HasColumnName(nameof(PropertyMedia.isActive));
                 b.HasOne<SiteProperty>().WithMany().IsRequired().HasForeignKey(x => x.SitePropertyId).OnDelete(DeleteBehavior.NoAction);
-            });
-
-        }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<VerificationCode>(b =>
-            {
-                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "VerificationCodes", AhlanFeekumConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.Property(x => x.PhoneOrEmail).HasColumnName(nameof(VerificationCode.PhoneOrEmail)).IsRequired();
-                b.Property(x => x.SecurityCode).HasColumnName(nameof(VerificationCode.SecurityCode));
-                b.Property(x => x.IsExpired).HasColumnName(nameof(VerificationCode.IsExpired));
             });
 
         }

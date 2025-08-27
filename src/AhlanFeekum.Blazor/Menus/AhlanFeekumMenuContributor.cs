@@ -119,14 +119,7 @@ icon: "fa fa-file-alt",
                 requiredPermissionName: AhlanFeekumPermissions.PropertyMedias.Default)
         );
 
-        context.Menu.AddItem(
-            new ApplicationMenuItem(
-                AhlanFeekumMenus.VerificationCodes,
-                l["Menu:VerificationCodes"],
-                url: "/verification-codes",
-                icon: "fa fa-file-alt",
-                requiredPermissionName: AhlanFeekumPermissions.VerificationCodes.Default)
-        );
+
 
         return Task.CompletedTask;
     }

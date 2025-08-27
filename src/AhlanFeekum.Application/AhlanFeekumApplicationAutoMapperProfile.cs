@@ -8,7 +8,6 @@ using AhlanFeekum.PropertyTypes;
 using AhlanFeekum.Shared;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.UserProfiles;
-using AhlanFeekum.VerificationCodes;
 using AutoMapper;
 using System;
 using Volo.Abp.Identity;
@@ -58,9 +57,6 @@ public class AhlanFeekumApplicationAutoMapperProfile : Profile
         CreateMap<PropertyMedia, PropertyMediaDto>();
         CreateMap<PropertyMedia, PropertyMediaExcelDto>();
         CreateMap<PropertyMediaWithNavigationProperties, PropertyMediaWithNavigationPropertiesDto>();
-
-        CreateMap<VerificationCode, VerificationCodeDto>();
-        CreateMap<VerificationCode, VerificationCodeExcelDto>();
 
         CreateMap<MobileResponse, MobileResponseDto>(); 
     }

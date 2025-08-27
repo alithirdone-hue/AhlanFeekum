@@ -50,11 +50,6 @@ public class AhlanFeekumPermissionDefinitionProvider : PermissionDefinitionProvi
         propertyMediaPermission.AddChild(AhlanFeekumPermissions.PropertyMedias.Create, L("Permission:Create"));
         propertyMediaPermission.AddChild(AhlanFeekumPermissions.PropertyMedias.Edit, L("Permission:Edit"));
         propertyMediaPermission.AddChild(AhlanFeekumPermissions.PropertyMedias.Delete, L("Permission:Delete"));
-
-        var verificationCodePermission = myGroup.AddPermission(AhlanFeekumPermissions.VerificationCodes.Default, L("Permission:VerificationCodes"));
-        verificationCodePermission.AddChild(AhlanFeekumPermissions.VerificationCodes.Create, L("Permission:Create"));
-        verificationCodePermission.AddChild(AhlanFeekumPermissions.VerificationCodes.Edit, L("Permission:Edit"));
-        verificationCodePermission.AddChild(AhlanFeekumPermissions.VerificationCodes.Delete, L("Permission:Delete"));
     }
 
     private static LocalizableString L(string name)

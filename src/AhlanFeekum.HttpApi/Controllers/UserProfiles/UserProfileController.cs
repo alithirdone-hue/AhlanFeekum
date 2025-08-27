@@ -8,6 +8,7 @@ using Volo.Abp.Application.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using AhlanFeekum.UserProfiles;
 using AhlanFeekum.MobileResponses;
+using AhlanFeekum.Authorizations;
 
 namespace AhlanFeekum.Controllers.UserProfiles
 {
@@ -31,62 +32,49 @@ namespace AhlanFeekum.Controllers.UserProfiles
             return _userProfilesAppService.RegisterAsync(input);
         }
 
-        //[HttpPost("update-user")]
-        //public virtual Task<MobileResponseDto> UpdateUserDetailsAsync([FromForm] UserUpdateDto input)
+        [AllowAnonymous]
+        [HttpPost("password-reset-request")]
+        public virtual Task<MobileResponseDto> RequestPasswordResetAsync(PasswordResetRequestDto input)
+        {
+            return _userProfilesAppService.RequestPasswordResetAsync(input);
+        }
+        [AllowAnonymous]
+        [HttpPost("confirm-password-reset")]
+        public virtual Task<MobileResponseDto> ConfirmPasswordResetAsync(PasswordConfirmResetRequestDto input)
+        {
+            return _userProfilesAppService.ConfirmPasswordResetAsync(input);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("password-change")]
+        public virtual Task<MobileResponseDto> ChangePasswordAsync(PasswordChangeRequestDto input)
+        {
+            return _userProfilesAppService.ChangePasswordAsync(input);
+        }
+        [HttpPost("send-secret-key-email")]
+        public virtual Task<MobileResponseDto> SendSecretKeyEmail(string email)
+        {
+            return _userProfilesAppService.SendSecretKeyEmailAsync(email);
+        }
+
+        [HttpPost("send-secret-key-phone")]
+        public virtual Task<MobileResponseDto> SendSecretKeyPhone(string email)
+        {
+            return _userProfilesAppService.SendSecretKeyPhoneAsync(email);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("verify")]
+        public virtual Task<MobileResponseDto> VerifyAsync(VerifyRequestDto input)
+        {
+            return _userProfilesAppService.VerifyAsync(input);
+        }
+        //[HttpGet("home")]
+        //public virtual Task<HomePageDto> GetListAsync()
         //{
-        //    return _userProfilesAppService.UpdateUserDetailsAsync(input);
+        //    return _homeAppService.GetAsync();
         //}
 
-        //[AllowAnonymous]
-        //[HttpPost("verify-email-exists")]
-        //public virtual Task<MobileResponseDto> VerifyEmailExistsAsync([FromBody] VerifyEmailExistsDto input)
-        //{
-        //    return _userProfilesAppService.VerifyEmailExistsAsync(input);
-        //}
-
-        //[AllowAnonymous]
-        //[HttpPost("verify-secret-key")]
-        //public virtual Task<MobileResponseDto> VerifySecurityCodeAsync(SecurityNumberCreateDto input)
-        //{
-        //    return null;
-        //    //return _userProfilesAppService.VerifySecrityCodeAsync(input);
-        //}
-
-
-        //[AllowAnonymous]
-        //[HttpPost("password-reset")]
-        //public virtual Task<MobileResponseDto> ResetPasswordWithoutTokenAsync(PasswordResetRequestDto input)
-        //{
-        //    return _userProfilesAppService.ResetPasswordWithoutTokenAsync(input);
-        //}
-
-        //[AllowAnonymous]
-        //[HttpPost("password-change")]
-        //public virtual Task<MobileResponseDto> ChangePasswordAsync(PasswordChangeRequestDto input)
-        //{
-        //    return _userProfilesAppService.ChangePasswordAsync(input);
-        //}
-
-        //[HttpGet]
-        //[Route("user-profile-details/{id}")]
-        //public virtual Task<UserProfileWithDetailsDto> GetWithDetailsAsync(Guid id)
-        //{
-        //    return _userProfilesAppService.GetWithDetailsAsync(id);
-        //}
-
-        //[HttpGet("check-follow-status/{id}")]
-        //public Task<bool> CheckFollowStatusAsync(Guid id)
-        //{
-        //    return _userProfilesAppService.CheckFollowStatusAsync(id);
-        //}
-
- 
-
-        //[HttpGet("check-saved-item-status/{id}")]
-        //public Task<bool> CheckSavedItemStatusAsync(Guid id)
-        //{
-        //    return _userProfilesAppService.CheckSavedItemStatusAsync(id);
-        //}
 
     }
 }

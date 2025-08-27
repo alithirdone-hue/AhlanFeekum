@@ -166,14 +166,10 @@
     "PropertyMedias": "Property Medias",
     "NewPropertyMedia": "New Property Media",
     "Menu:PropertyMedias": "Property Medias",
-    "Permission:VerificationCodes": "Verification Codes",
     "PhoneOrEmail": "Phone Or Email",
     "SecurityCode": "Security Code",
     "IsExpired": "Is Expired",
-    "VerificationCodes": "Verification Codes",
     "MinSecurityCode": "Min Security Code",
-    "MaxSecurityCode": "Max Security Code",
-    "NewVerificationCode": "New Verification Code",
-    "Menu:VerificationCodes": "Verification Codes"
+    "MaxSecurityCode": "Max Security Code"
   }
 }

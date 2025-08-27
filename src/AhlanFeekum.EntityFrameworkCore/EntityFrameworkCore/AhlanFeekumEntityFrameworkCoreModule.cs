@@ -6,7 +6,6 @@ using AhlanFeekum.PropertyMedias;
 using AhlanFeekum.PropertyTypes;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.UserProfiles;
-using AhlanFeekum.VerificationCodes;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
@@ -65,8 +64,6 @@ public class AhlanFeekumEntityFrameworkCoreModule : AbpModule
             options.AddRepository<PropertyEvaluation, PropertyEvaluations.EfCorePropertyEvaluationRepository>();
 
             options.AddRepository<PropertyMedia, PropertyMedias.EfCorePropertyMediaRepository>();
-
-            options.AddRepository<VerificationCode, VerificationCodes.EfCoreVerificationCodeRepository>();
         });
 
         Configure<AbpDbContextOptions>(options =>

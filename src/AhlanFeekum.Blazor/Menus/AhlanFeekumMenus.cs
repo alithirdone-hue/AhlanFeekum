@@ -11,8 +11,6 @@ public class AhlanFeekumMenus
 
     public const string PropertyFeatures = Prefix + ".PropertyFeatures";
 
-    public const string VerificationCodes = Prefix + ".VerificationCodes";
-
     public const string UserProfiles = Prefix + ".UserProfiles";
 
     public const string Properties = Prefix + ".Properties";
