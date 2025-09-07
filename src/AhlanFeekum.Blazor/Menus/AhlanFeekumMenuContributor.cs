@@ -121,6 +121,32 @@ icon: "fa fa-file-alt",
 
 
 
+        context.Menu.AddItem(
+            new ApplicationMenuItem(
+                AhlanFeekumMenus.Governorates,
+                l["Menu:Governorates"],
+                url: "/governorates",
+                icon: "fa fa-file-alt",
+                requiredPermissionName: AhlanFeekumPermissions.Governorates.Default)
+        );
+
+        context.Menu.AddItem(
+            new ApplicationMenuItem(
+                AhlanFeekumMenus.SpecialAdvertisments,
+                l["Menu:SpecialAdvertisments"],
+                url: "/special-advertisments",
+icon: "fa fa-file-alt",
+                requiredPermissionName: AhlanFeekumPermissions.SpecialAdvertisments.Default)
+        );
+
+        context.Menu.AddItem(
+            new ApplicationMenuItem(
+                AhlanFeekumMenus.OnlyForYouSections,
+                l["Menu:OnlyForYouSections"],
+                url: "/only-for-you-sections",
+                icon: "fa fa-file-alt",
+                requiredPermissionName: AhlanFeekumPermissions.OnlyForYouSections.Default)
+        );
         return Task.CompletedTask;
     }
 }

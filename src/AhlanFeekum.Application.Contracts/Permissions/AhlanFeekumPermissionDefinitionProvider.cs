@@ -50,6 +50,22 @@ public class AhlanFeekumPermissionDefinitionProvider : PermissionDefinitionProvi
         propertyMediaPermission.AddChild(AhlanFeekumPermissions.PropertyMedias.Create, L("Permission:Create"));
         propertyMediaPermission.AddChild(AhlanFeekumPermissions.PropertyMedias.Edit, L("Permission:Edit"));
         propertyMediaPermission.AddChild(AhlanFeekumPermissions.PropertyMedias.Delete, L("Permission:Delete"));
+
+
+        var governoratePermission = myGroup.AddPermission(AhlanFeekumPermissions.Governorates.Default, L("Permission:Governorates"));
+        governoratePermission.AddChild(AhlanFeekumPermissions.Governorates.Create, L("Permission:Create"));
+        governoratePermission.AddChild(AhlanFeekumPermissions.Governorates.Edit, L("Permission:Edit"));
+        governoratePermission.AddChild(AhlanFeekumPermissions.Governorates.Delete, L("Permission:Delete"));
+
+        var specialAdvertismentPermission = myGroup.AddPermission(AhlanFeekumPermissions.SpecialAdvertisments.Default, L("Permission:SpecialAdvertisments"));
+        specialAdvertismentPermission.AddChild(AhlanFeekumPermissions.SpecialAdvertisments.Create, L("Permission:Create"));
+        specialAdvertismentPermission.AddChild(AhlanFeekumPermissions.SpecialAdvertisments.Edit, L("Permission:Edit"));
+        specialAdvertismentPermission.AddChild(AhlanFeekumPermissions.SpecialAdvertisments.Delete, L("Permission:Delete"));
+
+        var onlyForYouSectionPermission = myGroup.AddPermission(AhlanFeekumPermissions.OnlyForYouSections.Default, L("Permission:OnlyForYouSections"));
+        onlyForYouSectionPermission.AddChild(AhlanFeekumPermissions.OnlyForYouSections.Create, L("Permission:Create"));
+        onlyForYouSectionPermission.AddChild(AhlanFeekumPermissions.OnlyForYouSections.Edit, L("Permission:Edit"));
+        onlyForYouSectionPermission.AddChild(AhlanFeekumPermissions.OnlyForYouSections.Delete, L("Permission:Delete"));
     }
 
     private static LocalizableString L(string name)

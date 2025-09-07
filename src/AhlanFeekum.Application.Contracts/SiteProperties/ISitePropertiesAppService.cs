@@ -20,6 +20,8 @@ namespace AhlanFeekum.SiteProperties
 
         Task<PagedResultDto<LookupDto<Guid>>> GetPropertyTypeLookupAsync(LookupRequestDto input);
 
+        Task<PagedResultDto<LookupDto<Guid>>> GetGovernorateLookupAsync(LookupRequestDto input);
+
         Task<PagedResultDto<LookupDto<Guid>>> GetPropertyFeatureLookupAsync(LookupRequestDto input);
 
         Task DeleteAsync(Guid id);

@@ -1,0 +1,96 @@
+@page "/site-properties/medias/{id}"
+
+@attribute [Authorize(AhlanFeekumPermissions.PropertyMedias.Edit)]
+@using AhlanFeekum.Blazor.Components
+@using AhlanFeekum.Localization
+@using AhlanFeekum.Shared
+@using AhlanFeekum.Helper
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Components.Web
+@using Blazorise
+@using Blazorise.Components
+@using Blazorise.DataGrid
+@using Volo.Abp.BlazoriseUI
+@using Volo.Abp.BlazoriseUI.Components
+@using Volo.Abp.ObjectMapping
+@using Volo.Abp.AspNetCore.Components.Messages
+@using Volo.Abp.AspNetCore.Components.Web.Theming.Layout
+@using AhlanFeekum.Permissions
+@using Microsoft.AspNetCore.Components
+@using Volo.Abp.AspNetCore.Components.Web
+@using Volo.Abp.Http.Client
+@inherits AhlanFeekumComponentBase
+@inject IUiMessageService UiMessageService
+@inject IRemoteServiceConfigurationProvider RemoteServiceConfigurationProvider
+@inject NavigationManager NavigationManager
+
+<PageHeader Title="@( $"{L["Update"]} {L["SiteProperties"]}")" BreadcrumbItems="BreadcrumbItems" Toolbar="Toolbar">
+
+</PageHeader>
+
+
+<Card>
+    <Form id="EditSitePropertyForm">
+        <Validations @ref="@EditingSitePropertyValidations"
+                     Mode="ValidationMode.Auto"
+                     Model="@SitePropertyDto"
+                     ValidateOnLoad="false">
+            @if (SitePropertyDto != null)
+            {
+                <Card>
+                    <CardTitle>@L["SiteProperties"].Value</CardTitle>
+                    <CardBody>
+                        <Validations @ref="@EditingSitePropertyValidations"
+                                 Mode="ValidationMode.Auto"
+                                 Model="@SitePropertyDto"
+                                 ValidateOnLoad="false">
+                            <Validation>
+                                <Field>
+                                    <FieldLabel>@L["PropertyTitle"]</FieldLabel>
+                                    <TextEdit @bind-Text="@SitePropertyDto.PropertyTitle" Disabled>
+                                        <Feedback>
+                                            <ValidationError />
+                                        </Feedback>
+                                    </TextEdit>
+                                </Field>
+                            </Validation>
+                        </Validations>
+
+                        <Div Class="mb-2">
+                            <Button Class="btn-light" Clicked="async ()=>await addNewMediaAsync()"><Icon Name="@IconName.Add" /> @L["Add"] @L["Media"]</Button>
+                        </Div>
+                        <Card>
+                            <CardBody>
+                                @if (!MediaDtos.IsNullOrEmpty())
+                                {
+                                    <Tabs SelectedTab="@SelectedTab" SelectedTabChanged="@OnSelectedCreateTabChanged">
+                                        <Items>
+
+                                            @foreach (var (item, index) in MediaDtos.WithIndex())
+                                                {
+                                                <Tab Name="@((index+1).ToString())">@item.Order</Tab>
+                                                }
+                                        </Items>
+                                        <Content>
+                                            @foreach (var (item, index) in MediaDtos.WithIndex())
+                                            {
+                                                <TabPanel Name="@((index+1).ToString())">
+                                                    <CustomMedia Media="item" MediaDeleted="MediaDeleted"></CustomMedia>
+                                                </TabPanel>
+                                            }
+                                        </Content>
+                                    </Tabs>   
+                                }
+                            </CardBody>
+                        </Card>
+                    </CardBody>
+                    <CardFooter>
+                        <SubmitButton Form="EditSitePropertyForm" Clicked="Cancel">@L["Cancel"]</SubmitButton>
+                        <SubmitButton Form="EditSitePropertyForm" Clicked="async()=> await UpdateMediasAsync()" />
+                    </CardFooter>
+                </Card>
+            }
+        </Validations>
+    </Form>
+</Card>

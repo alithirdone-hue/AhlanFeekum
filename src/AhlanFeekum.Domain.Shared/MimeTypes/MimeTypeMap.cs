@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FileSignatures;
+using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using static System.Net.Mime.MediaTypeNames;
@@ -859,6 +861,18 @@ namespace AhlanFeekum.MimeTypes
             }
 
             return string.Empty;
+        }
+
+        public static string GetRealExtension(IFormFile file)
+        {
+            var inspector = new FileFormatInspector();
+            using var stream = file.OpenReadStream();
+            var format = inspector.DetermineFileFormat(stream);
+            if (format != null && format.Extension.StartsWith("."))
+                return format?.Extension;
+            else
+                return "." + format?.Extension;
+            ; // Returns ".jpg", ".png", etc.
         }
     }
 }

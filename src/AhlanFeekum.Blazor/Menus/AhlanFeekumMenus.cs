@@ -4,12 +4,14 @@ public class AhlanFeekumMenus
 {
     private const string Prefix = "AhlanFeekum";
     public const string Home = Prefix + ".Home";
-
-    //Add your menu items here...
+    public const string HostDashboard = Prefix + ".HostDashboard";
+    public const string TenantDashboard = Prefix + ".TenantDashboard";
 
     public const string PropertyTypes = Prefix + ".PropertyTypes";
 
     public const string PropertyFeatures = Prefix + ".PropertyFeatures";
+
+    public const string VerificationCodes = Prefix + ".VerificationCodes";
 
     public const string UserProfiles = Prefix + ".UserProfiles";
 
@@ -27,5 +29,10 @@ public class AhlanFeekumMenus
 
     public const string PropertyEvaluations = Prefix + ".PropertyEvaluations";
 
+    public const string Governorates = Prefix + ".Governorates";
+
+    public const string SpecialAdvertisments = Prefix + ".SpecialAdvertisments";
+
+    public const string OnlyForYouSections = Prefix + ".OnlyForYouSections";
 
 }

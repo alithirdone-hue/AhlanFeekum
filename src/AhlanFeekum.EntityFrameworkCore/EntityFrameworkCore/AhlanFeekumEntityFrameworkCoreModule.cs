@@ -6,6 +6,9 @@ using AhlanFeekum.PropertyMedias;
 using AhlanFeekum.PropertyTypes;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.UserProfiles;
+using AhlanFeekum.Governorates;
+using AhlanFeekum.OnlyForYouSections;
+using AhlanFeekum.SpecialAdvertisments;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
@@ -64,6 +67,12 @@ public class AhlanFeekumEntityFrameworkCoreModule : AbpModule
             options.AddRepository<PropertyEvaluation, PropertyEvaluations.EfCorePropertyEvaluationRepository>();
 
             options.AddRepository<PropertyMedia, PropertyMedias.EfCorePropertyMediaRepository>();
+
+            options.AddRepository<Governorate, Governorates.EfCoreGovernorateRepository>();
+
+            options.AddRepository<SpecialAdvertisment, SpecialAdvertisments.EfCoreSpecialAdvertismentRepository>();
+
+            options.AddRepository<OnlyForYouSection, OnlyForYouSections.EfCoreOnlyForYouSectionRepository>();
         });
 
         Configure<AbpDbContextOptions>(options =>

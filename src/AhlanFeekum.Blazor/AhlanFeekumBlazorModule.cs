@@ -105,7 +105,8 @@ public class AhlanFeekumBlazorModule : AbpModule
 
             PreConfigure<OpenIddictServerBuilder>(serverBuilder =>
             {
-                serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", "d6af8d31-b318-4eb3-97ef-84624926d5da");
+                //   serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", "d6af8d31-b318-4eb3-97ef-84624926d5da");
+                serverBuilder.AddProductionEncryptionAndSigningCertificate("/var/apps/AhlanFeekum/certs/openiddict.pfx", "d6af8d31-b318-4eb3-97ef-84624926d5da");
                 serverBuilder.SetIssuer(new Uri(configuration["AuthServer:Authority"]));
                 serverBuilder.SetAccessTokenLifetime(TimeSpan.FromDays(30));
                 serverBuilder.UseAspNetCore().DisableTransportSecurityRequirement();

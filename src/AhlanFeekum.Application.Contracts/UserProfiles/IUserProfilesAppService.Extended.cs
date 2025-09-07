@@ -1,4 +1,6 @@
 using AhlanFeekum.MobileResponses;
+using AhlanFeekum.OnlyForYouSections;
+using System;
 using System.Threading.Tasks;
 
 namespace AhlanFeekum.UserProfiles
@@ -14,6 +16,8 @@ namespace AhlanFeekum.UserProfiles
         Task<MobileResponseDto> RequestPasswordResetAsync(PasswordResetRequestDto input);
         Task<MobileResponseDto> ConfirmPasswordResetAsync(PasswordConfirmResetRequestDto input);
         Task<MobileResponseDto> ChangePasswordAsync(PasswordChangeRequestDto input);
+
+        Task<HomePageDto> GetHomePageAsync();
 
     }
 }

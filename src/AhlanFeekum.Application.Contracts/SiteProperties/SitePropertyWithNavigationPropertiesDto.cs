@@ -1,4 +1,5 @@
 using AhlanFeekum.PropertyTypes;
+using AhlanFeekum.Governorates;
 using AhlanFeekum.PropertyFeatures;
 
 using System;
@@ -12,6 +13,7 @@ namespace AhlanFeekum.SiteProperties
         public SitePropertyDto SiteProperty { get; set; } = null!;
 
         public PropertyTypeDto PropertyType { get; set; } = null!;
+        public GovernorateDto Governorate { get; set; } = null!;
         public List<PropertyFeatureDto> PropertyFeatures { get; set; } = new List<PropertyFeatureDto>();
 
     }
