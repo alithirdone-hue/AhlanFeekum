@@ -10,6 +10,6 @@ namespace AhlanFeekum.PropertyMedias
         //Write your custom code here...
         Task<bool> UpdateSitePropertyMediasAsync(Guid sitePropertyId, List<PropertyMediaDto> input);
 
-        Task<MobileResponseDto> AddMediaToPropertyAsync(PropertyMediaCreateMobileDto input);
+        Task<MobileResponseDto> AddMediaToPropertyAsync(List<PropertyMediaItemDto> input);
     }
 }

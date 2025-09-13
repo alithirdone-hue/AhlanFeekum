@@ -34,5 +34,7 @@ public class AhlanFeekumMenus
     public const string SpecialAdvertisments = Prefix + ".SpecialAdvertisments";
 
     public const string OnlyForYouSections = Prefix + ".OnlyForYouSections";
+    public const string PropertyCalendars = Prefix + ".PropertyCalendars";
+
 
 }

@@ -1,10 +1,11 @@
-using System;
-using System.Threading.Tasks;
+using AhlanFeekum.Blazor.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
+using System;
+using System.Threading.Tasks;
 
 namespace AhlanFeekum.Blazor;
 
@@ -33,6 +34,12 @@ public class Program
                 .UseAutofac()
                 .UseSerilog();
             await builder.AddApplicationAsync<AhlanFeekumBlazorModule>();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+                    options.JsonSerializerOptions.Converters.Add(new TimeOnlyJsonConverter());
+                });
             var app = builder.Build();
             await app.InitializeApplicationAsync();
             await app.RunAsync();

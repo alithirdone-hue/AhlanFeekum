@@ -113,15 +113,21 @@ namespace AhlanFeekum.PropertyMedias
             return true;
         }
 
-        public virtual async Task<MobileResponseDto> AddMediaToPropertyAsync(PropertyMediaCreateMobileDto input)
+        public virtual async Task<MobileResponseDto> AddMediaToPropertyAsync(List<PropertyMediaItemDto> input)
         {
             MobileResponseDto mobileResponseDto = new MobileResponseDto();
             mobileResponseDto.Code = 200;
             mobileResponseDto.Message = "Success";
-            if (!input.propertyMediaItemDtos.IsNullOrEmpty())
+            if (!input.IsNullOrEmpty())
             {
+                GetPropertyMediasInput getPropertyMediasInput = new GetPropertyMediasInput();
+                getPropertyMediasInput.SkipCount = 0;
+                getPropertyMediasInput.MaxResultCount = 1000;
+                getPropertyMediasInput.SitePropertyId = input[0].PropertyId;
 
-                foreach (var item in input.propertyMediaItemDtos)
+                await DeleteAllAsync(getPropertyMediasInput);
+
+                foreach (var item in input)
                 {
                     using (var stream = new MemoryStream())
                     {
@@ -138,7 +144,7 @@ namespace AhlanFeekum.PropertyMedias
                         }
                         await _mediaBlobContainer.SaveAsync(imageName, stream.GetAllBytes());
 
-                        await _propertyMediaManager.CreateAsync(sitePropertyId: input.SitePropertyId,
+                        await _propertyMediaManager.CreateAsync(sitePropertyId: item.PropertyId,
                                                       image: imageName,
                                                      order: item.Order,
                                                      isActive: item.isActive);

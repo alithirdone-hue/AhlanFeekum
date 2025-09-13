@@ -39,5 +39,12 @@ namespace AhlanFeekum.Controllers.Lookups
             return _sitePropertiesAppService.GetPropertyFeatureLookupAsync(lookupRequestDto);
         }
 
+        [HttpGet]
+        [Route("governates")]
+        public virtual Task<PagedResultDto<LookupDto<Guid>>> GetGovernateLookupAsync(LookupRequestDto lookupRequestDto)
+        {
+            return _sitePropertiesAppService.GetGovernorateLookupAsync(lookupRequestDto);
+        }
+
     }
 }

@@ -1,16 +1,17 @@
-using Asp.Versioning;
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Volo.Abp;
-using Volo.Abp.AspNetCore.Mvc;
-using Volo.Abp.Application.Dtos;
-using Microsoft.AspNetCore.Authorization;
-using AhlanFeekum.SiteProperties;
-using AhlanFeekum.MobileResponses;
 using AhlanFeekum.Authorizations;
+using AhlanFeekum.MobileResponses;
+using AhlanFeekum.PropertyCalendars;
 using AhlanFeekum.PropertyMedias;
+using AhlanFeekum.SiteProperties;
+using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Volo.Abp;
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.AspNetCore.Mvc;
 
 namespace AhlanFeekum.Controllers.SiteProperties
 {
@@ -23,10 +24,12 @@ namespace AhlanFeekum.Controllers.SiteProperties
     {
         protected ISitePropertiesAppService _sitePropertiesAppService;
         protected IPropertyMediasAppService _propertyMediasAppService;
-        public PropertyController(ISitePropertiesAppService sitePropertiesAppService, IPropertyMediasAppService propertyMediasAppService)
+        protected IPropertyCalendarsAppService _propertyCalendarsAppService;
+        public PropertyController(ISitePropertiesAppService sitePropertiesAppService, IPropertyMediasAppService propertyMediasAppService, IPropertyCalendarsAppService propertyCalendarsAppService)
         {
             _sitePropertiesAppService = sitePropertiesAppService;
             _propertyMediasAppService = propertyMediasAppService;
+            _propertyCalendarsAppService = propertyCalendarsAppService;
         }
 
         [HttpPost("create-step-one")]
@@ -39,10 +42,37 @@ namespace AhlanFeekum.Controllers.SiteProperties
         {
             return _sitePropertiesAppService.UpdateAsync(input);
         }
+        [HttpPost("add-availability")]
+        public virtual Task<MobileResponseDto> CreateManyPropertyCalendarAsync(List<PropertyCalendarItemDto> input)
+        {
+            return _propertyCalendarsAppService.CreateManyAsync(input);
+        }
+
+  
+        //[HttpPost("add-availability11")]
+        //public virtual Task CreateManyProperty11CalendarAsync([FromBody] List<PropertyCalendarItemDto> input)
+        //{
+        //    return Task.CompletedTask;
+        //}
         [HttpPost("upload-medias")]
-        public virtual Task<MobileResponseDto> CreateStepTwoAsync(PropertyMediaCreateMobileDto input)
+        public virtual Task<MobileResponseDto> CreateStepTwoAsync([FromForm]List<PropertyMediaItemDto> input)
         {
             return _propertyMediasAppService.AddMediaToPropertyAsync(input);
+        }
+
+        [HttpPost("upload-one-media")]
+        public virtual Task<MobileResponseDto> UploadOneMediaAsync([FromForm]PropertyMediaItemDto input)
+        {
+            List<PropertyMediaItemDto> mediaList = new List<PropertyMediaItemDto>()
+            {
+                input
+            };
+            return _propertyMediasAppService.AddMediaToPropertyAsync(mediaList);
+        }
+        [HttpPost("set-price")]
+        public virtual Task<MobileResponseDto> SetPricePerNightAsync(SitePropertySetPriceDto input)
+        {
+            return _sitePropertiesAppService.SetPricePerNightAsync(input);
         }
 
         [HttpGet]

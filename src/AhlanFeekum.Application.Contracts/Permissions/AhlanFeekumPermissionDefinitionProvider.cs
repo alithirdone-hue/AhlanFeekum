@@ -66,6 +66,12 @@ public class AhlanFeekumPermissionDefinitionProvider : PermissionDefinitionProvi
         onlyForYouSectionPermission.AddChild(AhlanFeekumPermissions.OnlyForYouSections.Create, L("Permission:Create"));
         onlyForYouSectionPermission.AddChild(AhlanFeekumPermissions.OnlyForYouSections.Edit, L("Permission:Edit"));
         onlyForYouSectionPermission.AddChild(AhlanFeekumPermissions.OnlyForYouSections.Delete, L("Permission:Delete"));
+
+
+        var propertyCalendarPermission = myGroup.AddPermission(AhlanFeekumPermissions.PropertyCalendars.Default, L("Permission:PropertyCalendars"));
+        propertyCalendarPermission.AddChild(AhlanFeekumPermissions.PropertyCalendars.Create, L("Permission:Create"));
+        propertyCalendarPermission.AddChild(AhlanFeekumPermissions.PropertyCalendars.Edit, L("Permission:Edit"));
+        propertyCalendarPermission.AddChild(AhlanFeekumPermissions.PropertyCalendars.Delete, L("Permission:Delete"));
     }
 
     private static LocalizableString L(string name)

@@ -1,15 +1,16 @@
 ﻿using AhlanFeekum.FavoriteProperties;
+using AhlanFeekum.Governorates;
+using AhlanFeekum.OnlyForYouSections;
 using AhlanFeekum.PersonEvaluations;
 using AhlanFeekum.PropertyEvaluations;
 using AhlanFeekum.PropertyFeatures;
 using AhlanFeekum.PropertyMedias;
 using AhlanFeekum.PropertyTypes;
 using AhlanFeekum.SiteProperties;
-using AhlanFeekum.UserProfiles;
-using AhlanFeekum.Governorates;
-using AhlanFeekum.OnlyForYouSections;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SpecialAdvertisments;
+using AhlanFeekum.UserProfiles;
+using AhlanFeekum.PropertyCalendars;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -37,6 +38,7 @@ public class AhlanFeekumDbContext :
     ITenantManagementDbContext
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
+    public DbSet<PropertyCalendar> PropertyCalendars { get; set; } = null!;
     public DbSet<OnlyForYouSection> OnlyForYouSections { get; set; } = null!;
     public DbSet<SpecialAdvertisment> SpecialAdvertisments { get; set; } = null!;
     public DbSet<Governorate> Governorates { get; set; } = null!;
@@ -290,6 +292,32 @@ public class AhlanFeekumDbContext :
                 b.Property(x => x.FirstPhoto).HasColumnName(nameof(OnlyForYouSection.FirstPhoto)).IsRequired();
                 b.Property(x => x.SecondPhoto).HasColumnName(nameof(OnlyForYouSection.SecondPhoto)).IsRequired();
                 b.Property(x => x.ThirdPhoto).HasColumnName(nameof(OnlyForYouSection.ThirdPhoto)).IsRequired();
+            });
+
+        }
+        if (builder.IsHostDatabase())
+        {
+
+        }
+        if (builder.IsHostDatabase())
+        {
+
+        }
+        if (builder.IsHostDatabase())
+        {
+
+        }
+        if (builder.IsHostDatabase())
+        {
+            builder.Entity<PropertyCalendar>(b =>
+            {
+                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "PropertyCalendars", AhlanFeekumConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.Property(x => x.Date).HasColumnName(nameof(PropertyCalendar.Date));
+                b.Property(x => x.IsAvailable).HasColumnName(nameof(PropertyCalendar.IsAvailable));
+                b.Property(x => x.Price).HasColumnName(nameof(PropertyCalendar.Price));
+                b.Property(x => x.Note).HasColumnName(nameof(PropertyCalendar.Note));
+                b.HasOne<SiteProperty>().WithMany().IsRequired().HasForeignKey(x => x.SitePropertyId).OnDelete(DeleteBehavior.NoAction);
             });
 
         }

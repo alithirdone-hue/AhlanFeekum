@@ -1,14 +1,15 @@
 ﻿using AhlanFeekum.FavoriteProperties;
+using AhlanFeekum.Governorates;
+using AhlanFeekum.OnlyForYouSections;
 using AhlanFeekum.PersonEvaluations;
 using AhlanFeekum.PropertyEvaluations;
 using AhlanFeekum.PropertyFeatures;
 using AhlanFeekum.PropertyMedias;
 using AhlanFeekum.PropertyTypes;
 using AhlanFeekum.SiteProperties;
-using AhlanFeekum.UserProfiles;
-using AhlanFeekum.Governorates;
-using AhlanFeekum.OnlyForYouSections;
 using AhlanFeekum.SpecialAdvertisments;
+using AhlanFeekum.UserProfiles;
+using AhlanFeekum.PropertyCalendars;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
@@ -73,6 +74,9 @@ public class AhlanFeekumEntityFrameworkCoreModule : AbpModule
             options.AddRepository<SpecialAdvertisment, SpecialAdvertisments.EfCoreSpecialAdvertismentRepository>();
 
             options.AddRepository<OnlyForYouSection, OnlyForYouSections.EfCoreOnlyForYouSectionRepository>();
+           
+            options.AddRepository<PropertyCalendar, PropertyCalendars.EfCorePropertyCalendarRepository>();
+
         });
 
         Configure<AbpDbContextOptions>(options =>

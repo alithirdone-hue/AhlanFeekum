@@ -40,6 +40,7 @@ using Volo.Abp.AutoMapper;
 using Volo.Abp.BlobStoring;
 using Volo.Abp.BlobStoring.FileSystem;
 using Volo.Abp.Identity.Blazor.Server;
+using Volo.Abp.Json;
 using Volo.Abp.Modularity;
 using Volo.Abp.OpenIddict;
 using Volo.Abp.Security.Claims;
@@ -50,6 +51,7 @@ using Volo.Abp.UI;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
+using System.Text.Json.Serialization;
 
 namespace AhlanFeekum.Blazor;
 
@@ -149,6 +151,11 @@ public class AhlanFeekumBlazorModule : AbpModule
                 });
             });
         });
+        //Configure<AbpJsonOptions>(options =>
+        //{
+        //    options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+        //    options.JsonSerializerOptions.Converters.Add(new TimeOnlyJsonConverter());
+        //});
         context.Services.AddSingleton<IActionResultExecutor<ObjectResult>, AhlanFeekumWrapResultExecutor>();
     }
 

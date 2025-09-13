@@ -290,6 +290,79 @@ namespace AhlanFeekum.Migrations
                 b.ToTable("AppPersonEvaluations", (string)null);
             });
 
+            modelBuilder.Entity("AhlanFeekum.PropertyCalendars.PropertyCalendar", b =>
+            {
+                b.Property<Guid>("Id")
+                    .HasColumnType("uniqueidentifier");
+
+                b.Property<string>("ConcurrencyStamp")
+                    .IsConcurrencyToken()
+                    .IsRequired()
+                    .HasMaxLength(40)
+                    .HasColumnType("nvarchar(40)")
+                    .HasColumnName("ConcurrencyStamp");
+
+                b.Property<DateTime>("CreationTime")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("CreationTime");
+
+                b.Property<Guid?>("CreatorId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("CreatorId");
+
+                b.Property<DateOnly>("Date")
+                    .HasColumnType("date")
+                    .HasColumnName("Date");
+
+                b.Property<Guid?>("DeleterId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("DeleterId");
+
+                b.Property<DateTime?>("DeletionTime")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("DeletionTime");
+
+                b.Property<string>("ExtraProperties")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("ExtraProperties");
+
+                b.Property<bool>("IsAvailable")
+                    .HasColumnType("bit")
+                    .HasColumnName("IsAvailable");
+
+                b.Property<bool>("IsDeleted")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("bit")
+                    .HasDefaultValue(false)
+                    .HasColumnName("IsDeleted");
+
+                b.Property<DateTime?>("LastModificationTime")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("LastModificationTime");
+
+                b.Property<Guid?>("LastModifierId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("LastModifierId");
+
+                b.Property<string>("Note")
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("Note");
+
+                b.Property<float?>("Price")
+                    .HasColumnType("real")
+                    .HasColumnName("Price");
+
+                b.Property<Guid>("SitePropertyId")
+                    .HasColumnType("uniqueidentifier");
+
+                b.HasKey("Id");
+
+                b.HasIndex("SitePropertyId");
+
+                b.ToTable("AppPropertyCalendars", (string)null);
+            });
+
             modelBuilder.Entity("AhlanFeekum.PropertyEvaluations.PropertyEvaluation", b =>
             {
                 b.Property<Guid>("Id")
@@ -2659,6 +2732,14 @@ namespace AhlanFeekum.Migrations
                 b.HasOne("AhlanFeekum.UserProfiles.UserProfile", null)
                     .WithMany()
                     .HasForeignKey("EvaluatorId")
+                    .OnDelete(DeleteBehavior.NoAction)
+                    .IsRequired();
+            });
+            modelBuilder.Entity("AhlanFeekum.PropertyCalendars.PropertyCalendar", b =>
+            {
+                b.HasOne("AhlanFeekum.SiteProperties.SiteProperty", null)
+                    .WithMany()
+                    .HasForeignKey("SitePropertyId")
                     .OnDelete(DeleteBehavior.NoAction)
                     .IsRequired();
             });

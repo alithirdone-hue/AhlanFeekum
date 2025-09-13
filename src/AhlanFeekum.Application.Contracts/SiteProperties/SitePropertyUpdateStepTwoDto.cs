@@ -1,13 +1,14 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace AhlanFeekum.SiteProperties
 {
-    public class SitePropertyUpdateStepTwoDto
+    public class SitePropertySetPriceDto
     {
         //Write your custom code here...
-        public Guid Id { get; set; }
-        public string? Address { get; set; }
-        public string? StreetAndBuildingNumber { get; set; }
-        public string? LandMark { get; set; }
+        [Required]
+        public Guid PropertyId { get; set; }
+        [Required]
+        public int PricePerNight { get; set; }
     }
 }
