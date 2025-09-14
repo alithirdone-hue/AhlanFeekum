@@ -214,10 +214,9 @@ namespace AhlanFeekum.Migrations
                     .HasColumnType("nvarchar(max)")
                     .HasColumnName("ExtraProperties");
 
-                b.Property<string>("FirstPhoto")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)")
-                    .HasColumnName("FirstPhoto");
+                b.Property<Guid>("FirstPhotoId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("FirstPhotoId");
 
                 b.Property<bool>("IsDeleted")
                     .ValueGeneratedOnAdd()
@@ -233,15 +232,13 @@ namespace AhlanFeekum.Migrations
                     .HasColumnType("uniqueidentifier")
                     .HasColumnName("LastModifierId");
 
-                b.Property<string>("SecondPhoto")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)")
-                    .HasColumnName("SecondPhoto");
+                b.Property<Guid>("SecondPhotoId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("SecondPhotoId");
 
-                b.Property<string>("ThirdPhoto")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)")
-                    .HasColumnName("ThirdPhoto");
+                b.Property<Guid>("ThirdPhotoId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("ThirdPhotoId");
 
                 b.HasKey("Id");
 
