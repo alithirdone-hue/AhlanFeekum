@@ -11,6 +11,9 @@ namespace AhlanFeekum.SpecialAdvertisments
 {
     public partial interface ISpecialAdvertismentsAppService : IApplicationService
     {
+        Task<IRemoteStreamContent> GetFileAsync(GetFileInput input);
+
+        Task<AppFileDescriptorDto> UploadFileAsync(IRemoteStreamContent input);
 
         Task<PagedResultDto<SpecialAdvertismentWithNavigationPropertiesDto>> GetListAsync(GetSpecialAdvertismentsInput input);
 

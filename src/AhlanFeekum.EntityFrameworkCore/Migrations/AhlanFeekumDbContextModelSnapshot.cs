@@ -24,6 +24,36 @@ namespace AhlanFeekum.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("AhlanFeekum.AppFileDescriptors.AppFileDescriptor", b =>
+            {
+                b.Property<Guid>("Id")
+                    .HasColumnType("uniqueidentifier");
+
+                b.Property<string>("ConcurrencyStamp")
+                    .IsConcurrencyToken()
+                    .IsRequired()
+                    .HasMaxLength(40)
+                    .HasColumnType("nvarchar(40)")
+                    .HasColumnName("ConcurrencyStamp");
+
+                b.Property<string>("ExtraProperties")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("ExtraProperties");
+
+                b.Property<string>("MimeType")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
+
+                b.Property<string>("Name")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
+
+                b.HasKey("Id");
+
+                b.ToTable("AppFileDescriptors", (string)null);
+            });
+
             modelBuilder.Entity("AhlanFeekum.FavoriteProperties.FavoriteProperty", b =>
             {
                 b.Property<Guid>("Id")
@@ -833,10 +863,9 @@ namespace AhlanFeekum.Migrations
                     .HasColumnType("nvarchar(max)")
                     .HasColumnName("ExtraProperties");
 
-                b.Property<string>("Image")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)")
-                    .HasColumnName("Image");
+                b.Property<Guid>("ImageId")
+                      .HasColumnType("uniqueidentifier")
+                      .HasColumnName("ImageId");
 
                 b.Property<bool>("IsActive")
                     .HasColumnType("bit")

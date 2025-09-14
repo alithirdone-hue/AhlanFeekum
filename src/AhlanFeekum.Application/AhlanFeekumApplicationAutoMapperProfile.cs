@@ -3,6 +3,7 @@ using AhlanFeekum.Governorates;
 using AhlanFeekum.MobileResponses;
 using AhlanFeekum.OnlyForYouSections;
 using AhlanFeekum.PersonEvaluations;
+using AhlanFeekum.PropertyCalendars;
 using AhlanFeekum.PropertyEvaluations;
 using AhlanFeekum.PropertyFeatures;
 using AhlanFeekum.PropertyMedias;
@@ -11,7 +12,8 @@ using AhlanFeekum.Shared;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SpecialAdvertisments;
 using AhlanFeekum.UserProfiles;
-using AhlanFeekum.PropertyCalendars;
+using AhlanFeekum.AppFileDescriptors;
+using AhlanFeekum.Shared;
 using AutoMapper;
 using System;
 using Volo.Abp.AutoMapper;
@@ -84,7 +86,7 @@ public class AhlanFeekumApplicationAutoMapperProfile : Profile
         CreateMap<SpecialAdvertismentWithNavigationProperties, SpecialAdvertismentWithNavigationPropertiesDto>();
         CreateMap<SpecialAdvertismentWithNavigationProperties, SpecialAdvertismentMobileDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.SpecialAdvertisment.Id))
-            .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.SpecialAdvertisment.Image != null ? $"{MimeTypes.MimeTypeMap.GetAttachmentPath()}/specialAdvertisments/{src.SpecialAdvertisment.Image}" : null))
+            .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.SpecialAdvertisment.ImageId != null ? $"{MimeTypes.MimeTypeMap.GetAttachmentPath()}/specialadvertisment-file/{src.SpecialAdvertisment.ImageId}" : null))
             .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.SpecialAdvertisment.IsActive))
             .ForMember(dest => dest.SitePropertyId, opt => opt.MapFrom(src => src.SpecialAdvertisment.Id))
             .ForMember(dest => dest.SitePropertyTitle, opt => opt.MapFrom(src => src.SiteProperty.PropertyTitle));
@@ -120,6 +122,8 @@ public class AhlanFeekumApplicationAutoMapperProfile : Profile
         CreateMap<PropertyCalendar, PropertyCalendarExcelDto>();
         CreateMap<PropertyCalendarWithNavigationProperties, PropertyCalendarWithNavigationPropertiesDto>();
         CreateMap<PropertyCalendarDto, PropertyCalendarUpdateDto>();
+
+        CreateMap<AppFileDescriptors.AppFileDescriptor, AppFileDescriptorDto>();
 
     }
 }
