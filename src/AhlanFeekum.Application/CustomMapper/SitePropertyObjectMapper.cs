@@ -28,7 +28,7 @@ namespace SIBF.CustomMapper
         public List<SitePropertyMobileDto> Map(List<SitePropertyWithDetails> source)
         {
 
-            var output = new List<SitePropertyMobileDto>();
+            List<SitePropertyMobileDto> output = new List<SitePropertyMobileDto>();
             foreach (var item in source)
             {
                 output.Add(Map(item));
@@ -84,6 +84,10 @@ namespace SIBF.CustomMapper
         {
             return Map(source);
         }
+
+
+
+
     }
 }
 

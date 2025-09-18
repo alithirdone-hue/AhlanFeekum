@@ -14,7 +14,8 @@ namespace AhlanFeekum.UserProfiles
     {
         public List<SpecialAdvertismentWithNavigationProperties> SpecialAdvertisments { get; set; }
         public List<Governorate> Governorates { get; set; }
-        public List<SitePropertyWithDetails> SitePropertyWithDetails { get; set; }
+        public List<SitePropertyWithDetails> SiteProperties { get; set; }
+        public List<SitePropertyWithDetails> HighlyRated { get; set; }
         public OnlyForYouSection OnlyForYouSection { get; set; }
 
 

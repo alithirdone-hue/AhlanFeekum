@@ -69,11 +69,11 @@ namespace AhlanFeekum.Controllers.UserProfiles
         {
             return _userProfilesAppService.VerifyAsync(input);
         }
-        //[HttpGet("home")]
-        //public virtual Task<HomePageDto> GetListAsync()
-        //{
-        //    return _homeAppService.GetAsync();
-        //}
+        [HttpGet("home")]
+        public virtual Task<HomePageDto> GetHomePageAsync()
+        {
+            return _userProfilesAppService.GetHomePageAsync();
+        }
 
 
     }

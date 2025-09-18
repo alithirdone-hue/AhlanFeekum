@@ -1,4 +1,5 @@
 using AhlanFeekum.Governorates;
+using AhlanFeekum.PropertyEvaluations;
 using AhlanFeekum.PropertyFeatures;
 using AhlanFeekum.PropertyMedias;
 using AhlanFeekum.PropertyTypes;
@@ -18,12 +19,14 @@ namespace AhlanFeekum.SiteProperties
     {
         public SiteProperty SiteProperty { get; set; } = null!;
         public bool IsFavorite { get; set; } = false;
-
-        public PropertyType PropertyType { get; set; } = null!;
-        public Governorate Governorate { get; set; } = null!;
+        public double? AverageRating { get; set; } = null;
+        public PropertyAverageEvaluation? propertyAverageEvaluation { get; set; } = null;
+        public PropertyType? PropertyType { get; set; } = null!;
+        public Governorate ?Governorate { get; set; } = null!;
 
 
         public List<PropertyFeature> PropertyFeatures { get; set; } = null!;
+        public PropertyMedia? MainImage { get; set; } = null;
         public List<PropertyMedia> Medias { get; set; }
 
    

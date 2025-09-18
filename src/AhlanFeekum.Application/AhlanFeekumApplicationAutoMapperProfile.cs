@@ -93,6 +93,11 @@ public class AhlanFeekumApplicationAutoMapperProfile : Profile
 
 
         CreateMap<OnlyForYouSection, OnlyForYouSectionDto>();
+        CreateMap<OnlyForYouSection, OnlyForYouSectionMobileDto>()
+             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.FirstPhoto, opt => opt.MapFrom(src => src.FirstPhotoId != null ? $"{MimeTypes.MimeTypeMap.GetAttachmentPath()}/onlyforyousection-file/{src.FirstPhotoId}" : null))
+            .ForMember(dest => dest.SecondPhoto, opt => opt.MapFrom(src => src.SecondPhotoId != null ? $"{MimeTypes.MimeTypeMap.GetAttachmentPath()}/onlyforyousection-file/{src.SecondPhotoId}" : null))
+            .ForMember(dest => dest.ThirdPhoto, opt => opt.MapFrom(src => src.ThirdPhotoId != null ? $"{MimeTypes.MimeTypeMap.GetAttachmentPath()}/onlyforyousection-file/{src.ThirdPhotoId}" : null));
         CreateMap<OnlyForYouSection, OnlyForYouSectionExcelDto>();
 
         CreateMap<UserProfileDto, UserProfileUpdateDto>();
