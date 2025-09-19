@@ -1,23 +1,24 @@
+using AhlanFeekum.MimeTypes;
+using AhlanFeekum.OnlyForYouSections;
+using AhlanFeekum.Permissions;
+using AhlanFeekum.Shared;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Caching.Distributed;
+using MiniExcelLibs;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq.Dynamic.Core;
-using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
-using Volo.Abp.Domain.Repositories;
-using AhlanFeekum.Permissions;
-using AhlanFeekum.OnlyForYouSections;
-using MiniExcelLibs;
-using Volo.Abp.Content;
 using Volo.Abp.Authorization;
-using Volo.Abp.Caching;
-using Microsoft.Extensions.Caching.Distributed;
-using AhlanFeekum.Shared;
 using Volo.Abp.BlobStoring;
+using Volo.Abp.Caching;
+using Volo.Abp.Content;
+using Volo.Abp.Domain.Repositories;
 
 namespace AhlanFeekum.OnlyForYouSections
 {
@@ -126,7 +127,14 @@ namespace AhlanFeekum.OnlyForYouSections
             }
 
             var fileDescriptor = await _appFileDescriptorRepository.GetAsync(input.FileId);
-            var stream = await _blobContainer.GetAsync(fileDescriptor.Id.ToString("N"));
+
+            var extension = Path.GetExtension(fileDescriptor.Name);
+            string imageName = fileDescriptor.Id.ToString("N");
+            if (!string.IsNullOrWhiteSpace(extension))
+            {
+                imageName += extension;
+            }
+            var stream = await _blobContainer.GetAsync(imageName);
 
             return new RemoteStreamContent(stream, fileDescriptor.Name, fileDescriptor.MimeType);
         }
@@ -135,8 +143,13 @@ namespace AhlanFeekum.OnlyForYouSections
         {
             var id = GuidGenerator.Create();
             var fileDescriptor = await _appFileDescriptorRepository.InsertAsync(new AppFileDescriptors.AppFileDescriptor(id, input.FileName, input.ContentType));
-
-            await _blobContainer.SaveAsync(fileDescriptor.Id.ToString("N"), input.GetStream());
+            var extension = Path.GetExtension(input.FileName);
+            string imageName = fileDescriptor.Id.ToString("N");
+            if (!string.IsNullOrWhiteSpace(extension))
+            {
+                imageName += extension;
+            }
+            await _blobContainer.SaveAsync(imageName, input.GetStream());
 
             return ObjectMapper.Map<AppFileDescriptors.AppFileDescriptor, AppFileDescriptorDto>(fileDescriptor);
         }

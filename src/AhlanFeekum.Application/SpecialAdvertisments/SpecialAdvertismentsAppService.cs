@@ -169,7 +169,13 @@ namespace AhlanFeekum.SpecialAdvertisments
             }
 
             var fileDescriptor = await _appFileDescriptorRepository.GetAsync(input.FileId);
-            var stream = await _blobContainer.GetAsync(fileDescriptor.Id.ToString("N"));
+            var extension = Path.GetExtension(fileDescriptor.Name);
+            string fileName = fileDescriptor.Id.ToString("N");
+            if (!string.IsNullOrWhiteSpace(extension))
+            {
+                fileName += extension;
+            }
+            var stream = await _blobContainer.GetAsync(fileName);
 
             return new RemoteStreamContent(stream, fileDescriptor.Name, fileDescriptor.MimeType);
         }
@@ -178,8 +184,13 @@ namespace AhlanFeekum.SpecialAdvertisments
         {
             var id = GuidGenerator.Create();
             var fileDescriptor = await _appFileDescriptorRepository.InsertAsync(new AppFileDescriptors.AppFileDescriptor(id, input.FileName, input.ContentType));
-
-            await _blobContainer.SaveAsync(fileDescriptor.Id.ToString("N"), input.GetStream());
+            var extension = Path.GetExtension(input.FileName);
+            string imageName = fileDescriptor.Id.ToString("N");
+            if (!string.IsNullOrWhiteSpace(extension))
+            {
+                imageName += extension;
+            }
+            await _blobContainer.SaveAsync(imageName, input.GetStream());
 
             return ObjectMapper.Map<AppFileDescriptors.AppFileDescriptor, AppFileDescriptorDto>(fileDescriptor);
         }
