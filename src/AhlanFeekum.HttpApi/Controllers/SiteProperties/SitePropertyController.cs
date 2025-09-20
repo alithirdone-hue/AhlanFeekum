@@ -77,7 +77,7 @@ namespace AhlanFeekum.Controllers.SiteProperties
 
         [HttpGet]
         [Route("search-property")]
-        public virtual Task<PagedResultDto<SitePropertyMobileDto>> GetListAsync(GetSitePropertiesMobileInput input)
+        public virtual Task<PagedResultDto<SitePropertyListingMobileDto>> GetListAsync(GetSitePropertiesMobileInput input)
         {
             return _sitePropertiesAppService.GetListMobileAsync(input);
         }
@@ -91,9 +91,15 @@ namespace AhlanFeekum.Controllers.SiteProperties
 
         [HttpPost]
         [Route("remove-from-favorite/{id}")]
-        public virtual Task<MobileResponseDto> removeFromFavoriteAsync(Guid id)
+        public virtual Task<MobileResponseDto> RemoveFromFavoriteAsync(Guid id)
         {
             return _sitePropertiesAppService.RemoveFromFavoriteAsync(id);
+        }
+
+        [HttpGet("with-details/{id}")]
+        public async Task<SitePropertyWithDetailsMobileDto> GetWithDetailsMobileAsync(Guid id)
+        {
+            return await _sitePropertiesAppService.GetSitePropertyWithDetailsAsync(id);
         }
 
 

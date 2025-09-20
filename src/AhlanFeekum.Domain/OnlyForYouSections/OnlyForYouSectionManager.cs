@@ -20,12 +20,15 @@ namespace AhlanFeekum.OnlyForYouSections
         }
 
         public virtual async Task<OnlyForYouSection> CreateAsync(
-        Guid firstPhotoId, Guid secondPhotoId, Guid thirdPhotoId)
+        Guid firstPhotoId, Guid secondPhotoId, Guid thirdPhotoId, string firstPhotoExtension, string secondPhotoExtension, string thirdPhotoExtension)
         {
+            Check.NotNullOrWhiteSpace(firstPhotoExtension, nameof(firstPhotoExtension));
+            Check.NotNullOrWhiteSpace(secondPhotoExtension, nameof(secondPhotoExtension));
+            Check.NotNullOrWhiteSpace(thirdPhotoExtension, nameof(thirdPhotoExtension));
 
             var onlyForYouSection = new OnlyForYouSection(
              GuidGenerator.Create(),
-             firstPhotoId, secondPhotoId, thirdPhotoId
+             firstPhotoId, secondPhotoId, thirdPhotoId, firstPhotoExtension, secondPhotoExtension, thirdPhotoExtension
              );
 
             return await _onlyForYouSectionRepository.InsertAsync(onlyForYouSection);
@@ -33,15 +36,21 @@ namespace AhlanFeekum.OnlyForYouSections
 
         public virtual async Task<OnlyForYouSection> UpdateAsync(
             Guid id,
-            Guid firstPhotoId, Guid secondPhotoId, Guid thirdPhotoId, [CanBeNull] string? concurrencyStamp = null
+            Guid firstPhotoId, Guid secondPhotoId, Guid thirdPhotoId, string firstPhotoExtension, string secondPhotoExtension, string thirdPhotoExtension, [CanBeNull] string? concurrencyStamp = null
         )
         {
+            Check.NotNullOrWhiteSpace(firstPhotoExtension, nameof(firstPhotoExtension));
+            Check.NotNullOrWhiteSpace(secondPhotoExtension, nameof(secondPhotoExtension));
+            Check.NotNullOrWhiteSpace(thirdPhotoExtension, nameof(thirdPhotoExtension));
 
             var onlyForYouSection = await _onlyForYouSectionRepository.GetAsync(id);
 
             onlyForYouSection.FirstPhotoId = firstPhotoId;
             onlyForYouSection.SecondPhotoId = secondPhotoId;
             onlyForYouSection.ThirdPhotoId = thirdPhotoId;
+            onlyForYouSection.FirstPhotoExtension = firstPhotoExtension;
+            onlyForYouSection.SecondPhotoExtension = secondPhotoExtension;
+            onlyForYouSection.ThirdPhotoExtension = thirdPhotoExtension;
 
             onlyForYouSection.SetConcurrencyStampIfNotNull(concurrencyStamp);
             return await _onlyForYouSectionRepository.UpdateAsync(onlyForYouSection);

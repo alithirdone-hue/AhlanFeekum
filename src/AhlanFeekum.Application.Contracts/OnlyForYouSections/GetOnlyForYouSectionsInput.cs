@@ -8,6 +8,10 @@ namespace AhlanFeekum.OnlyForYouSections
 
         public string? FilterText { get; set; }
 
+        public string? FirstPhotoExtension { get; set; }
+        public string? SecondPhotoExtension { get; set; }
+        public string? ThirdPhotoExtension { get; set; }
+
         public GetOnlyForYouSectionsInputBase()
         {
 

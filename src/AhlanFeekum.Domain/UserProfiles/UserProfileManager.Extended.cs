@@ -78,7 +78,7 @@ namespace AhlanFeekum.UserProfiles
                 {
                     imageName = await uploadImage(profilePhoto);
 
-                    var userProfile = new UserProfile(GuidGenerator.Create(), roleId, identityUser.Id, name, isSuperHost, email, phoneNumber, latitude, longitude, address, imageName);
+                    var userProfile = new UserProfile(identityUser.Id, roleId, identityUser.Id, name, isSuperHost, email, phoneNumber, latitude, longitude, address, imageName);
                     var userProf = await _userProfileRepository.InsertAsync(userProfile);
 
                     var register = new RegisterResponse()

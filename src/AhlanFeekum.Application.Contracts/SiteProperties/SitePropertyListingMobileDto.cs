@@ -8,7 +8,7 @@ using Volo.Abp.Domain.Entities;
 
 namespace AhlanFeekum.SiteProperties
 {
-    public  class SitePropertyMobileDto
+    public  class SitePropertyWithDetailsMobileDto
     {
         public Guid Id { get; set; }
         public string PropertyTitle { get; set; } = null!;
@@ -33,7 +33,7 @@ namespace AhlanFeekum.SiteProperties
         public Guid GovernorateId { get; set; }
         public string GovernorateName { get; set; }
 
-        public string MainImage { get; set; }
+        public string? MainImage { get; set; }
         public List<PropertyFeatureMobileDto> PropertyFeatureMobileDtos { get; set; }
         public List<PropertyMediaMobileDto> PropertyMediaMobileDto { get; set; }
 

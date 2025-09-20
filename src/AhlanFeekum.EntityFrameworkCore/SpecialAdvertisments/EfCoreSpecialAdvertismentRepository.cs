@@ -22,7 +22,8 @@ namespace AhlanFeekum.SpecialAdvertisments
 
         public virtual async Task DeleteAllAsync(
             string? filterText = null,
-                        int? orderMin = null,
+                        string? imageExtension = null,
+            int? orderMin = null,
             int? orderMax = null,
             bool? isActive = null,
             Guid? sitePropertyId = null,
@@ -30,7 +31,7 @@ namespace AhlanFeekum.SpecialAdvertisments
         {
             var query = await GetQueryForNavigationPropertiesAsync();
 
-            query = ApplyFilter(query, filterText, orderMin, orderMax, isActive, sitePropertyId);
+            query = ApplyFilter(query, filterText, imageExtension, orderMin, orderMax, isActive, sitePropertyId);
 
             var ids = query.Select(x => x.SpecialAdvertisment.Id);
             await DeleteManyAsync(ids, cancellationToken: GetCancellationToken(cancellationToken));
@@ -50,6 +51,7 @@ namespace AhlanFeekum.SpecialAdvertisments
 
         public virtual async Task<List<SpecialAdvertismentWithNavigationProperties>> GetListWithNavigationPropertiesAsync(
             string? filterText = null,
+            string? imageExtension = null,
             int? orderMin = null,
             int? orderMax = null,
             bool? isActive = null,
@@ -60,7 +62,7 @@ namespace AhlanFeekum.SpecialAdvertisments
             CancellationToken cancellationToken = default)
         {
             var query = await GetQueryForNavigationPropertiesAsync();
-            query = ApplyFilter(query, filterText, orderMin, orderMax, isActive, sitePropertyId);
+            query = ApplyFilter(query, filterText, imageExtension, orderMin, orderMax, isActive, sitePropertyId);
             query = query.OrderBy(string.IsNullOrWhiteSpace(sorting) ? SpecialAdvertismentConsts.GetDefaultSorting(true) : sorting);
             return await query.PageBy(skipCount, maxResultCount).ToListAsync(cancellationToken);
         }
@@ -80,13 +82,15 @@ namespace AhlanFeekum.SpecialAdvertisments
         protected virtual IQueryable<SpecialAdvertismentWithNavigationProperties> ApplyFilter(
             IQueryable<SpecialAdvertismentWithNavigationProperties> query,
             string? filterText,
+            string? imageExtension = null,
             int? orderMin = null,
             int? orderMax = null,
             bool? isActive = null,
             Guid? sitePropertyId = null)
         {
             return query
-                .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => true)
+                .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.SpecialAdvertisment.ImageExtension!.Contains(filterText!))
+                    .WhereIf(!string.IsNullOrWhiteSpace(imageExtension), e => e.SpecialAdvertisment.ImageExtension.Contains(imageExtension))
                     .WhereIf(orderMin.HasValue, e => e.SpecialAdvertisment.Order >= orderMin!.Value)
                     .WhereIf(orderMax.HasValue, e => e.SpecialAdvertisment.Order <= orderMax!.Value)
                     .WhereIf(isActive.HasValue, e => e.SpecialAdvertisment.IsActive == isActive)
@@ -95,6 +99,7 @@ namespace AhlanFeekum.SpecialAdvertisments
 
         public virtual async Task<List<SpecialAdvertisment>> GetListAsync(
             string? filterText = null,
+            string? imageExtension = null,
             int? orderMin = null,
             int? orderMax = null,
             bool? isActive = null,
@@ -103,13 +108,14 @@ namespace AhlanFeekum.SpecialAdvertisments
             int skipCount = 0,
             CancellationToken cancellationToken = default)
         {
-            var query = ApplyFilter((await GetQueryableAsync()), filterText, orderMin, orderMax, isActive);
+            var query = ApplyFilter((await GetQueryableAsync()), filterText, imageExtension, orderMin, orderMax, isActive);
             query = query.OrderBy(string.IsNullOrWhiteSpace(sorting) ? SpecialAdvertismentConsts.GetDefaultSorting(false) : sorting);
             return await query.PageBy(skipCount, maxResultCount).ToListAsync(cancellationToken);
         }
 
         public virtual async Task<long> GetCountAsync(
             string? filterText = null,
+            string? imageExtension = null,
             int? orderMin = null,
             int? orderMax = null,
             bool? isActive = null,
@@ -117,19 +123,21 @@ namespace AhlanFeekum.SpecialAdvertisments
             CancellationToken cancellationToken = default)
         {
             var query = await GetQueryForNavigationPropertiesAsync();
-            query = ApplyFilter(query, filterText, orderMin, orderMax, isActive, sitePropertyId);
+            query = ApplyFilter(query, filterText, imageExtension, orderMin, orderMax, isActive, sitePropertyId);
             return await query.LongCountAsync(GetCancellationToken(cancellationToken));
         }
 
         protected virtual IQueryable<SpecialAdvertisment> ApplyFilter(
             IQueryable<SpecialAdvertisment> query,
             string? filterText = null,
+            string? imageExtension = null,
             int? orderMin = null,
             int? orderMax = null,
             bool? isActive = null)
         {
             return query
-                    .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => true)
+                    .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.ImageExtension!.Contains(filterText!))
+                    .WhereIf(!string.IsNullOrWhiteSpace(imageExtension), e => e.ImageExtension.Contains(imageExtension))
                     .WhereIf(orderMin.HasValue, e => e.Order >= orderMin!.Value)
                     .WhereIf(orderMax.HasValue, e => e.Order <= orderMax!.Value)
                     .WhereIf(isActive.HasValue, e => e.IsActive == isActive);

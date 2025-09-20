@@ -41,6 +41,7 @@ public class Program
                     options.JsonSerializerOptions.Converters.Add(new TimeOnlyJsonConverter());
                 });
             var app = builder.Build();
+            app.UseStaticFiles();
             await app.InitializeApplicationAsync();
             await app.RunAsync();
             return 0;

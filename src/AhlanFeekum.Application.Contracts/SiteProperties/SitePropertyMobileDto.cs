@@ -16,6 +16,7 @@ namespace AhlanFeekum.SiteProperties
         public string? Address { get; set; }
         public string? StreetAndBuildingNumber { get; set; }
         public string? LandMark { get; set; }
+        public double? AverageRating { get; set; } = null;
         public int PricePerNight { get; set; }
         public bool IsActive { get; set; }
         public bool IsFavorite { get; set; } = false;
@@ -24,7 +25,7 @@ namespace AhlanFeekum.SiteProperties
         //public Guid GovernorateId { get; set; }
         //public string GovernorateName { get; set; }
 
-        public string MainImage { get; set; }
+        public string? MainImage { get; set; }
 
     }
 }

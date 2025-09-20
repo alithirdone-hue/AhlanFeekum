@@ -12,8 +12,6 @@ using AhlanFeekum.Shared;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SpecialAdvertisments;
 using AhlanFeekum.UserProfiles;
-using AhlanFeekum.AppFileDescriptors;
-using AhlanFeekum.Shared;
 using AutoMapper;
 using System;
 using Volo.Abp.AutoMapper;
@@ -86,8 +84,7 @@ public class AhlanFeekumApplicationAutoMapperProfile : Profile
         CreateMap<SpecialAdvertismentWithNavigationProperties, SpecialAdvertismentWithNavigationPropertiesDto>();
         CreateMap<SpecialAdvertismentWithNavigationProperties, SpecialAdvertismentMobileDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.SpecialAdvertisment.Id))
-            .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.SpecialAdvertisment.ImageId != null ? $"{MimeTypes.MimeTypeMap.GetAttachmentPath()}/specialadvertisment-file/{src.SpecialAdvertisment.ImageId}" : null))
-            .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.SpecialAdvertisment.IsActive))
+            .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.SpecialAdvertisment.ImageId != null ? $"{MimeTypes.MimeTypeMap.GetAttachmentPath()}/specialadvertisment-file/{src.SpecialAdvertisment.ImageId.ToString("N")}{src.SpecialAdvertisment.ImageExtension}" : null))
             .ForMember(dest => dest.SitePropertyId, opt => opt.MapFrom(src => src.SpecialAdvertisment.Id))
             .ForMember(dest => dest.SitePropertyTitle, opt => opt.MapFrom(src => src.SiteProperty.PropertyTitle));
 
@@ -95,9 +92,9 @@ public class AhlanFeekumApplicationAutoMapperProfile : Profile
         CreateMap<OnlyForYouSection, OnlyForYouSectionDto>();
         CreateMap<OnlyForYouSection, OnlyForYouSectionMobileDto>()
              .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-            .ForMember(dest => dest.FirstPhoto, opt => opt.MapFrom(src => src.FirstPhotoId != null ? $"{MimeTypes.MimeTypeMap.GetAttachmentPath()}/onlyforyousection-file/{src.FirstPhotoId}" : null))
-            .ForMember(dest => dest.SecondPhoto, opt => opt.MapFrom(src => src.SecondPhotoId != null ? $"{MimeTypes.MimeTypeMap.GetAttachmentPath()}/onlyforyousection-file/{src.SecondPhotoId}" : null))
-            .ForMember(dest => dest.ThirdPhoto, opt => opt.MapFrom(src => src.ThirdPhotoId != null ? $"{MimeTypes.MimeTypeMap.GetAttachmentPath()}/onlyforyousection-file/{src.ThirdPhotoId}" : null));
+            .ForMember(dest => dest.FirstPhoto, opt => opt.MapFrom(src => src.FirstPhotoId != null ? $"{MimeTypes.MimeTypeMap.GetAttachmentPath()}/onlyforyousection-file/{src.FirstPhotoId.ToString("N")}{src.FirstPhotoExtension}" : null))
+            .ForMember(dest => dest.SecondPhoto, opt => opt.MapFrom(src => src.SecondPhotoId != null ? $"{MimeTypes.MimeTypeMap.GetAttachmentPath()}/onlyforyousection-file/{src.SecondPhotoId.ToString("N")}{src.SecondPhotoExtension}" : null))
+            .ForMember(dest => dest.ThirdPhoto, opt => opt.MapFrom(src => src.ThirdPhotoId != null ? $"{MimeTypes.MimeTypeMap.GetAttachmentPath()}/onlyforyousection-file/{src.ThirdPhotoId.ToString("N")}{src.ThirdPhotoExtension}" : null));
         CreateMap<OnlyForYouSection, OnlyForYouSectionExcelDto>();
 
         CreateMap<UserProfileDto, UserProfileUpdateDto>();

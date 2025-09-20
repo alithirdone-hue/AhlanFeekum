@@ -8,6 +8,7 @@ namespace AhlanFeekum.SpecialAdvertisments
 
         public string? FilterText { get; set; }
 
+        public string? ImageExtension { get; set; }
         public int? OrderMin { get; set; }
         public int? OrderMax { get; set; }
         public bool? IsActive { get; set; }

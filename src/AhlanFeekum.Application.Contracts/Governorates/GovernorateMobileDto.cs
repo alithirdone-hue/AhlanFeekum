@@ -10,8 +10,6 @@ namespace AhlanFeekum.Governorates
     {
         public Guid Id { get; set; }
         public string Title { get; set; } = null!;
-        public int Order { get; set; }
-        public bool IsActive { get; set; }
 
     }
 }

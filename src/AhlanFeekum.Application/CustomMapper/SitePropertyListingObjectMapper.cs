@@ -47,16 +47,18 @@ namespace SIBF.CustomMapper
         {
 
             SitePropertyListingMobileDto SitePropertyWithDetailsFront = new SitePropertyListingMobileDto();
+            SitePropertyWithDetailsFront.Id = source.SiteProperty.Id;
             SitePropertyWithDetailsFront.PropertyTitle = source.SiteProperty.PropertyTitle;
             SitePropertyWithDetailsFront.HotelName = source.SiteProperty.HotelName;
            
             SitePropertyWithDetailsFront.StreetAndBuildingNumber = source.SiteProperty.StreetAndBuildingNumber;
             SitePropertyWithDetailsFront.LandMark = source.SiteProperty.LandMark;
             SitePropertyWithDetailsFront.PricePerNight = source.SiteProperty.PricePerNight;
+            SitePropertyWithDetailsFront.AverageRating = source.AverageRating;
             SitePropertyWithDetailsFront.IsActive = source.SiteProperty.IsActive;
             SitePropertyWithDetailsFront.IsFavorite = source.IsFavorite;
             
-            SitePropertyWithDetailsFront.MainImage = $"{MimeTypeMap.GetAttachmentPath()}/propertyMedias/{source.MainImage}";
+            SitePropertyWithDetailsFront.MainImage = source.MainImage != null ? $"{MimeTypeMap.GetAttachmentPath()}/propertyMedias/{source.MainImage.Image}" : null;
             //if(source.PropertyType != null)
             //{
             //    SitePropertyWithDetailsFront.PropertyTypeId = source.PropertyType.Id;

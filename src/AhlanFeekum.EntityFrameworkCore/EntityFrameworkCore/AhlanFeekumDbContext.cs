@@ -2,6 +2,7 @@
 using AhlanFeekum.Governorates;
 using AhlanFeekum.OnlyForYouSections;
 using AhlanFeekum.PersonEvaluations;
+using AhlanFeekum.PropertyCalendars;
 using AhlanFeekum.PropertyEvaluations;
 using AhlanFeekum.PropertyFeatures;
 using AhlanFeekum.PropertyMedias;
@@ -10,7 +11,8 @@ using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SpecialAdvertisments;
 using AhlanFeekum.UserProfiles;
-using AhlanFeekum.PropertyCalendars;
+using AhlanFeekum.OnlyForYouSections;
+using AhlanFeekum.SpecialAdvertisments;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -320,6 +322,9 @@ public class AhlanFeekumDbContext :
                 b.Property(x => x.FirstPhotoId).HasColumnName(nameof(OnlyForYouSection.FirstPhotoId));
                 b.Property(x => x.SecondPhotoId).HasColumnName(nameof(OnlyForYouSection.SecondPhotoId));
                 b.Property(x => x.ThirdPhotoId).HasColumnName(nameof(OnlyForYouSection.ThirdPhotoId));
+                b.Property(x => x.FirstPhotoExtension).HasColumnName(nameof(OnlyForYouSection.FirstPhotoExtension)).IsRequired();
+                b.Property(x => x.SecondPhotoExtension).HasColumnName(nameof(OnlyForYouSection.SecondPhotoExtension)).IsRequired();
+                b.Property(x => x.ThirdPhotoExtension).HasColumnName(nameof(OnlyForYouSection.ThirdPhotoExtension)).IsRequired();
             });
 
         }
@@ -330,6 +335,7 @@ public class AhlanFeekumDbContext :
                 b.ToTable(AhlanFeekumConsts.DbTablePrefix + "SpecialAdvertisments", AhlanFeekumConsts.DbSchema);
                 b.ConfigureByConvention();
                 b.Property(x => x.ImageId).HasColumnName(nameof(SpecialAdvertisment.ImageId));
+                b.Property(x => x.ImageExtension).HasColumnName(nameof(SpecialAdvertisment.ImageExtension)).IsRequired();
                 b.Property(x => x.Order).HasColumnName(nameof(SpecialAdvertisment.Order));
                 b.Property(x => x.IsActive).HasColumnName(nameof(SpecialAdvertisment.IsActive));
                 b.HasOne<SiteProperty>().WithMany().IsRequired().HasForeignKey(x => x.SitePropertyId).OnDelete(DeleteBehavior.NoAction);

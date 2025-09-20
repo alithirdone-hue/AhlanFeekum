@@ -11,13 +11,13 @@ using IObjectMapper = Volo.Abp.ObjectMapping.IObjectMapper;
 
 namespace SIBF.CustomMapper
 {
-    public class SitePropertyObjectMapper : IObjectMapper<SitePropertyWithDetails, SitePropertyMobileDto>,
-        IObjectMapper<List<SitePropertyWithDetails>, List<SitePropertyMobileDto>>,
+    public class SitePropertyWithDetailsObjectMapper : IObjectMapper<SitePropertyWithDetails, SitePropertyWithDetailsMobileDto>,
+        IObjectMapper<List<SitePropertyWithDetails>, List<SitePropertyWithDetailsMobileDto>>,
         ITransientDependency
     {
         private readonly IObjectMapper _objectMapper;
 
-        public SitePropertyObjectMapper(
+        public SitePropertyWithDetailsObjectMapper(
 
            IObjectMapper objectMapper
             )
@@ -25,10 +25,10 @@ namespace SIBF.CustomMapper
             _objectMapper = objectMapper;
         }
 
-        public List<SitePropertyMobileDto> Map(List<SitePropertyWithDetails> source)
+        public List<SitePropertyWithDetailsMobileDto> Map(List<SitePropertyWithDetails> source)
         {
 
-            List<SitePropertyMobileDto> output = new List<SitePropertyMobileDto>();
+            List<SitePropertyWithDetailsMobileDto> output = new List<SitePropertyWithDetailsMobileDto>();
             foreach (var item in source)
             {
                 output.Add(Map(item));
@@ -37,15 +37,16 @@ namespace SIBF.CustomMapper
             return output;
         }
 
-        public List<SitePropertyMobileDto> Map(List<SitePropertyWithDetails> source, List<SitePropertyMobileDto> destination)
+        public List<SitePropertyWithDetailsMobileDto> Map(List<SitePropertyWithDetails> source, List<SitePropertyWithDetailsMobileDto> destination)
         {
             return Map(source);
         }
 
-        public SitePropertyMobileDto Map(SitePropertyWithDetails source)
+        public SitePropertyWithDetailsMobileDto Map(SitePropertyWithDetails source)
         {
 
-            SitePropertyMobileDto SitePropertyWithDetailsFront = new SitePropertyMobileDto();
+            SitePropertyWithDetailsMobileDto SitePropertyWithDetailsFront = new SitePropertyWithDetailsMobileDto();
+            SitePropertyWithDetailsFront.Id = source.SiteProperty.Id;
             SitePropertyWithDetailsFront.PropertyTitle = source.SiteProperty.PropertyTitle;
             SitePropertyWithDetailsFront.HotelName = source.SiteProperty.HotelName;
             SitePropertyWithDetailsFront.Bedrooms = source.SiteProperty.Bedrooms;
@@ -69,7 +70,7 @@ namespace SIBF.CustomMapper
             SitePropertyWithDetailsFront.PropertyFeatureMobileDtos = _objectMapper.Map<List<PropertyFeature>, List<PropertyFeatureMobileDto>>(source.PropertyFeatures);
             if (!source.Medias.IsNullOrEmpty())
             {
-                SitePropertyWithDetailsFront.MainImage = $"{MimeTypeMap.GetAttachmentPath()}/propertyMedias/{source.Medias[0].Image}";
+                SitePropertyWithDetailsFront.MainImage = !source.Medias.IsNullOrEmpty() ?  $"{MimeTypeMap.GetAttachmentPath()}/propertyMedias/{source.Medias[0].Image}" : null;
                 SitePropertyWithDetailsFront.PropertyMediaMobileDto = _objectMapper.Map<List<PropertyMedia>, List<PropertyMediaMobileDto>>(source.Medias);
             }
             SitePropertyWithDetailsFront.IsActive = source.SiteProperty.IsActive;
@@ -80,7 +81,7 @@ namespace SIBF.CustomMapper
             return SitePropertyWithDetailsFront;
         }
 
-        public SitePropertyMobileDto Map(SitePropertyWithDetails source, SitePropertyMobileDto destination)
+        public SitePropertyWithDetailsMobileDto Map(SitePropertyWithDetails source, SitePropertyWithDetailsMobileDto destination)
         {
             return Map(source);
         }

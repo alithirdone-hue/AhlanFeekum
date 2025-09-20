@@ -9,6 +9,7 @@ namespace AhlanFeekum.SpecialAdvertisments
     public abstract class SpecialAdvertismentDtoBase : FullAuditedEntityDto<Guid>, IHasConcurrencyStamp
     {
         public Guid ImageId { get; set; }
+        public string ImageExtension { get; set; } = null!;
         public int Order { get; set; }
         public bool IsActive { get; set; }
         public Guid SitePropertyId { get; set; }

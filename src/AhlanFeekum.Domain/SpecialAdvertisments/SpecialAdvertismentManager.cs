@@ -20,13 +20,14 @@ namespace AhlanFeekum.SpecialAdvertisments
         }
 
         public virtual async Task<SpecialAdvertisment> CreateAsync(
-        Guid sitePropertyId, Guid imageId, int order, bool isActive)
+        Guid sitePropertyId, Guid imageId, string imageExtension, int order, bool isActive)
         {
             Check.NotNull(sitePropertyId, nameof(sitePropertyId));
+            Check.NotNullOrWhiteSpace(imageExtension, nameof(imageExtension));
 
             var specialAdvertisment = new SpecialAdvertisment(
              GuidGenerator.Create(),
-             sitePropertyId, imageId, order, isActive
+             sitePropertyId, imageId, imageExtension, order, isActive
              );
 
             return await _specialAdvertismentRepository.InsertAsync(specialAdvertisment);
@@ -34,15 +35,17 @@ namespace AhlanFeekum.SpecialAdvertisments
 
         public virtual async Task<SpecialAdvertisment> UpdateAsync(
             Guid id,
-            Guid sitePropertyId, Guid imageId, int order, bool isActive, [CanBeNull] string? concurrencyStamp = null
+            Guid sitePropertyId, Guid imageId, string imageExtension, int order, bool isActive, [CanBeNull] string? concurrencyStamp = null
         )
         {
             Check.NotNull(sitePropertyId, nameof(sitePropertyId));
+            Check.NotNullOrWhiteSpace(imageExtension, nameof(imageExtension));
 
             var specialAdvertisment = await _specialAdvertismentRepository.GetAsync(id);
 
             specialAdvertisment.SitePropertyId = sitePropertyId;
             specialAdvertisment.ImageId = imageId;
+            specialAdvertisment.ImageExtension = imageExtension;
             specialAdvertisment.Order = order;
             specialAdvertisment.IsActive = isActive;
 

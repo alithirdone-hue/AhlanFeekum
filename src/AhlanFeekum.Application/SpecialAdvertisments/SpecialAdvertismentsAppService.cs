@@ -46,8 +46,8 @@ namespace AhlanFeekum.SpecialAdvertisments
 
         public virtual async Task<PagedResultDto<SpecialAdvertismentWithNavigationPropertiesDto>> GetListAsync(GetSpecialAdvertismentsInput input)
         {
-            var totalCount = await _specialAdvertismentRepository.GetCountAsync(input.FilterText, input.OrderMin, input.OrderMax, input.IsActive, input.SitePropertyId);
-            var items = await _specialAdvertismentRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.OrderMin, input.OrderMax, input.IsActive, input.SitePropertyId, input.Sorting, input.MaxResultCount, input.SkipCount);
+            var totalCount = await _specialAdvertismentRepository.GetCountAsync(input.FilterText, input.ImageExtension, input.OrderMin, input.OrderMax, input.IsActive, input.SitePropertyId);
+            var items = await _specialAdvertismentRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.ImageExtension, input.OrderMin, input.OrderMax, input.IsActive, input.SitePropertyId, input.Sorting, input.MaxResultCount, input.SkipCount);
 
             return new PagedResultDto<SpecialAdvertismentWithNavigationPropertiesDto>
             {
@@ -98,7 +98,7 @@ namespace AhlanFeekum.SpecialAdvertisments
             }
 
             var specialAdvertisment = await _specialAdvertismentManager.CreateAsync(
-            input.SitePropertyId, input.ImageId, input.Order, input.IsActive
+            input.SitePropertyId, input.ImageId, input.ImageExtension, input.Order, input.IsActive
             );
 
             return ObjectMapper.Map<SpecialAdvertisment, SpecialAdvertismentDto>(specialAdvertisment);
@@ -114,7 +114,7 @@ namespace AhlanFeekum.SpecialAdvertisments
 
             var specialAdvertisment = await _specialAdvertismentManager.UpdateAsync(
             id,
-            input.SitePropertyId, input.ImageId, input.Order, input.IsActive, input.ConcurrencyStamp
+            input.SitePropertyId, input.ImageId, input.ImageExtension, input.Order, input.IsActive, input.ConcurrencyStamp
             );
 
             return ObjectMapper.Map<SpecialAdvertisment, SpecialAdvertismentDto>(specialAdvertisment);
@@ -129,10 +129,11 @@ namespace AhlanFeekum.SpecialAdvertisments
                 throw new AbpAuthorizationException("Invalid download token: " + input.DownloadToken);
             }
 
-            var specialAdvertisments = await _specialAdvertismentRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.OrderMin, input.OrderMax, input.IsActive, input.SitePropertyId);
+            var specialAdvertisments = await _specialAdvertismentRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.ImageExtension, input.OrderMin, input.OrderMax, input.IsActive, input.SitePropertyId);
             var items = specialAdvertisments.Select(item => new
             {
                 ImageId = item.SpecialAdvertisment.ImageId,
+                ImageExtension = item.SpecialAdvertisment.ImageExtension,
                 Order = item.SpecialAdvertisment.Order,
                 IsActive = item.SpecialAdvertisment.IsActive,
 
@@ -156,7 +157,7 @@ namespace AhlanFeekum.SpecialAdvertisments
         [Authorize(AhlanFeekumPermissions.SpecialAdvertisments.Delete)]
         public virtual async Task DeleteAllAsync(GetSpecialAdvertismentsInput input)
         {
-            await _specialAdvertismentRepository.DeleteAllAsync(input.FilterText, input.OrderMin, input.OrderMax, input.IsActive, input.SitePropertyId);
+            await _specialAdvertismentRepository.DeleteAllAsync(input.FilterText, input.ImageExtension, input.OrderMin, input.OrderMax, input.IsActive, input.SitePropertyId);
         }
 
         [AllowAnonymous]
@@ -169,6 +170,7 @@ namespace AhlanFeekum.SpecialAdvertisments
             }
 
             var fileDescriptor = await _appFileDescriptorRepository.GetAsync(input.FileId);
+
             var extension = Path.GetExtension(fileDescriptor.Name);
             string fileName = fileDescriptor.Id.ToString("N");
             if (!string.IsNullOrWhiteSpace(extension))
@@ -184,13 +186,14 @@ namespace AhlanFeekum.SpecialAdvertisments
         {
             var id = GuidGenerator.Create();
             var fileDescriptor = await _appFileDescriptorRepository.InsertAsync(new AppFileDescriptors.AppFileDescriptor(id, input.FileName, input.ContentType));
-            var extension = Path.GetExtension(input.FileName);
-            string imageName = fileDescriptor.Id.ToString("N");
+
+            var extension = Path.GetExtension(fileDescriptor.Name);
+            string fileName = fileDescriptor.Id.ToString("N");
             if (!string.IsNullOrWhiteSpace(extension))
             {
-                imageName += extension;
+                fileName += extension;
             }
-            await _blobContainer.SaveAsync(imageName, input.GetStream());
+            await _blobContainer.SaveAsync(fileName, input.GetStream());
 
             return ObjectMapper.Map<AppFileDescriptors.AppFileDescriptor, AppFileDescriptorDto>(fileDescriptor);
         }

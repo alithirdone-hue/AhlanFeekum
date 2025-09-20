@@ -19,18 +19,33 @@ namespace AhlanFeekum.OnlyForYouSections
 
         public virtual Guid ThirdPhotoId { get; set; }
 
+        [NotNull]
+        public virtual string FirstPhotoExtension { get; set; }
+
+        [NotNull]
+        public virtual string SecondPhotoExtension { get; set; }
+
+        [NotNull]
+        public virtual string ThirdPhotoExtension { get; set; }
+
         protected OnlyForYouSectionBase()
         {
 
         }
 
-        public OnlyForYouSectionBase(Guid id, Guid firstPhotoId, Guid secondPhotoId, Guid thirdPhotoId)
+        public OnlyForYouSectionBase(Guid id, Guid firstPhotoId, Guid secondPhotoId, Guid thirdPhotoId, string firstPhotoExtension, string secondPhotoExtension, string thirdPhotoExtension)
         {
 
             Id = id;
+            Check.NotNull(firstPhotoExtension, nameof(firstPhotoExtension));
+            Check.NotNull(secondPhotoExtension, nameof(secondPhotoExtension));
+            Check.NotNull(thirdPhotoExtension, nameof(thirdPhotoExtension));
             FirstPhotoId = firstPhotoId;
             SecondPhotoId = secondPhotoId;
             ThirdPhotoId = thirdPhotoId;
+            FirstPhotoExtension = firstPhotoExtension;
+            SecondPhotoExtension = secondPhotoExtension;
+            ThirdPhotoExtension = thirdPhotoExtension;
         }
 
     }

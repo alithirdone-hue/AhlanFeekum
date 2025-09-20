@@ -16,6 +16,9 @@ namespace AhlanFeekum.SpecialAdvertisments
     {
         public virtual Guid ImageId { get; set; }
 
+        [NotNull]
+        public virtual string ImageExtension { get; set; }
+
         public virtual int Order { get; set; }
 
         public virtual bool IsActive { get; set; }
@@ -26,11 +29,13 @@ namespace AhlanFeekum.SpecialAdvertisments
 
         }
 
-        public SpecialAdvertismentBase(Guid id, Guid sitePropertyId, Guid imageId, int order, bool isActive)
+        public SpecialAdvertismentBase(Guid id, Guid sitePropertyId, Guid imageId, string imageExtension, int order, bool isActive)
         {
 
             Id = id;
+            Check.NotNull(imageExtension, nameof(imageExtension));
             ImageId = imageId;
+            ImageExtension = imageExtension;
             Order = order;
             IsActive = isActive;
             SitePropertyId = sitePropertyId;

@@ -11,6 +11,7 @@ namespace AhlanFeekum.SpecialAdvertisments
 
         Task DeleteAllAsync(
             string? filterText = null,
+            string? imageExtension = null,
             int? orderMin = null,
             int? orderMax = null,
             bool? isActive = null,
@@ -23,6 +24,7 @@ namespace AhlanFeekum.SpecialAdvertisments
 
         Task<List<SpecialAdvertismentWithNavigationProperties>> GetListWithNavigationPropertiesAsync(
             string? filterText = null,
+            string? imageExtension = null,
             int? orderMin = null,
             int? orderMax = null,
             bool? isActive = null,
@@ -35,6 +37,7 @@ namespace AhlanFeekum.SpecialAdvertisments
 
         Task<List<SpecialAdvertisment>> GetListAsync(
                     string? filterText = null,
+                    string? imageExtension = null,
                     int? orderMin = null,
                     int? orderMax = null,
                     bool? isActive = null,
@@ -46,6 +49,7 @@ namespace AhlanFeekum.SpecialAdvertisments
 
         Task<long> GetCountAsync(
             string? filterText = null,
+            string? imageExtension = null,
             int? orderMin = null,
             int? orderMax = null,
             bool? isActive = null,

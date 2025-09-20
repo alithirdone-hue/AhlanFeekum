@@ -214,6 +214,12 @@ namespace AhlanFeekum.Migrations
                     .HasColumnType("nvarchar(max)")
                     .HasColumnName("ExtraProperties");
 
+                b.Property<string>("FirstPhotoExtension")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("FirstPhotoExtension");
+
+
                 b.Property<Guid>("FirstPhotoId")
                     .HasColumnType("uniqueidentifier")
                     .HasColumnName("FirstPhotoId");
@@ -232,9 +238,18 @@ namespace AhlanFeekum.Migrations
                     .HasColumnType("uniqueidentifier")
                     .HasColumnName("LastModifierId");
 
+                b.Property<string>("SecondPhotoExtension")
+    .IsRequired()
+    .HasColumnType("nvarchar(max)")
+    .HasColumnName("SecondPhotoExtension");
+
                 b.Property<Guid>("SecondPhotoId")
                     .HasColumnType("uniqueidentifier")
                     .HasColumnName("SecondPhotoId");
+                b.Property<string>("ThirdPhotoExtension")
+                     .IsRequired()
+                     .HasColumnType("nvarchar(max)")
+                     .HasColumnName("ThirdPhotoExtension");
 
                 b.Property<Guid>("ThirdPhotoId")
                     .HasColumnType("uniqueidentifier")
@@ -859,6 +874,12 @@ namespace AhlanFeekum.Migrations
                     .IsRequired()
                     .HasColumnType("nvarchar(max)")
                     .HasColumnName("ExtraProperties");
+
+
+                b.Property<string>("ImageExtension")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("ImageExtension");
 
                 b.Property<Guid>("ImageId")
                       .HasColumnType("uniqueidentifier")

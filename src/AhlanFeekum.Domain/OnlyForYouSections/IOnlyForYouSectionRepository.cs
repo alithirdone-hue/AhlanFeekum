@@ -11,11 +11,15 @@ namespace AhlanFeekum.OnlyForYouSections
 
         Task DeleteAllAsync(
             string? filterText = null,
-
+            string? firstPhotoExtension = null,
+            string? secondPhotoExtension = null,
+            string? thirdPhotoExtension = null,
             CancellationToken cancellationToken = default);
         Task<List<OnlyForYouSection>> GetListAsync(
                     string? filterText = null,
-
+                    string? firstPhotoExtension = null,
+                    string? secondPhotoExtension = null,
+                    string? thirdPhotoExtension = null,
                     string? sorting = null,
                     int maxResultCount = int.MaxValue,
                     int skipCount = 0,
@@ -24,7 +28,9 @@ namespace AhlanFeekum.OnlyForYouSections
 
         Task<long> GetCountAsync(
             string? filterText = null,
-
+            string? firstPhotoExtension = null,
+            string? secondPhotoExtension = null,
+            string? thirdPhotoExtension = null,
             CancellationToken cancellationToken = default);
     }
 }

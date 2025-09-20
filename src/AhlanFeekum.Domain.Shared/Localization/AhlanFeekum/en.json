@@ -207,6 +207,10 @@
     "MinThirdPhoto": "Min Third Photo",
     "MaxFirstPhoto": "Max First Photo",
     "MaxSecondPhoto": "Max Second Photo",
-    "MaxThirdPhoto": "Max Third Photo"
+    "MaxThirdPhoto": "Max Third Photo",
+    "FirstPhotoExtension": "First Photo Extension",
+    "SecondPhotoExtension": "Second Photo Extension",
+    "ThirdPhotoExtension": "Third Photo Extension",
+    "ImageExtension": "Image Extension"
   }
 }

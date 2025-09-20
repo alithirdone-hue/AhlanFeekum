@@ -74,6 +74,12 @@
             <Row>
                 <Column ColumnSize="ColumnSize.Is3">
                     <Field>
+                        <FieldLabel>@L["ImageExtension"]</FieldLabel>
+                        <TextEdit Text="@Filter.ImageExtension" TextChanged="@OnImageExtensionChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
                         <FieldLabel>@L["MinOrder"]</FieldLabel>
                         <NumericEdit TValue="int?" 
              Value="@Filter.OrderMin"
@@ -250,6 +256,7 @@
                       </DisplayTemplate>
               </DataGridColumn>
 
+
               <DataGridColumn TItem="SpecialAdvertismentWithNavigationPropertiesDto"
                       Field="SpecialAdvertisment.Order"
                       Caption="@L["Order"]">
@@ -309,6 +316,7 @@
                             }
                             <p class="text-muted pt-1"><i class="fa fa-info-circle"></i> @L["MaxFileSizeLimit", 10]</p>
                         </Field>
+
 
 
                     <Validation MessageLocalizer="@LH.Localize">
@@ -399,6 +407,8 @@
                             </Field>
                         }
                     </Field>
+
+
 
                     <Validation MessageLocalizer="@LH.Localize">
                         <Field>

@@ -158,7 +158,7 @@ namespace AhlanFeekum.Blazor.Pages
                 culture = "&culture=" + culture;
             }
             await RemoteServiceConfigurationProvider.GetConfigurationOrDefaultOrNullAsync("Default");
-            NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/special-advertisments/as-excel-file?DownloadToken={token}&FilterText={HttpUtility.UrlEncode(Filter.FilterText)}{culture}&OrderMin={Filter.OrderMin}&OrderMax={Filter.OrderMax}&IsActive={Filter.IsActive}&SitePropertyId={Filter.SitePropertyId}", forceLoad: true);
+            NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/special-advertisments/as-excel-file?DownloadToken={token}&FilterText={HttpUtility.UrlEncode(Filter.FilterText)}{culture}&ImageExtension={HttpUtility.UrlEncode(Filter.ImageExtension)}&OrderMin={Filter.OrderMin}&OrderMax={Filter.OrderMax}&IsActive={Filter.IsActive}&SitePropertyId={Filter.SitePropertyId}", forceLoad: true);
         }
 
         private async Task OnDataGridReadAsync(DataGridReadDataEventArgs<SpecialAdvertismentWithNavigationPropertiesDto> e)
@@ -300,6 +300,7 @@ namespace AhlanFeekum.Blazor.Pages
                 var result = await UploadFileAsync(e.File!);
     
                 NewSpecialAdvertisment.ImageId = result.Id;
+                NewSpecialAdvertisment.ImageExtension = Path.GetExtension(e.File.Name);
                 OnNewSpecialAdvertismentImageLoading = false;            
             }
             catch(Exception ex)
@@ -323,6 +324,7 @@ namespace AhlanFeekum.Blazor.Pages
                 var result = await UploadFileAsync(e.File!);
     
                 EditingSpecialAdvertisment.ImageId = result.Id;
+                EditingSpecialAdvertisment.ImageExtension = Path.GetExtension(e.File.Name);
                 OnEditSpecialAdvertismentImageLoading = false;            
             }
             catch(Exception ex)
@@ -354,6 +356,11 @@ namespace AhlanFeekum.Blazor.Pages
             NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/special-advertisments/file?DownloadToken={token}&FileId={fileId}", forceLoad: true);
         }
 
+        protected virtual async Task OnImageExtensionChangedAsync(string? imageExtension)
+        {
+            Filter.ImageExtension = imageExtension;
+            await SearchAsync();
+        }
         protected virtual async Task OnOrderMinChangedAsync(int? orderMin)
         {
             Filter.OrderMin = orderMin;

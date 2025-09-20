@@ -154,7 +154,7 @@ namespace AhlanFeekum.Blazor.Pages
                 culture = "&culture=" + culture;
             }
             await RemoteServiceConfigurationProvider.GetConfigurationOrDefaultOrNullAsync("Default");
-            NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/only-for-you-sections/as-excel-file?DownloadToken={token}&FilterText={HttpUtility.UrlEncode(Filter.FilterText)}{culture}", forceLoad: true);
+            NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/only-for-you-sections/as-excel-file?DownloadToken={token}&FilterText={HttpUtility.UrlEncode(Filter.FilterText)}{culture}&FirstPhotoExtension={HttpUtility.UrlEncode(Filter.FirstPhotoExtension)}&SecondPhotoExtension={HttpUtility.UrlEncode(Filter.SecondPhotoExtension)}&ThirdPhotoExtension={HttpUtility.UrlEncode(Filter.ThirdPhotoExtension)}", forceLoad: true);
         }
 
         private async Task OnDataGridReadAsync(DataGridReadDataEventArgs<OnlyForYouSectionDto> e)
@@ -296,6 +296,7 @@ HasSelectedOnlyForYouSectionThirdPhoto = EditingOnlyForYouSection.ThirdPhotoId !
                 var result = await UploadFileAsync(e.File!);
     
                 NewOnlyForYouSection.FirstPhotoId = result.Id;
+                NewOnlyForYouSection.FirstPhotoExtension = Path.GetExtension(e.File.Name);
                 OnNewOnlyForYouSectionFirstPhotoLoading = false;            
             }
             catch(Exception ex)
@@ -320,7 +321,8 @@ HasSelectedOnlyForYouSectionThirdPhoto = EditingOnlyForYouSection.ThirdPhotoId !
                 var result = await UploadFileAsync(e.File!);
     
                 NewOnlyForYouSection.SecondPhotoId = result.Id;
-                OnNewOnlyForYouSectionSecondPhotoLoading = false;            
+				NewOnlyForYouSection.SecondPhotoExtension = Path.GetExtension(e.File.Name);
+				OnNewOnlyForYouSectionSecondPhotoLoading = false;            
             }
             catch(Exception ex)
             {
@@ -344,7 +346,8 @@ HasSelectedOnlyForYouSectionThirdPhoto = EditingOnlyForYouSection.ThirdPhotoId !
                 var result = await UploadFileAsync(e.File!);
     
                 NewOnlyForYouSection.ThirdPhotoId = result.Id;
-                OnNewOnlyForYouSectionThirdPhotoLoading = false;            
+				NewOnlyForYouSection.ThirdPhotoExtension = Path.GetExtension(e.File.Name);
+				OnNewOnlyForYouSectionThirdPhotoLoading = false;            
             }
             catch(Exception ex)
             {
@@ -367,7 +370,8 @@ HasSelectedOnlyForYouSectionThirdPhoto = EditingOnlyForYouSection.ThirdPhotoId !
                 var result = await UploadFileAsync(e.File!);
     
                 EditingOnlyForYouSection.FirstPhotoId = result.Id;
-                OnEditOnlyForYouSectionFirstPhotoLoading = false;            
+				EditingOnlyForYouSection.FirstPhotoExtension = Path.GetExtension(e.File.Name);
+				OnEditOnlyForYouSectionFirstPhotoLoading = false;            
             }
             catch(Exception ex)
             {
@@ -391,7 +395,9 @@ HasSelectedOnlyForYouSectionThirdPhoto = EditingOnlyForYouSection.ThirdPhotoId !
                 var result = await UploadFileAsync(e.File!);
     
                 EditingOnlyForYouSection.SecondPhotoId = result.Id;
-                OnEditOnlyForYouSectionSecondPhotoLoading = false;            
+				EditingOnlyForYouSection.SecondPhotoExtension = Path.GetExtension(e.File.Name);
+
+				OnEditOnlyForYouSectionSecondPhotoLoading = false;            
             }
             catch(Exception ex)
             {
@@ -415,7 +421,9 @@ HasSelectedOnlyForYouSectionThirdPhoto = EditingOnlyForYouSection.ThirdPhotoId !
                 var result = await UploadFileAsync(e.File!);
     
                 EditingOnlyForYouSection.ThirdPhotoId = result.Id;
-                OnEditOnlyForYouSectionThirdPhotoLoading = false;            
+				EditingOnlyForYouSection.ThirdPhotoExtension = Path.GetExtension(e.File.Name);
+
+				OnEditOnlyForYouSectionThirdPhotoLoading = false;            
             }
             catch(Exception ex)
             {
@@ -446,7 +454,21 @@ HasSelectedOnlyForYouSectionThirdPhoto = EditingOnlyForYouSection.ThirdPhotoId !
             NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/only-for-you-sections/file?DownloadToken={token}&FileId={fileId}", forceLoad: true);
         }
 
-
+        protected virtual async Task OnFirstPhotoExtensionChangedAsync(string? firstPhotoExtension)
+        {
+            Filter.FirstPhotoExtension = firstPhotoExtension;
+            await SearchAsync();
+        }
+        protected virtual async Task OnSecondPhotoExtensionChangedAsync(string? secondPhotoExtension)
+        {
+            Filter.SecondPhotoExtension = secondPhotoExtension;
+            await SearchAsync();
+        }
+        protected virtual async Task OnThirdPhotoExtensionChangedAsync(string? thirdPhotoExtension)
+        {
+            Filter.ThirdPhotoExtension = thirdPhotoExtension;
+            await SearchAsync();
+        }
         
 
 

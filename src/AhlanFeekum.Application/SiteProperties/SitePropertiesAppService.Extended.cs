@@ -45,14 +45,14 @@ namespace AhlanFeekum.SiteProperties
         }
 
 
-        public virtual async Task<SitePropertyMobileDto> GetSitePropertyWithDetailsAsync(Guid id)
+        public virtual async Task<SitePropertyWithDetailsMobileDto> GetSitePropertyWithDetailsAsync(Guid id)
         {
             Guid? userId = null;
             if (_currentUser == null)
                 userId = null;
             else
                 userId = _currentUser.Id;
-            return ObjectMapper.Map<SitePropertyWithDetails, SitePropertyMobileDto>(await _sitePropertyRepository.GetSitePropertyWithDetailsAsync(id, userId));
+            return ObjectMapper.Map<SitePropertyWithDetails, SitePropertyWithDetailsMobileDto>(await _sitePropertyRepository.GetSitePropertyWithDetailsAsync(id, userId));
 
         }
 
@@ -82,7 +82,7 @@ namespace AhlanFeekum.SiteProperties
             mobileResponseDto.Data = true;
             return mobileResponseDto;
         }
-        public virtual async Task<PagedResultDto<SitePropertyMobileDto>> GetListMobileAsync(GetSitePropertiesMobileInput input)
+        public virtual async Task<PagedResultDto<SitePropertyListingMobileDto>> GetListMobileAsync(GetSitePropertiesMobileInput input)
         {
             Guid? userId = null;
             if (_currentUser == null)
@@ -92,10 +92,10 @@ namespace AhlanFeekum.SiteProperties
 
             var item = await _sitePropertyRepository.GetListWithDetailsAsync(input.FilterText, input.PropertyTitle, input.HotelName, input.BedroomsMin, input.BedroomsMax, input.BathroomsMin, input.BathroomsMax, input.NumberOfBedMin, input.NumberOfBedMax, input.FloorMin, input.FloorMax, input.MaximumNumberOfGuestMin, input.MaximumNumberOfGuestMax, input.LivingroomsMin, input.LivingroomsMax, input.PropertyDescription, input.HourseRules, input.ImportantInformation, input.Address, input.StreetAndBuildingNumber, input.LandMark, input.PricePerNightMin, input.PricePerNightMax, input.IsActive, input.PropertyTypeId, input.GovernorateId, input.PropertyFeatureIds, input.CheckInDate, input.CheckOutDate, userId, input.Sorting, input.MaxResultCount, input.SkipCount);
 
-            return new PagedResultDto<SitePropertyMobileDto>
+            return new PagedResultDto<SitePropertyListingMobileDto>
             {
                 TotalCount = item.TotalCount,
-                Items = ObjectMapper.Map<List<SitePropertyWithDetails>, List<SitePropertyMobileDto>>(item.SitePropertyWithDetails)
+                Items = ObjectMapper.Map<List<SitePropertyWithDetails>, List<SitePropertyListingMobileDto>>(item.SitePropertyWithDetails)
             };
 
         }
