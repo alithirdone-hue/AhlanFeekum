@@ -45,6 +45,12 @@ namespace AhlanFeekum.Controllers.Lookups
         {
             return _sitePropertiesAppService.GetGovernorateLookupAsync(lookupRequestDto);
         }
+        [HttpGet]
+        [Route("statuses")]
+        public virtual Task<PagedResultDto<LookupDto<Guid>>> GetStatusLookupAsync(LookupRequestDto lookupRequestDto)
+        {
+            return _sitePropertiesAppService.GetStatusLookupAsync(lookupRequestDto);
+        }
 
     }
 }

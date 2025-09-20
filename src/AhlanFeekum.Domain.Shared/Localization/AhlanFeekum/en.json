@@ -215,6 +215,11 @@
     "Owner": "Owner",
     "Area": "Area",
     "MinArea": "Min Area",
-    "MaxArea": "Max Area"
+    "MaxArea": "Max Area",
+    "Permission:Statuses": "Statuses",
+    "Statuses": "Statuses",
+    "NewStatus": "New Status",
+    "Menu:Statuses": "Statuses",
+    "Status": "Status"
   }
 }

@@ -39,6 +39,7 @@ namespace AhlanFeekum.SiteProperties
             Guid? propertyTypeId = null,
             Guid? governorateId = null,
             Guid? ownerId = null,
+            Guid? statusId = null,
             Guid? propertyFeatureId = null,
             CancellationToken cancellationToken = default);
         Task<SitePropertyWithNavigationProperties> GetWithNavigationPropertiesAsync(
@@ -76,6 +77,7 @@ namespace AhlanFeekum.SiteProperties
             Guid? propertyTypeId = null,
             Guid? governorateId = null,
             Guid? ownerId = null,
+            Guid? statusId = null,
             Guid? propertyFeatureId = null,
             string? sorting = null,
             int maxResultCount = int.MaxValue,
@@ -146,6 +148,7 @@ namespace AhlanFeekum.SiteProperties
             Guid? propertyTypeId = null,
             Guid? governorateId = null,
             Guid? ownerId = null,
+            Guid? statusId = null,
             Guid? propertyFeatureId = null,
             CancellationToken cancellationToken = default);
     }

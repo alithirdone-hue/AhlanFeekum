@@ -821,6 +821,9 @@ namespace AhlanFeekum.Migrations
 
                 b.Property<Guid>("PropertyTypeId")
                     .HasColumnType("uniqueidentifier");
+               
+                b.Property<Guid>("StatusId")
+      .HasColumnType("uniqueidentifier");
 
                 b.Property<string>("StreetAndBuildingNumber")
                     .HasColumnType("nvarchar(max)")
@@ -830,7 +833,7 @@ namespace AhlanFeekum.Migrations
                 b.HasIndex("GovernorateId");
                 b.HasIndex("OwnerId");
                 b.HasIndex("PropertyTypeId");
-
+                b.HasIndex("StatusId");
                 b.ToTable("AppSiteProperties", (string)null);
             });
 
@@ -924,6 +927,71 @@ namespace AhlanFeekum.Migrations
 
                 b.ToTable("AppSpecialAdvertisments", (string)null);
             });
+            modelBuilder.Entity("AhlanFeekum.Statuses.Status", b =>
+            {
+                b.Property<Guid>("Id")
+                    .HasColumnType("uniqueidentifier");
+
+                b.Property<string>("ConcurrencyStamp")
+                    .IsConcurrencyToken()
+                    .IsRequired()
+                    .HasMaxLength(40)
+                    .HasColumnType("nvarchar(40)")
+                    .HasColumnName("ConcurrencyStamp");
+
+                b.Property<DateTime>("CreationTime")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("CreationTime");
+
+                b.Property<Guid?>("CreatorId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("CreatorId");
+
+                b.Property<Guid?>("DeleterId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("DeleterId");
+
+                b.Property<DateTime?>("DeletionTime")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("DeletionTime");
+
+                b.Property<string>("ExtraProperties")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("ExtraProperties");
+
+                b.Property<bool>("IsActive")
+                    .HasColumnType("bit")
+                    .HasColumnName("IsActive");
+
+                b.Property<bool>("IsDeleted")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("bit")
+                    .HasDefaultValue(false)
+                    .HasColumnName("IsDeleted");
+
+                b.Property<DateTime?>("LastModificationTime")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("LastModificationTime");
+
+                b.Property<Guid?>("LastModifierId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("LastModifierId");
+
+                b.Property<string>("Name")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("Name");
+
+                b.Property<int>("Order")
+                    .HasColumnType("int")
+                    .HasColumnName("Order");
+
+                b.HasKey("Id");
+
+                b.ToTable("AppStatuses", (string)null);
+            });
+
             modelBuilder.Entity("AhlanFeekum.UserProfiles.UserProfile", b =>
             {
                 b.Property<Guid>("Id")
@@ -2841,6 +2909,12 @@ namespace AhlanFeekum.Migrations
                 b.HasOne("AhlanFeekum.PropertyTypes.PropertyType", null)
                     .WithMany()
                     .HasForeignKey("PropertyTypeId")
+                    .OnDelete(DeleteBehavior.NoAction)
+                    .IsRequired();
+
+                b.HasOne("AhlanFeekum.Statuses.Status", null)
+                    .WithMany()
+                    .HasForeignKey("StatusId")
                     .OnDelete(DeleteBehavior.NoAction)
                     .IsRequired();
             });

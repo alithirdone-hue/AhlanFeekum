@@ -1,13 +1,11 @@
 using AhlanFeekum.Shared;
-using AhlanFeekum.SiteProperties;
-using AhlanFeekum.Shared;
-using AhlanFeekum.Shared;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Content;
+using AhlanFeekum.Shared;
 
 namespace AhlanFeekum.SiteProperties
 {
@@ -25,6 +23,8 @@ namespace AhlanFeekum.SiteProperties
         Task<PagedResultDto<LookupDto<Guid>>> GetGovernorateLookupAsync(LookupRequestDto input);
 
         Task<PagedResultDto<LookupDto<Guid>>> GetUserProfileLookupAsync(LookupRequestDto input);
+
+        Task<PagedResultDto<LookupDto<Guid>>> GetStatusLookupAsync(LookupRequestDto input);
 
         Task<PagedResultDto<LookupDto<Guid>>> GetPropertyFeatureLookupAsync(LookupRequestDto input);
 

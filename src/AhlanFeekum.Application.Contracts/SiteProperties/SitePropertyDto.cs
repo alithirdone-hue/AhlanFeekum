@@ -28,6 +28,7 @@ namespace AhlanFeekum.SiteProperties
         public Guid PropertyTypeId { get; set; }
         public Guid GovernorateId { get; set; }
         public Guid OwnerId { get; set; }
+        public Guid StatusId { get; set; }
 
         public string ConcurrencyStamp { get; set; } = null!;
 

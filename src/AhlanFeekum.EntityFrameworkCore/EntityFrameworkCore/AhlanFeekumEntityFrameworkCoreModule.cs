@@ -2,6 +2,7 @@
 using AhlanFeekum.Governorates;
 using AhlanFeekum.OnlyForYouSections;
 using AhlanFeekum.PersonEvaluations;
+using AhlanFeekum.PropertyCalendars;
 using AhlanFeekum.PropertyEvaluations;
 using AhlanFeekum.PropertyFeatures;
 using AhlanFeekum.PropertyMedias;
@@ -9,7 +10,7 @@ using AhlanFeekum.PropertyTypes;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SpecialAdvertisments;
 using AhlanFeekum.UserProfiles;
-using AhlanFeekum.PropertyCalendars;
+using AhlanFeekum.Statuses;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
@@ -24,6 +25,7 @@ using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
 using Volo.Abp.Uow;
+using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace AhlanFeekum.EntityFrameworkCore;
 
@@ -76,6 +78,7 @@ public class AhlanFeekumEntityFrameworkCoreModule : AbpModule
             options.AddRepository<OnlyForYouSection, OnlyForYouSections.EfCoreOnlyForYouSectionRepository>();
            
             options.AddRepository<PropertyCalendar, PropertyCalendars.EfCorePropertyCalendarRepository>();
+            options.AddRepository<Status, Statuses.EfCoreStatusRepository>();
 
         });
 

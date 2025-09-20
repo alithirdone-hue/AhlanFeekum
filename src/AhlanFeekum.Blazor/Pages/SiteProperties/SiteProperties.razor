@@ -321,6 +321,25 @@
                 </Column>
                 <Column ColumnSize="ColumnSize.Is3">
                     <Field>
+                        <FieldLabel>@L["Status"]</FieldLabel>
+                        <Select TValue="Guid?"
+		SelectedValue="@Filter.StatusId"
+		SelectedValueChanged="@OnStatusIdChangedAsync">
+
+<SelectItem></SelectItem>
+
+@foreach(var item in StatusesCollection)
+{
+	<SelectItem TValue="Guid" Value="@item.Id">
+		@item.DisplayName
+	</SelectItem>
+}
+
+</Select>                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
                         <FieldLabel>@L["PropertyFeature"]</FieldLabel>
                         <Select TValue="Guid?"
 		SelectedValue="@Filter.PropertyFeatureId"
@@ -563,6 +582,11 @@
                       Caption="@L["Owner"]">
               </DataGridColumn>
 
+              <DataGridColumn TItem="SitePropertyWithNavigationPropertiesDto"
+                      Field="Status.Name"
+                      Caption="@L["Status"]">
+              </DataGridColumn>
+
             </DataGridColumns>
             
             
@@ -572,7 +596,7 @@
 
 @* ************************* CREATE MODAL ************************* *@
 <Modal @ref="CreateSitePropertyModal" Closing="@CreateSitePropertyModal.CancelClosingModalWhenFocusLost">
-    <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
+    <ModalContent Centered="true">
 @*//<suite-custom-code-block-5>*@
 @*//</suite-custom-code-block-5>*@
         <Form id="CreateSitePropertyForm">
@@ -828,6 +852,19 @@
                     </Field>
 
 
+                    <Field>
+                        <FieldLabel>@L["Status"]</FieldLabel>
+                        <Select TValue="Guid" @bind-SelectedValue="@NewSiteProperty.StatusId">
+                            @foreach (var status in StatusesCollection)
+                            {
+                                <SelectItem TValue="Guid" Value="@(status.Id)">
+                                    @(status.DisplayName)
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
                     </TabPanel>
                     <TabPanel Name="propertyFeatures-create-tab">
 
@@ -899,7 +936,7 @@
 
 @* ************************* EDIT MODAL ************************* *@
 <Modal @ref="EditSitePropertyModal" Closing="@EditSitePropertyModal.CancelClosingModalWhenFocusLost">
-    <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
+    <ModalContent Centered="true">
 @*//<suite-custom-code-block-8>*@
 @*//</suite-custom-code-block-8>*@
         <Form id="EditSitePropertyForm">
@@ -1150,6 +1187,19 @@
                             {
                                 <SelectItem TValue="Guid" Value="@(userProfile.Id)">
                                     @(userProfile.DisplayName)
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    <Field>
+                        <FieldLabel>@L["Status"]</FieldLabel>
+                        <Select TValue="Guid" @bind-SelectedValue="@EditingSiteProperty.StatusId">
+                            @foreach (var status in StatusesCollection)
+                            {
+                                <SelectItem TValue="Guid" Value="@(status.Id)">
+                                    @(status.DisplayName)
                                 </SelectItem>
                             }
                         </Select>

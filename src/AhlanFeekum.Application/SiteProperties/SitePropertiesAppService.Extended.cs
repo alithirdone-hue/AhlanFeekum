@@ -8,6 +8,7 @@ using AhlanFeekum.Shared;
 using AhlanFeekum.Shared;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SiteProperties;
+using AhlanFeekum.Statuses;
 using AhlanFeekum.UserProfiles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Distributed;
@@ -35,9 +36,9 @@ namespace AhlanFeekum.SiteProperties
         public ICurrentUser _currentUser { get; set; }
         public IFavoritePropertyRepository _favoritePropertyRepository { get; set; }
         public FavoritePropertyManager _favoritePropertyManager { get; set; }
-        public SitePropertiesAppService(ISitePropertyRepository sitePropertyRepository, SitePropertyManager sitePropertyManager, IDistributedCache<SitePropertyDownloadTokenCacheItem, string> downloadTokenCache, IRepository<AhlanFeekum.PropertyTypes.PropertyType, Guid> propertyTypeRepository, IRepository<AhlanFeekum.Governorates.Governorate, Guid> governorateRepository, IRepository<AhlanFeekum.UserProfiles.UserProfile, Guid> userProfileRepository, IRepository<AhlanFeekum.PropertyFeatures.PropertyFeature, Guid> propertyFeatureRepository,
+        public SitePropertiesAppService(ISitePropertyRepository sitePropertyRepository, SitePropertyManager sitePropertyManager, IDistributedCache<SitePropertyDownloadTokenCacheItem, string> downloadTokenCache, IRepository<AhlanFeekum.PropertyTypes.PropertyType, Guid> propertyTypeRepository, IRepository<AhlanFeekum.Governorates.Governorate, Guid> governorateRepository, IRepository<AhlanFeekum.UserProfiles.UserProfile, Guid> userProfileRepository, IRepository<AhlanFeekum.Statuses.Status, Guid> statusRepository, IRepository<AhlanFeekum.PropertyFeatures.PropertyFeature, Guid> propertyFeatureRepository,
              ICurrentUser currentUser, IFavoritePropertyRepository favoritePropertyRepository, FavoritePropertyManager favoritePropertyManager)
-            : base(sitePropertyRepository, sitePropertyManager, downloadTokenCache, propertyTypeRepository, governorateRepository, userProfileRepository, propertyFeatureRepository)
+            : base(sitePropertyRepository, sitePropertyManager, downloadTokenCache, propertyTypeRepository, governorateRepository, userProfileRepository, statusRepository, propertyFeatureRepository)
         {
             _currentUser = currentUser;
             _favoritePropertyRepository = favoritePropertyRepository;
@@ -73,8 +74,12 @@ namespace AhlanFeekum.SiteProperties
             }
 
             Guid? ownerId = _currentUser.Id;
+            Status status = await _statusRepository.FirstOrDefaultAsync(s => s.Name == "Pending");
+            if(status == null)
+                throw new UserFriendlyException(L["Pending Status not found"]);
+
             var siteProperty = await _sitePropertyManager.CreateAsync(
-            input.PropertyFeatureIds, input.PropertyTypeId, input.GovernorateId, ownerId.Value, input.PropertyTitle, input.Bedrooms, input.Bathrooms, input.NumberOfBed, input.Floor, input.MaximumNumberOfGuest, input.Livingrooms, input.PropertyDescription, input.PricePerNight, input.Area, input.IsActive, input.HotelName, input.HourseRules, input.ImportantInformation, input.Address, input.StreetAndBuildingNumber, input.LandMark
+            input.PropertyFeatureIds, input.PropertyTypeId, input.GovernorateId, ownerId.Value, status.Id, input.PropertyTitle, input.Bedrooms, input.Bathrooms, input.NumberOfBed, input.Floor, input.MaximumNumberOfGuest, input.Livingrooms, input.PropertyDescription, input.PricePerNight, input.Area, input.IsActive, input.HotelName, input.HourseRules, input.ImportantInformation, input.Address, input.StreetAndBuildingNumber, input.LandMark
             );
 
             return ObjectMapper.Map<SiteProperty, SitePropertyDto>(siteProperty);

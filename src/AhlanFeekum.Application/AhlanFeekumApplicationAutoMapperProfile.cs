@@ -12,6 +12,7 @@ using AhlanFeekum.Shared;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SpecialAdvertisments;
 using AhlanFeekum.UserProfiles;
+using AhlanFeekum.Statuses;
 using AutoMapper;
 using System;
 using Volo.Abp.AutoMapper;
@@ -126,6 +127,13 @@ public class AhlanFeekumApplicationAutoMapperProfile : Profile
         CreateMap<PropertyCalendarDto, PropertyCalendarUpdateDto>();
 
         CreateMap<AppFileDescriptors.AppFileDescriptor, AppFileDescriptorDto>();
+
+
+        CreateMap<Status, StatusDto>();
+        CreateMap<Status, StatusExcelDto>();
+
+        CreateMap<StatusDto, StatusUpdateDto>();
+        CreateMap<Status, LookupDto<Guid>>().ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.Name));
 
     }
 }

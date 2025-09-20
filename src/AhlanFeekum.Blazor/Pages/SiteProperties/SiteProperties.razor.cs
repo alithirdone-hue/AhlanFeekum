@@ -57,6 +57,7 @@ namespace AhlanFeekum.Blazor.Pages.SiteProperties
         private IReadOnlyList<LookupDto<Guid>> PropertyTypesCollection { get; set; } = new List<LookupDto<Guid>>();
 private IReadOnlyList<LookupDto<Guid>> GovernoratesCollection { get; set; } = new List<LookupDto<Guid>>();
 private IReadOnlyList<LookupDto<Guid>> UserProfilesCollection { get; set; } = new List<LookupDto<Guid>>();
+private IReadOnlyList<LookupDto<Guid>> StatusesCollection { get; set; } = new List<LookupDto<Guid>>();
 private IReadOnlyList<LookupDto<Guid>> PropertyFeatures { get; set; } = new List<LookupDto<Guid>>();
         
         private string SelectedPropertyFeatureId { get; set; }
@@ -98,6 +99,9 @@ private IReadOnlyList<LookupDto<Guid>> PropertyFeatures { get; set; } = new List
 
 
             await GetUserProfileCollectionLookupAsync();
+
+
+            await GetStatusCollectionLookupAsync();
 
 
             await GetPropertyFeatureLookupAsync();
@@ -177,7 +181,7 @@ private IReadOnlyList<LookupDto<Guid>> PropertyFeatures { get; set; } = new List
                 culture = "&culture=" + culture;
             }
             await RemoteServiceConfigurationProvider.GetConfigurationOrDefaultOrNullAsync("Default");
-            NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/site-properties/as-excel-file?DownloadToken={token}&FilterText={HttpUtility.UrlEncode(Filter.FilterText)}{culture}&PropertyTitle={HttpUtility.UrlEncode(Filter.PropertyTitle)}&HotelName={HttpUtility.UrlEncode(Filter.HotelName)}&BedroomsMin={Filter.BedroomsMin}&BedroomsMax={Filter.BedroomsMax}&BathroomsMin={Filter.BathroomsMin}&BathroomsMax={Filter.BathroomsMax}&NumberOfBedMin={Filter.NumberOfBedMin}&NumberOfBedMax={Filter.NumberOfBedMax}&FloorMin={Filter.FloorMin}&FloorMax={Filter.FloorMax}&MaximumNumberOfGuestMin={Filter.MaximumNumberOfGuestMin}&MaximumNumberOfGuestMax={Filter.MaximumNumberOfGuestMax}&LivingroomsMin={Filter.LivingroomsMin}&LivingroomsMax={Filter.LivingroomsMax}&PropertyDescription={HttpUtility.UrlEncode(Filter.PropertyDescription)}&HourseRules={HttpUtility.UrlEncode(Filter.HourseRules)}&ImportantInformation={HttpUtility.UrlEncode(Filter.ImportantInformation)}&Address={HttpUtility.UrlEncode(Filter.Address)}&StreetAndBuildingNumber={HttpUtility.UrlEncode(Filter.StreetAndBuildingNumber)}&LandMark={HttpUtility.UrlEncode(Filter.LandMark)}&PricePerNightMin={Filter.PricePerNightMin}&PricePerNightMax={Filter.PricePerNightMax}&AreaMin={Filter.AreaMin}&AreaMax={Filter.AreaMax}&IsActive={Filter.IsActive}&PropertyTypeId={Filter.PropertyTypeId}&GovernorateId={Filter.GovernorateId}&OwnerId={Filter.OwnerId}&PropertyFeatureId={Filter.PropertyFeatureId}", forceLoad: true);
+            NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/site-properties/as-excel-file?DownloadToken={token}&FilterText={HttpUtility.UrlEncode(Filter.FilterText)}{culture}&PropertyTitle={HttpUtility.UrlEncode(Filter.PropertyTitle)}&HotelName={HttpUtility.UrlEncode(Filter.HotelName)}&BedroomsMin={Filter.BedroomsMin}&BedroomsMax={Filter.BedroomsMax}&BathroomsMin={Filter.BathroomsMin}&BathroomsMax={Filter.BathroomsMax}&NumberOfBedMin={Filter.NumberOfBedMin}&NumberOfBedMax={Filter.NumberOfBedMax}&FloorMin={Filter.FloorMin}&FloorMax={Filter.FloorMax}&MaximumNumberOfGuestMin={Filter.MaximumNumberOfGuestMin}&MaximumNumberOfGuestMax={Filter.MaximumNumberOfGuestMax}&LivingroomsMin={Filter.LivingroomsMin}&LivingroomsMax={Filter.LivingroomsMax}&PropertyDescription={HttpUtility.UrlEncode(Filter.PropertyDescription)}&HourseRules={HttpUtility.UrlEncode(Filter.HourseRules)}&ImportantInformation={HttpUtility.UrlEncode(Filter.ImportantInformation)}&Address={HttpUtility.UrlEncode(Filter.Address)}&StreetAndBuildingNumber={HttpUtility.UrlEncode(Filter.StreetAndBuildingNumber)}&LandMark={HttpUtility.UrlEncode(Filter.LandMark)}&PricePerNightMin={Filter.PricePerNightMin}&PricePerNightMax={Filter.PricePerNightMax}&AreaMin={Filter.AreaMin}&AreaMax={Filter.AreaMax}&IsActive={Filter.IsActive}&PropertyTypeId={Filter.PropertyTypeId}&GovernorateId={Filter.GovernorateId}&OwnerId={Filter.OwnerId}&StatusId={Filter.StatusId}&PropertyFeatureId={Filter.PropertyFeatureId}", forceLoad: true);
         }
 
         private async Task OnDataGridReadAsync(DataGridReadDataEventArgs<SitePropertyWithNavigationPropertiesDto> e)
@@ -204,6 +208,7 @@ private IReadOnlyList<LookupDto<Guid>> PropertyFeatures { get; set; } = new List
                 PropertyTypeId = PropertyTypesCollection.Select(i=>i.Id).FirstOrDefault(),
 GovernorateId = GovernoratesCollection.Select(i=>i.Id).FirstOrDefault(),
 OwnerId = UserProfilesCollection.Select(i=>i.Id).FirstOrDefault(),
+StatusId = StatusesCollection.Select(i=>i.Id).FirstOrDefault(),
 
             };
 
@@ -221,6 +226,7 @@ OwnerId = UserProfilesCollection.Select(i=>i.Id).FirstOrDefault(),
                 PropertyTypeId = PropertyTypesCollection.Select(i=>i.Id).FirstOrDefault(),
 GovernorateId = GovernoratesCollection.Select(i=>i.Id).FirstOrDefault(),
 OwnerId = UserProfilesCollection.Select(i=>i.Id).FirstOrDefault(),
+StatusId = StatusesCollection.Select(i=>i.Id).FirstOrDefault(),
 
             };
             await CreateSitePropertyModal.Hide();
@@ -453,6 +459,11 @@ OwnerId = UserProfilesCollection.Select(i=>i.Id).FirstOrDefault(),
             Filter.OwnerId = ownerId;
             await SearchAsync();
         }
+        protected virtual async Task OnStatusIdChangedAsync(Guid? statusId)
+        {
+            Filter.StatusId = statusId;
+            await SearchAsync();
+        }
         protected virtual async Task OnPropertyFeatureIdChangedAsync(Guid? propertyFeatureId)
         {
             Filter.PropertyFeatureId = propertyFeatureId;
@@ -473,6 +484,11 @@ OwnerId = UserProfilesCollection.Select(i=>i.Id).FirstOrDefault(),
         private async Task GetUserProfileCollectionLookupAsync(string? newValue = null)
         {
             UserProfilesCollection = (await SitePropertiesAppService.GetUserProfileLookupAsync(new LookupRequestDto { Filter = newValue })).Items;
+        }
+
+        private async Task GetStatusCollectionLookupAsync(string? newValue = null)
+        {
+            StatusesCollection = (await SitePropertiesAppService.GetStatusLookupAsync(new LookupRequestDto { Filter = newValue })).Items;
         }
 
         private async Task GetPropertyFeatureLookupAsync(string? newValue = null)

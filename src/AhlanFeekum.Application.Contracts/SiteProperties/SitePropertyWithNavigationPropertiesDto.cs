@@ -1,6 +1,7 @@
 using AhlanFeekum.PropertyTypes;
 using AhlanFeekum.Governorates;
 using AhlanFeekum.UserProfiles;
+using AhlanFeekum.Statuses;
 using AhlanFeekum.PropertyFeatures;
 
 using System;
@@ -16,6 +17,7 @@ namespace AhlanFeekum.SiteProperties
         public PropertyTypeDto PropertyType { get; set; } = null!;
         public GovernorateDto Governorate { get; set; } = null!;
         public UserProfileDto Owner { get; set; } = null!;
+        public StatusDto Status { get; set; } = null!;
         public List<PropertyFeatureDto> PropertyFeatures { get; set; } = new List<PropertyFeatureDto>();
 
     }

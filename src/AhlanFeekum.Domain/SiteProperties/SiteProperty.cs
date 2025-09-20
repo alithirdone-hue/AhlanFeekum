@@ -1,6 +1,7 @@
 using AhlanFeekum.PropertyTypes;
 using AhlanFeekum.Governorates;
 using AhlanFeekum.UserProfiles;
+using AhlanFeekum.Statuses;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -60,6 +61,7 @@ namespace AhlanFeekum.SiteProperties
         public Guid PropertyTypeId { get; set; }
         public Guid GovernorateId { get; set; }
         public Guid OwnerId { get; set; }
+        public Guid StatusId { get; set; }
         public ICollection<SitePropertyPropertyFeature> PropertyFeatures { get; private set; }
 
         protected SitePropertyBase()
@@ -67,7 +69,7 @@ namespace AhlanFeekum.SiteProperties
 
         }
 
-        public SitePropertyBase(Guid id, Guid propertyTypeId, Guid governorateId, Guid ownerId, string propertyTitle, int bedrooms, int bathrooms, int numberOfBed, int floor, int maximumNumberOfGuest, int livingrooms, string propertyDescription, int pricePerNight, double area, bool isActive, string? hotelName = null, string? hourseRules = null, string? importantInformation = null, string? address = null, string? streetAndBuildingNumber = null, string? landMark = null)
+        public SitePropertyBase(Guid id, Guid propertyTypeId, Guid governorateId, Guid ownerId, Guid statusId, string propertyTitle, int bedrooms, int bathrooms, int numberOfBed, int floor, int maximumNumberOfGuest, int livingrooms, string propertyDescription, int pricePerNight, double area, bool isActive, string? hotelName = null, string? hourseRules = null, string? importantInformation = null, string? address = null, string? streetAndBuildingNumber = null, string? landMark = null)
         {
 
             Id = id;
@@ -93,6 +95,7 @@ namespace AhlanFeekum.SiteProperties
             PropertyTypeId = propertyTypeId;
             GovernorateId = governorateId;
             OwnerId = ownerId;
+            StatusId = statusId;
             PropertyFeatures = new Collection<SitePropertyPropertyFeature>();
         }
         public virtual void AddPropertyFeature(Guid propertyFeatureId)

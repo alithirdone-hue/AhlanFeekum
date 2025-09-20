@@ -1,6 +1,7 @@
 ﻿using AhlanFeekum.FavoriteProperties;
 using AhlanFeekum.Governorates;
 using AhlanFeekum.OnlyForYouSections;
+using AhlanFeekum.OnlyForYouSections;
 using AhlanFeekum.PersonEvaluations;
 using AhlanFeekum.PropertyCalendars;
 using AhlanFeekum.PropertyEvaluations;
@@ -10,9 +11,9 @@ using AhlanFeekum.PropertyTypes;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SpecialAdvertisments;
-using AhlanFeekum.UserProfiles;
-using AhlanFeekum.OnlyForYouSections;
 using AhlanFeekum.SpecialAdvertisments;
+using AhlanFeekum.UserProfiles;
+using AhlanFeekum.Statuses;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -40,6 +41,8 @@ public class AhlanFeekumDbContext :
     ITenantManagementDbContext
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
+    public DbSet<Status> Statuses { get; set; } = null!;
+
     public DbSet<AppFileDescriptors.AppFileDescriptor> AppFileDescriptors { get; set; } = null!;
     public DbSet<PropertyCalendar> PropertyCalendars { get; set; } = null!;
     public DbSet<OnlyForYouSection> OnlyForYouSections { get; set; } = null!;
@@ -306,7 +309,18 @@ public class AhlanFeekumDbContext :
             b.Property(x => x.Name);
             b.Property(x => x.MimeType);
         });
+        if (builder.IsHostDatabase())
+        {
+            builder.Entity<Status>(b =>
+            {
+                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "Statuses", AhlanFeekumConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.Property(x => x.Name).HasColumnName(nameof(Status.Name)).IsRequired();
+                b.Property(x => x.Order).HasColumnName(nameof(Status.Order));
+                b.Property(x => x.IsActive).HasColumnName(nameof(Status.IsActive));
+            });
 
+        }
         if (builder.IsHostDatabase())
         {
             builder.Entity<SiteProperty>(b =>
@@ -333,6 +347,7 @@ public class AhlanFeekumDbContext :
                 b.HasOne<PropertyType>().WithMany().IsRequired().HasForeignKey(x => x.PropertyTypeId).OnDelete(DeleteBehavior.NoAction);
                 b.HasOne<Governorate>().WithMany().IsRequired().HasForeignKey(x => x.GovernorateId).OnDelete(DeleteBehavior.NoAction);
                 b.HasOne<UserProfile>().WithMany().IsRequired().HasForeignKey(x => x.OwnerId).OnDelete(DeleteBehavior.NoAction);
+                b.HasOne<Status>().WithMany().IsRequired().HasForeignKey(x => x.StatusId).OnDelete(DeleteBehavior.NoAction);
                 b.HasMany(x => x.PropertyFeatures).WithOne().HasForeignKey(x => x.SitePropertyId).IsRequired().OnDelete(DeleteBehavior.NoAction);
             });
 
