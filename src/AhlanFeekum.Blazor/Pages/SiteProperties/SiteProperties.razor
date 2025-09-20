@@ -234,6 +234,22 @@
                 </Column>
                 <Column ColumnSize="ColumnSize.Is3">
                     <Field>
+                        <FieldLabel>@L["MinArea"]</FieldLabel>
+                        <NumericEdit TValue="double?" 
+             Value="@Filter.AreaMin"
+             ValueChanged="@OnAreaMinChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MaxArea"]</FieldLabel>
+                        <NumericEdit TValue="double?" 
+             Value="@Filter.AreaMax"
+             ValueChanged="@OnAreaMaxChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
                         <FieldLabel>@L["IsActive"]</FieldLabel>
                         <Select TValue="bool?"
 		SelectedValue="@Filter.IsActive"
@@ -275,6 +291,25 @@
 <SelectItem></SelectItem>
 
 @foreach(var item in GovernoratesCollection)
+{
+	<SelectItem TValue="Guid" Value="@item.Id">
+		@item.DisplayName
+	</SelectItem>
+}
+
+</Select>                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["UserProfile"]</FieldLabel>
+                        <Select TValue="Guid?"
+		SelectedValue="@Filter.OwnerId"
+		SelectedValueChanged="@OnOwnerIdChangedAsync">
+
+<SelectItem></SelectItem>
+
+@foreach(var item in UserProfilesCollection)
 {
 	<SelectItem TValue="Guid" Value="@item.Id">
 		@item.DisplayName
@@ -493,6 +528,11 @@
               </DataGridColumn>
 
               <DataGridColumn TItem="SitePropertyWithNavigationPropertiesDto"
+                      Field="SiteProperty.Area"
+                      Caption="@L["Area"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="SitePropertyWithNavigationPropertiesDto"
                       Field="SiteProperty.IsActive"
                       Caption="@L["IsActive"]">
                     <DisplayTemplate>
@@ -516,6 +556,11 @@
               <DataGridColumn TItem="SitePropertyWithNavigationPropertiesDto"
                       Field="Governorate.Title"
                       Caption="@L["Governorate"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="SitePropertyWithNavigationPropertiesDto"
+                      Field="Owner.Name"
+                      Caption="@L["Owner"]">
               </DataGridColumn>
 
             </DataGridColumns>
@@ -728,6 +773,18 @@
                      </Validation>
 
 
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Area"]</FieldLabel>
+                            <NumericPicker TValue="double" @bind-Value="@NewSiteProperty.Area"   >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                             </NumericPicker>
+                        </Field>
+                     </Validation>
+
+
                     <Field>
                         <Check TValue="bool" @bind-Checked="@NewSiteProperty.IsActive" >@L["IsActive"]</Check>
                     </Field>
@@ -752,6 +809,19 @@
                             {
                                 <SelectItem TValue="Guid" Value="@(governorate.Id)">
                                     @(governorate.DisplayName)
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    <Field>
+                        <FieldLabel>@L["UserProfile"]</FieldLabel>
+                        <Select TValue="Guid" @bind-SelectedValue="@NewSiteProperty.OwnerId">
+                            @foreach (var userProfile in UserProfilesCollection)
+                            {
+                                <SelectItem TValue="Guid" Value="@(userProfile.Id)">
+                                    @(userProfile.DisplayName)
                                 </SelectItem>
                             }
                         </Select>
@@ -1031,6 +1101,18 @@
                      </Validation>
 
 
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Area"]</FieldLabel>
+                            <NumericPicker TValue="double" @bind-Value="@EditingSiteProperty.Area"   >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                             </NumericPicker>
+                        </Field>
+                     </Validation>
+
+
                     <Field>
                         <Check TValue="bool" @bind-Checked="@EditingSiteProperty.IsActive" >@L["IsActive"]</Check>
                     </Field>
@@ -1055,6 +1137,19 @@
                             {
                                 <SelectItem TValue="Guid" Value="@(governorate.Id)">
                                     @(governorate.DisplayName)
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    <Field>
+                        <FieldLabel>@L["UserProfile"]</FieldLabel>
+                        <Select TValue="Guid" @bind-SelectedValue="@EditingSiteProperty.OwnerId">
+                            @foreach (var userProfile in UserProfilesCollection)
+                            {
+                                <SelectItem TValue="Guid" Value="@(userProfile.Id)">
+                                    @(userProfile.DisplayName)
                                 </SelectItem>
                             }
                         </Select>

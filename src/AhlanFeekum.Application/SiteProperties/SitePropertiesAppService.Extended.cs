@@ -35,9 +35,9 @@ namespace AhlanFeekum.SiteProperties
         public ICurrentUser _currentUser { get; set; }
         public IFavoritePropertyRepository _favoritePropertyRepository { get; set; }
         public FavoritePropertyManager _favoritePropertyManager { get; set; }
-        public SitePropertiesAppService(ISitePropertyRepository sitePropertyRepository, SitePropertyManager sitePropertyManager, IDistributedCache<SitePropertyDownloadTokenCacheItem, string> downloadTokenCache, IRepository<AhlanFeekum.PropertyTypes.PropertyType, Guid> propertyTypeRepository, IRepository<AhlanFeekum.Governorates.Governorate, Guid> governorateRepository, IRepository<AhlanFeekum.PropertyFeatures.PropertyFeature, Guid> propertyFeatureRepository,
+        public SitePropertiesAppService(ISitePropertyRepository sitePropertyRepository, SitePropertyManager sitePropertyManager, IDistributedCache<SitePropertyDownloadTokenCacheItem, string> downloadTokenCache, IRepository<AhlanFeekum.PropertyTypes.PropertyType, Guid> propertyTypeRepository, IRepository<AhlanFeekum.Governorates.Governorate, Guid> governorateRepository, IRepository<AhlanFeekum.UserProfiles.UserProfile, Guid> userProfileRepository, IRepository<AhlanFeekum.PropertyFeatures.PropertyFeature, Guid> propertyFeatureRepository,
              ICurrentUser currentUser, IFavoritePropertyRepository favoritePropertyRepository, FavoritePropertyManager favoritePropertyManager)
-            : base(sitePropertyRepository, sitePropertyManager, downloadTokenCache, propertyTypeRepository, governorateRepository, propertyFeatureRepository)
+            : base(sitePropertyRepository, sitePropertyManager, downloadTokenCache, propertyTypeRepository, governorateRepository, userProfileRepository, propertyFeatureRepository)
         {
             _currentUser = currentUser;
             _favoritePropertyRepository = favoritePropertyRepository;
@@ -54,6 +54,30 @@ namespace AhlanFeekum.SiteProperties
                 userId = _currentUser.Id;
             return ObjectMapper.Map<SitePropertyWithDetails, SitePropertyWithDetailsMobileDto>(await _sitePropertyRepository.GetSitePropertyWithDetailsAsync(id, userId));
 
+        }
+
+        [Authorize(AhlanFeekumPermissions.SiteProperties.Create)]
+        public virtual async Task<SitePropertyDto> CreateAsync(SitePropertyCreateMobileDto input)
+        {
+            if (input.PropertyTypeId == default)
+            {
+                throw new UserFriendlyException(L["The {0} field is required.", L["PropertyType"]]);
+            }
+            if (input.GovernorateId == default)
+            {
+                throw new UserFriendlyException(L["The {0} field is required.", L["Governorate"]]);
+            }
+            if (_currentUser == null)
+            {
+                throw new UserFriendlyException(L["The {0} field is required.", L["UserProfile"]]);
+            }
+
+            Guid? ownerId = _currentUser.Id;
+            var siteProperty = await _sitePropertyManager.CreateAsync(
+            input.PropertyFeatureIds, input.PropertyTypeId, input.GovernorateId, ownerId.Value, input.PropertyTitle, input.Bedrooms, input.Bathrooms, input.NumberOfBed, input.Floor, input.MaximumNumberOfGuest, input.Livingrooms, input.PropertyDescription, input.PricePerNight, input.Area, input.IsActive, input.HotelName, input.HourseRules, input.ImportantInformation, input.Address, input.StreetAndBuildingNumber, input.LandMark
+            );
+
+            return ObjectMapper.Map<SiteProperty, SitePropertyDto>(siteProperty);
         }
 
         [Authorize(AhlanFeekumPermissions.SiteProperties.Edit)]

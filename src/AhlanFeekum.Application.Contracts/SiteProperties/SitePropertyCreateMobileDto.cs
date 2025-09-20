@@ -1,13 +1,12 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
-
-using Volo.Abp.Application.Dtos;
-using Volo.Abp.Domain.Entities;
 
 namespace AhlanFeekum.SiteProperties
 {
-    public abstract class SitePropertyDtoBase : FullAuditedEntityDto<Guid>, IHasConcurrencyStamp
+    public abstract class SitePropertyCreateDtoMobileBase
     {
+        [Required]
         public string PropertyTitle { get; set; } = null!;
         public string? HotelName { get; set; }
         public int Bedrooms { get; set; }
@@ -16,6 +15,7 @@ namespace AhlanFeekum.SiteProperties
         public int Floor { get; set; }
         public int MaximumNumberOfGuest { get; set; }
         public int Livingrooms { get; set; }
+        [Required]
         public string PropertyDescription { get; set; } = null!;
         public string? HourseRules { get; set; }
         public string? ImportantInformation { get; set; }
@@ -24,12 +24,9 @@ namespace AhlanFeekum.SiteProperties
         public string? LandMark { get; set; }
         public int PricePerNight { get; set; }
         public double Area { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
         public Guid PropertyTypeId { get; set; }
         public Guid GovernorateId { get; set; }
-        public Guid OwnerId { get; set; }
-
-        public string ConcurrencyStamp { get; set; } = null!;
-
+        public List<Guid> PropertyFeatureIds { get; set; }
     }
 }

@@ -19,6 +19,7 @@ namespace AhlanFeekum.SiteProperties
         public string? StreetAndBuildingNumber { get; set; }
         public string? LandMark { get; set; }
         public int PricePerNight { get; set; }
+        public double Area { get; set; }
         public bool IsActive { get; set; }
     }
 }

@@ -225,50 +225,7 @@ public class AhlanFeekumDbContext :
             });
 
         }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<SiteProperty>(b =>
-            {
-                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "SiteProperties", AhlanFeekumConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.Property(x => x.PropertyTitle).HasColumnName(nameof(SiteProperty.PropertyTitle)).IsRequired();
-                b.Property(x => x.HotelName).HasColumnName(nameof(SiteProperty.HotelName));
-                b.Property(x => x.Bedrooms).HasColumnName(nameof(SiteProperty.Bedrooms));
-                b.Property(x => x.Bathrooms).HasColumnName(nameof(SiteProperty.Bathrooms));
-                b.Property(x => x.NumberOfBed).HasColumnName(nameof(SiteProperty.NumberOfBed));
-                b.Property(x => x.Floor).HasColumnName(nameof(SiteProperty.Floor));
-                b.Property(x => x.MaximumNumberOfGuest).HasColumnName(nameof(SiteProperty.MaximumNumberOfGuest));
-                b.Property(x => x.Livingrooms).HasColumnName(nameof(SiteProperty.Livingrooms));
-                b.Property(x => x.PropertyDescription).HasColumnName(nameof(SiteProperty.PropertyDescription)).IsRequired();
-                b.Property(x => x.HourseRules).HasColumnName(nameof(SiteProperty.HourseRules));
-                b.Property(x => x.ImportantInformation).HasColumnName(nameof(SiteProperty.ImportantInformation));
-                b.Property(x => x.Address).HasColumnName(nameof(SiteProperty.Address));
-                b.Property(x => x.StreetAndBuildingNumber).HasColumnName(nameof(SiteProperty.StreetAndBuildingNumber));
-                b.Property(x => x.LandMark).HasColumnName(nameof(SiteProperty.LandMark));
-                b.Property(x => x.PricePerNight).HasColumnName(nameof(SiteProperty.PricePerNight));
-                b.Property(x => x.IsActive).HasColumnName(nameof(SiteProperty.IsActive));
-                b.HasOne<PropertyType>().WithMany().IsRequired().HasForeignKey(x => x.PropertyTypeId).OnDelete(DeleteBehavior.NoAction);
-                b.HasOne<Governorate>().WithMany().IsRequired().HasForeignKey(x => x.GovernorateId).OnDelete(DeleteBehavior.NoAction);
-                b.HasMany(x => x.PropertyFeatures).WithOne().HasForeignKey(x => x.SitePropertyId).IsRequired().OnDelete(DeleteBehavior.NoAction);
-            });
 
-            builder.Entity<SitePropertyPropertyFeature>(b =>
-            {
-                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "SitePropertyPropertyFeature", AhlanFeekumConsts.DbSchema);
-                b.ConfigureByConvention();
-
-                b.HasKey(
-                    x => new { x.SitePropertyId, x.PropertyFeatureId }
-                );
-
-                b.HasOne<SiteProperty>().WithMany(x => x.PropertyFeatures).HasForeignKey(x => x.SitePropertyId).IsRequired().OnDelete(DeleteBehavior.Cascade);
-                b.HasOne<PropertyFeature>().WithMany().HasForeignKey(x => x.PropertyFeatureId).IsRequired().OnDelete(DeleteBehavior.Cascade);
-
-                b.HasIndex(
-                        x => new { x.SitePropertyId, x.PropertyFeatureId }
-                );
-            });
-        }
         if (builder.IsHostDatabase())
         {
 
@@ -349,6 +306,53 @@ public class AhlanFeekumDbContext :
             b.Property(x => x.Name);
             b.Property(x => x.MimeType);
         });
+
+        if (builder.IsHostDatabase())
+        {
+            builder.Entity<SiteProperty>(b =>
+            {
+                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "SiteProperties", AhlanFeekumConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.Property(x => x.PropertyTitle).HasColumnName(nameof(SiteProperty.PropertyTitle)).IsRequired();
+                b.Property(x => x.HotelName).HasColumnName(nameof(SiteProperty.HotelName));
+                b.Property(x => x.Bedrooms).HasColumnName(nameof(SiteProperty.Bedrooms));
+                b.Property(x => x.Bathrooms).HasColumnName(nameof(SiteProperty.Bathrooms));
+                b.Property(x => x.NumberOfBed).HasColumnName(nameof(SiteProperty.NumberOfBed));
+                b.Property(x => x.Floor).HasColumnName(nameof(SiteProperty.Floor));
+                b.Property(x => x.MaximumNumberOfGuest).HasColumnName(nameof(SiteProperty.MaximumNumberOfGuest));
+                b.Property(x => x.Livingrooms).HasColumnName(nameof(SiteProperty.Livingrooms));
+                b.Property(x => x.PropertyDescription).HasColumnName(nameof(SiteProperty.PropertyDescription)).IsRequired();
+                b.Property(x => x.HourseRules).HasColumnName(nameof(SiteProperty.HourseRules));
+                b.Property(x => x.ImportantInformation).HasColumnName(nameof(SiteProperty.ImportantInformation));
+                b.Property(x => x.Address).HasColumnName(nameof(SiteProperty.Address));
+                b.Property(x => x.StreetAndBuildingNumber).HasColumnName(nameof(SiteProperty.StreetAndBuildingNumber));
+                b.Property(x => x.LandMark).HasColumnName(nameof(SiteProperty.LandMark));
+                b.Property(x => x.PricePerNight).HasColumnName(nameof(SiteProperty.PricePerNight));
+                b.Property(x => x.Area).HasColumnName(nameof(SiteProperty.Area));
+                b.Property(x => x.IsActive).HasColumnName(nameof(SiteProperty.IsActive));
+                b.HasOne<PropertyType>().WithMany().IsRequired().HasForeignKey(x => x.PropertyTypeId).OnDelete(DeleteBehavior.NoAction);
+                b.HasOne<Governorate>().WithMany().IsRequired().HasForeignKey(x => x.GovernorateId).OnDelete(DeleteBehavior.NoAction);
+                b.HasOne<UserProfile>().WithMany().IsRequired().HasForeignKey(x => x.OwnerId).OnDelete(DeleteBehavior.NoAction);
+                b.HasMany(x => x.PropertyFeatures).WithOne().HasForeignKey(x => x.SitePropertyId).IsRequired().OnDelete(DeleteBehavior.NoAction);
+            });
+
+            builder.Entity<SitePropertyPropertyFeature>(b =>
+            {
+                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "SitePropertyPropertyFeature", AhlanFeekumConsts.DbSchema);
+                b.ConfigureByConvention();
+
+                b.HasKey(
+                    x => new { x.SitePropertyId, x.PropertyFeatureId }
+                );
+
+                b.HasOne<SiteProperty>().WithMany(x => x.PropertyFeatures).HasForeignKey(x => x.SitePropertyId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+                b.HasOne<PropertyFeature>().WithMany().HasForeignKey(x => x.PropertyFeatureId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+
+                b.HasIndex(
+                        x => new { x.SitePropertyId, x.PropertyFeatureId }
+                );
+            });
+        }
     }
 
 

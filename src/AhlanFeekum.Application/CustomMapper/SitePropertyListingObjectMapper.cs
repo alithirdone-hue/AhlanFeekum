@@ -55,6 +55,7 @@ namespace SIBF.CustomMapper
             SitePropertyWithDetailsFront.LandMark = source.SiteProperty.LandMark;
             SitePropertyWithDetailsFront.PricePerNight = source.SiteProperty.PricePerNight;
             SitePropertyWithDetailsFront.AverageRating = source.AverageRating;
+            SitePropertyWithDetailsFront.Area = source.SiteProperty.Area;
             SitePropertyWithDetailsFront.IsActive = source.SiteProperty.IsActive;
             SitePropertyWithDetailsFront.IsFavorite = source.IsFavorite;
             

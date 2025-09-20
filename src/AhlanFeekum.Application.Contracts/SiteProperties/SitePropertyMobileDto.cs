@@ -24,7 +24,7 @@ namespace AhlanFeekum.SiteProperties
         //public string PropertyTypeName { get; set; }
         //public Guid GovernorateId { get; set; }
         //public string GovernorateName { get; set; }
-
+        public  double Area { get; set; }
         public string? MainImage { get; set; }
 
     }

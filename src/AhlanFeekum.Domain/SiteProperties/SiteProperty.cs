@@ -1,5 +1,6 @@
 using AhlanFeekum.PropertyTypes;
 using AhlanFeekum.Governorates;
+using AhlanFeekum.UserProfiles;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -53,9 +54,12 @@ namespace AhlanFeekum.SiteProperties
 
         public virtual int PricePerNight { get; set; }
 
+        public virtual double Area { get; set; }
+
         public virtual bool IsActive { get; set; }
         public Guid PropertyTypeId { get; set; }
         public Guid GovernorateId { get; set; }
+        public Guid OwnerId { get; set; }
         public ICollection<SitePropertyPropertyFeature> PropertyFeatures { get; private set; }
 
         protected SitePropertyBase()
@@ -63,7 +67,7 @@ namespace AhlanFeekum.SiteProperties
 
         }
 
-        public SitePropertyBase(Guid id, Guid propertyTypeId, Guid governorateId, string propertyTitle, int bedrooms, int bathrooms, int numberOfBed, int floor, int maximumNumberOfGuest, int livingrooms, string propertyDescription, int pricePerNight, bool isActive, string? hotelName = null, string? hourseRules = null, string? importantInformation = null, string? address = null, string? streetAndBuildingNumber = null, string? landMark = null)
+        public SitePropertyBase(Guid id, Guid propertyTypeId, Guid governorateId, Guid ownerId, string propertyTitle, int bedrooms, int bathrooms, int numberOfBed, int floor, int maximumNumberOfGuest, int livingrooms, string propertyDescription, int pricePerNight, double area, bool isActive, string? hotelName = null, string? hourseRules = null, string? importantInformation = null, string? address = null, string? streetAndBuildingNumber = null, string? landMark = null)
         {
 
             Id = id;
@@ -78,6 +82,7 @@ namespace AhlanFeekum.SiteProperties
             Livingrooms = livingrooms;
             PropertyDescription = propertyDescription;
             PricePerNight = pricePerNight;
+            Area = area;
             IsActive = isActive;
             HotelName = hotelName;
             HourseRules = hourseRules;
@@ -87,6 +92,7 @@ namespace AhlanFeekum.SiteProperties
             LandMark = landMark;
             PropertyTypeId = propertyTypeId;
             GovernorateId = governorateId;
+            OwnerId = ownerId;
             PropertyFeatures = new Collection<SitePropertyPropertyFeature>();
         }
         public virtual void AddPropertyFeature(Guid propertyFeatureId)

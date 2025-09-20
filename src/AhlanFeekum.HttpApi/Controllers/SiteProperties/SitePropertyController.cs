@@ -33,7 +33,7 @@ namespace AhlanFeekum.Controllers.SiteProperties
         }
 
         [HttpPost("create-step-one")]
-        public virtual Task<SitePropertyDto> CreateMobileAsync(SitePropertyCreateDto input)
+        public virtual Task<SitePropertyDto> CreateMobileAsync(SitePropertyCreateMobileDto input)
         {
             return _sitePropertiesAppService.CreateAsync(input);
         }

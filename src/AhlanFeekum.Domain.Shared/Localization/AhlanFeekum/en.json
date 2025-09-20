@@ -211,6 +211,10 @@
     "FirstPhotoExtension": "First Photo Extension",
     "SecondPhotoExtension": "Second Photo Extension",
     "ThirdPhotoExtension": "Third Photo Extension",
-    "ImageExtension": "Image Extension"
+    "ImageExtension": "Image Extension",
+    "Owner": "Owner",
+    "Area": "Area",
+    "MinArea": "Min Area",
+    "MaxArea": "Max Area"
   }
 }

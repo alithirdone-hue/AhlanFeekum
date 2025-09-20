@@ -31,9 +31,12 @@ namespace AhlanFeekum.SiteProperties
         public string? LandMark { get; set; }
         public int? PricePerNightMin { get; set; }
         public int? PricePerNightMax { get; set; }
+        public double? AreaMin { get; set; }
+        public double? AreaMax { get; set; }
         public bool? IsActive { get; set; }
         public Guid? PropertyTypeId { get; set; }
         public Guid? GovernorateId { get; set; }
+        public Guid? OwnerId { get; set; }
         public Guid? PropertyFeatureId { get; set; }
 
         public SitePropertyExcelDownloadDtoBase()

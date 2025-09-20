@@ -9,6 +9,7 @@ namespace AhlanFeekum.SiteProperties
     {
         //Write your custom code here...
         Task<SitePropertyWithDetailsMobileDto> GetSitePropertyWithDetailsAsync(Guid id);
+        Task<SitePropertyDto> CreateAsync(SitePropertyCreateMobileDto input);
         Task<SitePropertyDto> UpdateAsync(SitePropertyUpdateStepTwoDto input);
         Task<MobileResponseDto> SetPricePerNightAsync(SitePropertySetPriceDto input);
         Task<PagedResultDto<SitePropertyListingMobileDto>> GetListMobileAsync(GetSitePropertiesMobileInput input);

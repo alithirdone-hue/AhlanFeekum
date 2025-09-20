@@ -1,20 +1,18 @@
-using AhlanFeekum.PropertyFeatures;
-using AhlanFeekum.PropertyTypes;
-using AhlanFeekum.SiteProperties;
-using AhlanFeekum.EntityFrameworkCore;
+using AhlanFeekum.UserProfiles;
 using AhlanFeekum.Governorates;
-using AhlanFeekum.PropertyFeatures;
-using AhlanFeekum.PropertyFeatures;
 using AhlanFeekum.PropertyTypes;
-using Microsoft.EntityFrameworkCore;
+using AhlanFeekum.PropertyFeatures;
+using AhlanFeekum.PropertyFeatures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
+using AhlanFeekum.EntityFrameworkCore;
 
 namespace AhlanFeekum.SiteProperties
 {
@@ -50,15 +48,18 @@ namespace AhlanFeekum.SiteProperties
             string? landMark = null,
             int? pricePerNightMin = null,
             int? pricePerNightMax = null,
+            double? areaMin = null,
+            double? areaMax = null,
             bool? isActive = null,
             Guid? propertyTypeId = null,
             Guid? governorateId = null,
+            Guid? ownerId = null,
             Guid? propertyFeatureId = null,
             CancellationToken cancellationToken = default)
         {
             var query = await GetQueryForNavigationPropertiesAsync();
 
-            query = ApplyFilter(query, filterText, propertyTitle, hotelName, bedroomsMin, bedroomsMax, bathroomsMin, bathroomsMax, numberOfBedMin, numberOfBedMax, floorMin, floorMax, maximumNumberOfGuestMin, maximumNumberOfGuestMax, livingroomsMin, livingroomsMax, propertyDescription, hourseRules, importantInformation, address, streetAndBuildingNumber, landMark, pricePerNightMin, pricePerNightMax, isActive, propertyTypeId, governorateId, propertyFeatureId);
+            query = ApplyFilter(query, filterText, propertyTitle, hotelName, bedroomsMin, bedroomsMax, bathroomsMin, bathroomsMax, numberOfBedMin, numberOfBedMax, floorMin, floorMax, maximumNumberOfGuestMin, maximumNumberOfGuestMax, livingroomsMin, livingroomsMax, propertyDescription, hourseRules, importantInformation, address, streetAndBuildingNumber, landMark, pricePerNightMin, pricePerNightMax, areaMin, areaMax, isActive, propertyTypeId, governorateId, ownerId, propertyFeatureId);
 
             var ids = query.Select(x => x.SiteProperty.Id);
             await DeleteManyAsync(ids, cancellationToken: GetCancellationToken(cancellationToken));
@@ -74,6 +75,7 @@ namespace AhlanFeekum.SiteProperties
                     SiteProperty = siteProperty,
                     PropertyType = dbContext.Set<PropertyType>().FirstOrDefault(c => c.Id == siteProperty.PropertyTypeId),
                     Governorate = dbContext.Set<Governorate>().FirstOrDefault(c => c.Id == siteProperty.GovernorateId),
+                    Owner = dbContext.Set<UserProfile>().FirstOrDefault(c => c.Id == siteProperty.OwnerId),
                     PropertyFeatures = (from sitePropertyPropertyFeatures in siteProperty.PropertyFeatures
                                         join _propertyFeature in dbContext.Set<PropertyFeature>() on sitePropertyPropertyFeatures.PropertyFeatureId equals _propertyFeature.Id
                                         select _propertyFeature).ToList()
@@ -104,9 +106,12 @@ namespace AhlanFeekum.SiteProperties
             string? landMark = null,
             int? pricePerNightMin = null,
             int? pricePerNightMax = null,
+            double? areaMin = null,
+            double? areaMax = null,
             bool? isActive = null,
             Guid? propertyTypeId = null,
             Guid? governorateId = null,
+            Guid? ownerId = null,
             Guid? propertyFeatureId = null,
             string? sorting = null,
             int maxResultCount = int.MaxValue,
@@ -114,7 +119,7 @@ namespace AhlanFeekum.SiteProperties
             CancellationToken cancellationToken = default)
         {
             var query = await GetQueryForNavigationPropertiesAsync();
-            query = ApplyFilter(query, filterText, propertyTitle, hotelName, bedroomsMin, bedroomsMax, bathroomsMin, bathroomsMax, numberOfBedMin, numberOfBedMax, floorMin, floorMax, maximumNumberOfGuestMin, maximumNumberOfGuestMax, livingroomsMin, livingroomsMax, propertyDescription, hourseRules, importantInformation, address, streetAndBuildingNumber, landMark, pricePerNightMin, pricePerNightMax, isActive, propertyTypeId, governorateId, propertyFeatureId);
+            query = ApplyFilter(query, filterText, propertyTitle, hotelName, bedroomsMin, bedroomsMax, bathroomsMin, bathroomsMax, numberOfBedMin, numberOfBedMax, floorMin, floorMax, maximumNumberOfGuestMin, maximumNumberOfGuestMax, livingroomsMin, livingroomsMax, propertyDescription, hourseRules, importantInformation, address, streetAndBuildingNumber, landMark, pricePerNightMin, pricePerNightMax, areaMin, areaMax, isActive, propertyTypeId, governorateId, ownerId, propertyFeatureId);
             query = query.OrderBy(string.IsNullOrWhiteSpace(sorting) ? SitePropertyConsts.GetDefaultSorting(true) : sorting);
             return await query.PageBy(skipCount, maxResultCount).ToListAsync(cancellationToken);
         }
@@ -126,11 +131,14 @@ namespace AhlanFeekum.SiteProperties
                    from propertyType in propertyTypes.DefaultIfEmpty()
                    join governorate in (await GetDbContextAsync()).Set<Governorate>() on siteProperty.GovernorateId equals governorate.Id into governorates
                    from governorate in governorates.DefaultIfEmpty()
+                   join owner in (await GetDbContextAsync()).Set<UserProfile>() on siteProperty.OwnerId equals owner.Id into userProfiles
+                   from owner in userProfiles.DefaultIfEmpty()
                    select new SitePropertyWithNavigationProperties
                    {
                        SiteProperty = siteProperty,
                        PropertyType = propertyType,
                        Governorate = governorate,
+                       Owner = owner,
                        PropertyFeatures = new List<PropertyFeature>()
                    };
         }
@@ -160,9 +168,12 @@ namespace AhlanFeekum.SiteProperties
             string? landMark = null,
             int? pricePerNightMin = null,
             int? pricePerNightMax = null,
+            double? areaMin = null,
+            double? areaMax = null,
             bool? isActive = null,
             Guid? propertyTypeId = null,
             Guid? governorateId = null,
+            Guid? ownerId = null,
             Guid? propertyFeatureId = null)
         {
             return query
@@ -189,9 +200,12 @@ namespace AhlanFeekum.SiteProperties
                     .WhereIf(!string.IsNullOrWhiteSpace(landMark), e => e.SiteProperty.LandMark.Contains(landMark))
                     .WhereIf(pricePerNightMin.HasValue, e => e.SiteProperty.PricePerNight >= pricePerNightMin!.Value)
                     .WhereIf(pricePerNightMax.HasValue, e => e.SiteProperty.PricePerNight <= pricePerNightMax!.Value)
+                    .WhereIf(areaMin.HasValue, e => e.SiteProperty.Area >= areaMin!.Value)
+                    .WhereIf(areaMax.HasValue, e => e.SiteProperty.Area <= areaMax!.Value)
                     .WhereIf(isActive.HasValue, e => e.SiteProperty.IsActive == isActive)
                     .WhereIf(propertyTypeId != null && propertyTypeId != Guid.Empty, e => e.PropertyType != null && e.PropertyType.Id == propertyTypeId)
                     .WhereIf(governorateId != null && governorateId != Guid.Empty, e => e.Governorate != null && e.Governorate.Id == governorateId)
+                    .WhereIf(ownerId != null && ownerId != Guid.Empty, e => e.Owner != null && e.Owner.Id == ownerId)
                     .WhereIf(propertyFeatureId != null && propertyFeatureId != Guid.Empty, e => e.SiteProperty.PropertyFeatures.Any(x => x.PropertyFeatureId == propertyFeatureId));
         }
 
@@ -219,13 +233,15 @@ namespace AhlanFeekum.SiteProperties
             string? landMark = null,
             int? pricePerNightMin = null,
             int? pricePerNightMax = null,
+            double? areaMin = null,
+            double? areaMax = null,
             bool? isActive = null,
             string? sorting = null,
             int maxResultCount = int.MaxValue,
             int skipCount = 0,
             CancellationToken cancellationToken = default)
         {
-            var query = ApplyFilter((await GetQueryableAsync()), filterText, propertyTitle, hotelName, bedroomsMin, bedroomsMax, bathroomsMin, bathroomsMax, numberOfBedMin, numberOfBedMax, floorMin, floorMax, maximumNumberOfGuestMin, maximumNumberOfGuestMax, livingroomsMin, livingroomsMax, propertyDescription, hourseRules, importantInformation, address, streetAndBuildingNumber, landMark, pricePerNightMin, pricePerNightMax, isActive);
+            var query = ApplyFilter((await GetQueryableAsync()), filterText, propertyTitle, hotelName, bedroomsMin, bedroomsMax, bathroomsMin, bathroomsMax, numberOfBedMin, numberOfBedMax, floorMin, floorMax, maximumNumberOfGuestMin, maximumNumberOfGuestMax, livingroomsMin, livingroomsMax, propertyDescription, hourseRules, importantInformation, address, streetAndBuildingNumber, landMark, pricePerNightMin, pricePerNightMax, areaMin, areaMax, isActive);
             query = query.OrderBy(string.IsNullOrWhiteSpace(sorting) ? SitePropertyConsts.GetDefaultSorting(false) : sorting);
             return await query.PageBy(skipCount, maxResultCount).ToListAsync(cancellationToken);
         }
@@ -254,14 +270,17 @@ namespace AhlanFeekum.SiteProperties
             string? landMark = null,
             int? pricePerNightMin = null,
             int? pricePerNightMax = null,
+            double? areaMin = null,
+            double? areaMax = null,
             bool? isActive = null,
             Guid? propertyTypeId = null,
             Guid? governorateId = null,
+            Guid? ownerId = null,
             Guid? propertyFeatureId = null,
             CancellationToken cancellationToken = default)
         {
             var query = await GetQueryForNavigationPropertiesAsync();
-            query = ApplyFilter(query, filterText, propertyTitle, hotelName, bedroomsMin, bedroomsMax, bathroomsMin, bathroomsMax, numberOfBedMin, numberOfBedMax, floorMin, floorMax, maximumNumberOfGuestMin, maximumNumberOfGuestMax, livingroomsMin, livingroomsMax, propertyDescription, hourseRules, importantInformation, address, streetAndBuildingNumber, landMark, pricePerNightMin, pricePerNightMax, isActive, propertyTypeId, governorateId, propertyFeatureId);
+            query = ApplyFilter(query, filterText, propertyTitle, hotelName, bedroomsMin, bedroomsMax, bathroomsMin, bathroomsMax, numberOfBedMin, numberOfBedMax, floorMin, floorMax, maximumNumberOfGuestMin, maximumNumberOfGuestMax, livingroomsMin, livingroomsMax, propertyDescription, hourseRules, importantInformation, address, streetAndBuildingNumber, landMark, pricePerNightMin, pricePerNightMax, areaMin, areaMax, isActive, propertyTypeId, governorateId, ownerId, propertyFeatureId);
             return await query.LongCountAsync(GetCancellationToken(cancellationToken));
         }
 
@@ -290,6 +309,8 @@ namespace AhlanFeekum.SiteProperties
             string? landMark = null,
             int? pricePerNightMin = null,
             int? pricePerNightMax = null,
+            double? areaMin = null,
+            double? areaMax = null,
             bool? isActive = null)
         {
             return query
@@ -316,6 +337,8 @@ namespace AhlanFeekum.SiteProperties
                     .WhereIf(!string.IsNullOrWhiteSpace(landMark), e => e.LandMark.Contains(landMark))
                     .WhereIf(pricePerNightMin.HasValue, e => e.PricePerNight >= pricePerNightMin!.Value)
                     .WhereIf(pricePerNightMax.HasValue, e => e.PricePerNight <= pricePerNightMax!.Value)
+                    .WhereIf(areaMin.HasValue, e => e.Area >= areaMin!.Value)
+                    .WhereIf(areaMax.HasValue, e => e.Area <= areaMax!.Value)
                     .WhereIf(isActive.HasValue, e => e.IsActive == isActive);
         }
     }

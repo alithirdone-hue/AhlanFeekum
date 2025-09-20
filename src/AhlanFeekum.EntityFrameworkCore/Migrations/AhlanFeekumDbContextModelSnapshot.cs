@@ -710,6 +710,10 @@ namespace AhlanFeekum.Migrations
                     .HasColumnType("nvarchar(max)")
                     .HasColumnName("Address");
 
+                b.Property<double>("Area")
+                     .HasColumnType("float")
+                     .HasColumnName("Area");
+
                 b.Property<int>("Bathrooms")
                     .HasColumnType("int")
                     .HasColumnName("Bathrooms");
@@ -798,6 +802,9 @@ namespace AhlanFeekum.Migrations
                     .HasColumnType("int")
                     .HasColumnName("NumberOfBed");
 
+                b.Property<Guid>("OwnerId")
+                .HasColumnType("uniqueidentifier");
+
                 b.Property<int>("PricePerNight")
                     .HasColumnType("int")
                     .HasColumnName("PricePerNight");
@@ -821,6 +828,7 @@ namespace AhlanFeekum.Migrations
 
                 b.HasKey("Id");
                 b.HasIndex("GovernorateId");
+                b.HasIndex("OwnerId");
                 b.HasIndex("PropertyTypeId");
 
                 b.ToTable("AppSiteProperties", (string)null);
@@ -2822,6 +2830,13 @@ namespace AhlanFeekum.Migrations
                        .HasForeignKey("GovernorateId")
                        .OnDelete(DeleteBehavior.NoAction)
                        .IsRequired();
+
+
+                b.HasOne("AhlanFeekum.UserProfiles.UserProfile", null)
+                    .WithMany()
+                    .HasForeignKey("OwnerId")
+                    .OnDelete(DeleteBehavior.NoAction)
+                    .IsRequired();
 
                 b.HasOne("AhlanFeekum.PropertyTypes.PropertyType", null)
                     .WithMany()

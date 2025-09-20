@@ -23,9 +23,11 @@ namespace AhlanFeekum.SiteProperties
         public string? StreetAndBuildingNumber { get; set; }
         public string? LandMark { get; set; }
         public int PricePerNight { get; set; }
+        public double Area { get; set; }
         public bool IsActive { get; set; } = true;
         public Guid PropertyTypeId { get; set; }
         public Guid GovernorateId { get; set; }
+        public Guid OwnerId { get; set; }
         public List<Guid> PropertyFeatureIds { get; set; }
     }
 }

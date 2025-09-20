@@ -56,6 +56,7 @@ namespace AhlanFeekum.Blazor.Pages.SiteProperties
         private SitePropertyWithNavigationPropertiesDto? SelectedSiteProperty;
         private IReadOnlyList<LookupDto<Guid>> PropertyTypesCollection { get; set; } = new List<LookupDto<Guid>>();
 private IReadOnlyList<LookupDto<Guid>> GovernoratesCollection { get; set; } = new List<LookupDto<Guid>>();
+private IReadOnlyList<LookupDto<Guid>> UserProfilesCollection { get; set; } = new List<LookupDto<Guid>>();
 private IReadOnlyList<LookupDto<Guid>> PropertyFeatures { get; set; } = new List<LookupDto<Guid>>();
         
         private string SelectedPropertyFeatureId { get; set; }
@@ -94,6 +95,9 @@ private IReadOnlyList<LookupDto<Guid>> PropertyFeatures { get; set; } = new List
 
 
             await GetGovernorateCollectionLookupAsync();
+
+
+            await GetUserProfileCollectionLookupAsync();
 
 
             await GetPropertyFeatureLookupAsync();
@@ -173,7 +177,7 @@ private IReadOnlyList<LookupDto<Guid>> PropertyFeatures { get; set; } = new List
                 culture = "&culture=" + culture;
             }
             await RemoteServiceConfigurationProvider.GetConfigurationOrDefaultOrNullAsync("Default");
-            NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/site-properties/as-excel-file?DownloadToken={token}&FilterText={HttpUtility.UrlEncode(Filter.FilterText)}{culture}&PropertyTitle={HttpUtility.UrlEncode(Filter.PropertyTitle)}&HotelName={HttpUtility.UrlEncode(Filter.HotelName)}&BedroomsMin={Filter.BedroomsMin}&BedroomsMax={Filter.BedroomsMax}&BathroomsMin={Filter.BathroomsMin}&BathroomsMax={Filter.BathroomsMax}&NumberOfBedMin={Filter.NumberOfBedMin}&NumberOfBedMax={Filter.NumberOfBedMax}&FloorMin={Filter.FloorMin}&FloorMax={Filter.FloorMax}&MaximumNumberOfGuestMin={Filter.MaximumNumberOfGuestMin}&MaximumNumberOfGuestMax={Filter.MaximumNumberOfGuestMax}&LivingroomsMin={Filter.LivingroomsMin}&LivingroomsMax={Filter.LivingroomsMax}&PropertyDescription={HttpUtility.UrlEncode(Filter.PropertyDescription)}&HourseRules={HttpUtility.UrlEncode(Filter.HourseRules)}&ImportantInformation={HttpUtility.UrlEncode(Filter.ImportantInformation)}&Address={HttpUtility.UrlEncode(Filter.Address)}&StreetAndBuildingNumber={HttpUtility.UrlEncode(Filter.StreetAndBuildingNumber)}&LandMark={HttpUtility.UrlEncode(Filter.LandMark)}&PricePerNightMin={Filter.PricePerNightMin}&PricePerNightMax={Filter.PricePerNightMax}&IsActive={Filter.IsActive}&PropertyTypeId={Filter.PropertyTypeId}&GovernorateId={Filter.GovernorateId}&PropertyFeatureId={Filter.PropertyFeatureId}", forceLoad: true);
+            NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/site-properties/as-excel-file?DownloadToken={token}&FilterText={HttpUtility.UrlEncode(Filter.FilterText)}{culture}&PropertyTitle={HttpUtility.UrlEncode(Filter.PropertyTitle)}&HotelName={HttpUtility.UrlEncode(Filter.HotelName)}&BedroomsMin={Filter.BedroomsMin}&BedroomsMax={Filter.BedroomsMax}&BathroomsMin={Filter.BathroomsMin}&BathroomsMax={Filter.BathroomsMax}&NumberOfBedMin={Filter.NumberOfBedMin}&NumberOfBedMax={Filter.NumberOfBedMax}&FloorMin={Filter.FloorMin}&FloorMax={Filter.FloorMax}&MaximumNumberOfGuestMin={Filter.MaximumNumberOfGuestMin}&MaximumNumberOfGuestMax={Filter.MaximumNumberOfGuestMax}&LivingroomsMin={Filter.LivingroomsMin}&LivingroomsMax={Filter.LivingroomsMax}&PropertyDescription={HttpUtility.UrlEncode(Filter.PropertyDescription)}&HourseRules={HttpUtility.UrlEncode(Filter.HourseRules)}&ImportantInformation={HttpUtility.UrlEncode(Filter.ImportantInformation)}&Address={HttpUtility.UrlEncode(Filter.Address)}&StreetAndBuildingNumber={HttpUtility.UrlEncode(Filter.StreetAndBuildingNumber)}&LandMark={HttpUtility.UrlEncode(Filter.LandMark)}&PricePerNightMin={Filter.PricePerNightMin}&PricePerNightMax={Filter.PricePerNightMax}&AreaMin={Filter.AreaMin}&AreaMax={Filter.AreaMax}&IsActive={Filter.IsActive}&PropertyTypeId={Filter.PropertyTypeId}&GovernorateId={Filter.GovernorateId}&OwnerId={Filter.OwnerId}&PropertyFeatureId={Filter.PropertyFeatureId}", forceLoad: true);
         }
 
         private async Task OnDataGridReadAsync(DataGridReadDataEventArgs<SitePropertyWithNavigationPropertiesDto> e)
@@ -199,6 +203,7 @@ private IReadOnlyList<LookupDto<Guid>> PropertyFeatures { get; set; } = new List
                 
                 PropertyTypeId = PropertyTypesCollection.Select(i=>i.Id).FirstOrDefault(),
 GovernorateId = GovernoratesCollection.Select(i=>i.Id).FirstOrDefault(),
+OwnerId = UserProfilesCollection.Select(i=>i.Id).FirstOrDefault(),
 
             };
 
@@ -215,6 +220,7 @@ GovernorateId = GovernoratesCollection.Select(i=>i.Id).FirstOrDefault(),
                 
                 PropertyTypeId = PropertyTypesCollection.Select(i=>i.Id).FirstOrDefault(),
 GovernorateId = GovernoratesCollection.Select(i=>i.Id).FirstOrDefault(),
+OwnerId = UserProfilesCollection.Select(i=>i.Id).FirstOrDefault(),
 
             };
             await CreateSitePropertyModal.Hide();
@@ -417,6 +423,16 @@ GovernorateId = GovernoratesCollection.Select(i=>i.Id).FirstOrDefault(),
             Filter.PricePerNightMax = pricePerNightMax;
             await SearchAsync();
         }
+        protected virtual async Task OnAreaMinChangedAsync(double? areaMin)
+        {
+            Filter.AreaMin = areaMin;
+            await SearchAsync();
+        }
+        protected virtual async Task OnAreaMaxChangedAsync(double? areaMax)
+        {
+            Filter.AreaMax = areaMax;
+            await SearchAsync();
+        }
         protected virtual async Task OnIsActiveChangedAsync(bool? isActive)
         {
             Filter.IsActive = isActive;
@@ -430,6 +446,11 @@ GovernorateId = GovernoratesCollection.Select(i=>i.Id).FirstOrDefault(),
         protected virtual async Task OnGovernorateIdChangedAsync(Guid? governorateId)
         {
             Filter.GovernorateId = governorateId;
+            await SearchAsync();
+        }
+        protected virtual async Task OnOwnerIdChangedAsync(Guid? ownerId)
+        {
+            Filter.OwnerId = ownerId;
             await SearchAsync();
         }
         protected virtual async Task OnPropertyFeatureIdChangedAsync(Guid? propertyFeatureId)
@@ -447,6 +468,11 @@ GovernorateId = GovernoratesCollection.Select(i=>i.Id).FirstOrDefault(),
         private async Task GetGovernorateCollectionLookupAsync(string? newValue = null)
         {
             GovernoratesCollection = (await SitePropertiesAppService.GetGovernorateLookupAsync(new LookupRequestDto { Filter = newValue })).Items;
+        }
+
+        private async Task GetUserProfileCollectionLookupAsync(string? newValue = null)
+        {
+            UserProfilesCollection = (await SitePropertiesAppService.GetUserProfileLookupAsync(new LookupRequestDto { Filter = newValue })).Items;
         }
 
         private async Task GetPropertyFeatureLookupAsync(string? newValue = null)
