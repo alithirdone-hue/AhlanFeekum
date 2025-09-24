@@ -12,6 +12,7 @@ namespace AhlanFeekum.UserProfiles
 {
     public class HomePage
     {
+        public UserProfile UserProfile { get; set; } = null;
         public List<SpecialAdvertismentWithNavigationProperties> SpecialAdvertisments { get; set; }
         public List<Governorate> Governorates { get; set; }
         public List<SitePropertyWithDetails> SiteProperties { get; set; }

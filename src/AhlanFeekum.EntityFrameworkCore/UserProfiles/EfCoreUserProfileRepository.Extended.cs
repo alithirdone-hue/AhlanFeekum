@@ -30,6 +30,7 @@ namespace AhlanFeekum.UserProfiles
                 .Select(homePage => new HomePage
                 {
 
+                    UserProfile = userId != null ? dbContext.UserProfiles.FirstOrDefault(u => u.Id == userId) : null,
                     SpecialAdvertisments = dbContext.SpecialAdvertisments.Where(s=>s.IsActive).OrderBy(s=>s.Order)
                                             .Select(specialAdvertisment => new SpecialAdvertismentWithNavigationProperties
                                             {

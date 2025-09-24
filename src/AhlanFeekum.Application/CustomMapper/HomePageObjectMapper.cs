@@ -50,6 +50,7 @@ namespace SIBF.CustomMapper
         {
 
             HomePageDto HomePageFront = new HomePageDto();
+            HomePageFront.UserProfile = source.UserProfile != null ?_objectMapper.Map<UserProfile, UserProfileMobileDto>(source.UserProfile)  : null;
             HomePageFront.SpecialAdvertismentMobileDtos = _objectMapper.Map<List<SpecialAdvertismentWithNavigationProperties>, List<SpecialAdvertismentMobileDto>>(source.SpecialAdvertisments);
             HomePageFront.SiteProperties = _objectMapper.Map<List<SitePropertyWithDetails>, List<SitePropertyListingMobileDto>>(source.SiteProperties);
             HomePageFront.HighlyRatedProperty = _objectMapper.Map<List<SitePropertyWithDetails>, List<SitePropertyListingMobileDto>>(source.HighlyRated);

@@ -13,6 +13,7 @@ namespace AhlanFeekum.UserProfiles
 {
     public class HomePageDto
     {
+        public UserProfileMobileDto? UserProfile { get; set; } = null;
         public List<SpecialAdvertismentMobileDto> SpecialAdvertismentMobileDtos { get; set; } = new List<SpecialAdvertismentMobileDto>();
         public List<SitePropertyListingMobileDto> SiteProperties { get; set; } = new List<SitePropertyListingMobileDto>();
         public List<SitePropertyListingMobileDto> HighlyRatedProperty { get; set; } = new List<SitePropertyListingMobileDto>();
