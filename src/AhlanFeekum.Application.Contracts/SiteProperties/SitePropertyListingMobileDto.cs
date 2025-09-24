@@ -1,3 +1,4 @@
+using AhlanFeekum.PropertyEvaluations;
 using AhlanFeekum.PropertyFeatures;
 using AhlanFeekum.PropertyMedias;
 using System;
@@ -33,9 +34,23 @@ namespace AhlanFeekum.SiteProperties
         public Guid GovernorateId { get; set; }
         public string GovernorateName { get; set; }
 
+        public Guid OwnerId { get; set; }
+        public string OwnerName { get; set; }
+        public Guid StatusId { get; set; }
+        public string StatusName { get; set; }
+        public double Area { get; set; }
         public string? MainImage { get; set; }
         public List<PropertyFeatureMobileDto> PropertyFeatureMobileDtos { get; set; }
         public List<PropertyMediaMobileDto> PropertyMediaMobileDto { get; set; }
+
+        public List<PropertyEvaluationMobileDto> PropertyEvaluationMobileDtos { get; set; }
+
+         public double? AverageRating { get; set; } = null;
+         public double? AverageCleanliness { get; set; } = null;
+         public double? AveragePriceAndValue { get; set; } = null;
+         public double? AverageLocation { get; set; } = null;
+         public double? AverageAccuracy { get; set; } = null;
+         public double? AverageAttitude { get; set; } = null;
 
     }
 }

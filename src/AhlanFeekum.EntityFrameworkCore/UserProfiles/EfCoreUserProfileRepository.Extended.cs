@@ -82,5 +82,55 @@ namespace AhlanFeekum.UserProfiles
                     OnlyForYouSection = dbContext.OnlyForYouSections.FirstOrDefault()
                 }).FirstOrDefault();
         }
+
+        public async Task<UserProfileWithDetails> GetWithDetailsAsync( Guid userId)
+        {
+            var dbContext = await GetDbContextAsync();
+
+            return (from userProfile in (await GetDbSetAsync()).Where(b => b.Id == userId)
+                   select new UserProfileWithDetails
+                   {
+                       UserProfile = userProfile,
+                       MyProperties = (
+                                             from siteProperty in (dbContext.SiteProperties).Where(b => b.OwnerId == userId).Include(x => x.PropertyFeatures)
+                                             join propertyType in dbContext.PropertyTypes on siteProperty.PropertyTypeId equals propertyType.Id into propertyTypes
+                                             from propertyType in propertyTypes.DefaultIfEmpty()
+                                             join governorate in dbContext.Governorates on siteProperty.GovernorateId equals governorate.Id into governorates
+                                             from governorate in governorates.DefaultIfEmpty()
+                                             select new SitePropertyWithDetails
+                                             {
+                                                 SiteProperty = siteProperty,
+                                                 PropertyType = propertyType,
+                                                 Governorate = governorate,
+                                                 PropertyFeatures = (from sitePropertyPropertyFeature in siteProperty.PropertyFeatures
+                                                                     join _propertyFeature in dbContext.Set<PropertyFeature>() on sitePropertyPropertyFeature.PropertyFeatureId equals _propertyFeature.Id
+                                                                     select _propertyFeature).ToList(),
+                                                 Medias = dbContext.PropertyMedias.Where(pm => pm.SitePropertyId == siteProperty.Id).OrderBy(pm => pm.Order).ToList(),
+                                                 IsFavorite = userId == null ? false : dbContext.FavoriteProperties.Any(p => p.SitePropertyId == siteProperty.Id && p.UserProfileId == userId),
+                                             }).ToList(),
+
+                       FavoriteProperties = (
+                                            from fav in (dbContext.FavoriteProperties).Where(f =>f.UserProfileId == userId)
+                                             join siteProperty in (dbContext.SiteProperties) on fav.SitePropertyId equals siteProperty.Id into siteProperties
+                                             from siteProperty in siteProperties.DefaultIfEmpty()
+                                             join propertyType in dbContext.PropertyTypes on siteProperty.PropertyTypeId equals propertyType.Id into propertyTypes
+                                             from propertyType in propertyTypes.DefaultIfEmpty()
+                                             join governorate in dbContext.Governorates on siteProperty.GovernorateId equals governorate.Id into governorates
+                                             from governorate in governorates.DefaultIfEmpty()
+                                             select new SitePropertyWithDetails
+                                             {
+                                                 SiteProperty = siteProperty,
+                                                 PropertyType = propertyType,
+                                                 Governorate = governorate,
+                                                 PropertyFeatures = (from sitePropertyPropertyFeature in siteProperty.PropertyFeatures
+                                                                     join _propertyFeature in dbContext.Set<PropertyFeature>() on sitePropertyPropertyFeature.PropertyFeatureId equals _propertyFeature.Id
+                                                                     select _propertyFeature).ToList(),
+                                                 Medias = dbContext.PropertyMedias.Where(pm => pm.SitePropertyId == siteProperty.Id).OrderBy(pm => pm.Order).ToList(),
+                                                 IsFavorite = userId == null ? false : dbContext.FavoriteProperties.Any(p => p.SitePropertyId == siteProperty.Id && p.UserProfileId == userId),
+                                             }).ToList(),
+
+
+                   }).FirstOrDefault();
+        }
     }
 }

@@ -220,6 +220,9 @@
     "Statuses": "Statuses",
     "NewStatus": "New Status",
     "Menu:Statuses": "Statuses",
-    "Status": "Status"
+    "Status": "Status",
+    "iconExtension": "icon Extension",
+    "MinIcon": "Min Icon",
+    "MaxIcon": "Max Icon"
   }
 }

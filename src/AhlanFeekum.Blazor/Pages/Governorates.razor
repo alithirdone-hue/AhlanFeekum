@@ -80,6 +80,12 @@
                 </Column>
                 <Column ColumnSize="ColumnSize.Is3">
                     <Field>
+                        <FieldLabel>@L["iconExtension"]</FieldLabel>
+                        <TextEdit Text="@Filter.iconExtension" TextChanged="@OniconExtensionChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
                         <FieldLabel>@L["MinOrder"]</FieldLabel>
                         <NumericEdit TValue="int?" 
              Value="@Filter.OrderMin"
@@ -228,6 +234,26 @@
               </DataGridColumn>
 
               <DataGridColumn TItem="GovernorateDto"
+                      Field="IconId"
+                      Caption="@L["Icon"]">
+                      <DisplayTemplate>
+                        @if (context.IconId != null && context.IconId != Guid.Empty)
+                        {   
+                            <Icon Name="IconName.FileAlt" Clicked="async () => await DownloadFileAsync(context.IconId)" />
+                        }
+                        else
+                        {
+                            <span>"-"</span>
+                        }
+                      </DisplayTemplate>
+              </DataGridColumn>
+@* 
+              <DataGridColumn TItem="GovernorateDto"
+                      Field="iconExtension"
+                      Caption="@L["iconExtension"]">
+              </DataGridColumn> *@
+
+              <DataGridColumn TItem="GovernorateDto"
                       Field="Order"
                       Caption="@L["Order"]">
               </DataGridColumn>
@@ -284,6 +310,29 @@
                     </Validation>
 
 
+                        <Field>
+                            <FieldLabel>@L["Icon"] *</FieldLabel>
+                            <InputFile class="form-control file-input" OnChange="@OnNewGovernorateIconChanged" required/>
+                            @if (OnNewGovernorateIconLoading)
+                            {
+                                <p>@L["FileUploading"]</p>
+                            }
+                            <p class="text-muted pt-1"><i class="fa fa-info-circle"></i> @L["MaxFileSizeLimit", 10]</p>
+                        </Field>
+
+
+    @*                 <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["iconExtension"] *</FieldLabel>
+                            <TextEdit @bind-Text="@NewGovernorate.iconExtension"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation> *@
+
+
                     <Validation MessageLocalizer="@LH.Localize">
                         <Field>
                             <FieldLabel>@L["Order"]</FieldLabel>
@@ -309,7 +358,7 @@
                         Clicked="CloseCreateGovernorateModalAsync">
                     @L["Cancel"]
                 </Button>
-                <SubmitButton Form="CreateGovernorateForm" Clicked="CreateGovernorateAsync"/>
+                <SubmitButton Form="CreateGovernorateForm" Clicked="CreateGovernorateAsync" Disabled="@IsCreateFormDisabled()"/>
 @*//<suite-custom-code-block-6>*@
 @*//</suite-custom-code-block-6>*@
             </ModalFooter>
@@ -348,6 +397,42 @@
                     </Validation>
 
 
+                    <Field>
+                        <FieldLabel>@L["Icon"] *</FieldLabel>
+                        @if (HasSelectedGovernorateIcon)
+                        {
+                            <div class="mb-2">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="@L["DownloadSelectedFile"].Value" @onclick="@(async () => await DownloadFileAsync(EditingGovernorate.IconId))"><i class="fa fa-file-alt"></i></button>
+                                    <button type="button" class="btn btn-primary btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="@L["RemoveSelectedFile"].Value" @onclick="(() => { EditingGovernorate.IconId = Guid.Empty; HasSelectedGovernorateIcon = false; })"><i class="fa fa-trash"></i></button>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <Field>
+                                <InputFile class="form-control file-input" OnChange="@OnEditGovernorateIconChanged" required/>
+                                @if (OnEditGovernorateIconLoading)
+                                {
+                                    <p>@L["FileUploading"]</p>
+                                }
+                                <p class="text-muted pt-1"><i class="fa fa-info-circle"></i> @L["MaxFileSizeLimit", 10]</p>
+                            </Field>
+                        }
+                    </Field>
+@* 
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["iconExtension"] *</FieldLabel>
+                            <TextEdit @bind-Text="@EditingGovernorate.iconExtension"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation> *@
+
+
                     <Validation MessageLocalizer="@LH.Localize">
                         <Field>
                             <FieldLabel>@L["Order"]</FieldLabel>
@@ -373,7 +458,7 @@
                         Clicked="CloseEditGovernorateModalAsync">
                     @L["Cancel"]
                 </Button>
-                <SubmitButton Form="EditGovernorateForm" Clicked="UpdateGovernorateAsync" />
+                <SubmitButton Form="EditGovernorateForm" Clicked="UpdateGovernorateAsync" Disabled="@IsEditFormDisabled()" />
 @*//<suite-custom-code-block-9>*@
 @*//</suite-custom-code-block-9>*@
             </ModalFooter>

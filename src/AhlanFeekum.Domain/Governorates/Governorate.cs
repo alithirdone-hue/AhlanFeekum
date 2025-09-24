@@ -16,6 +16,11 @@ namespace AhlanFeekum.Governorates
         [NotNull]
         public virtual string Title { get; set; }
 
+        public virtual Guid IconId { get; set; }
+
+        [NotNull]
+        public virtual string iconExtension { get; set; }
+
         public virtual int Order { get; set; }
 
         public virtual bool IsActive { get; set; }
@@ -25,12 +30,15 @@ namespace AhlanFeekum.Governorates
 
         }
 
-        public GovernorateBase(Guid id, string title, int order, bool isActive)
+        public GovernorateBase(Guid id, string title, Guid iconId, string iconExtension, int order, bool isActive)
         {
 
             Id = id;
             Check.NotNull(title, nameof(title));
+            Check.NotNull(iconExtension, nameof(iconExtension));
             Title = title;
+            IconId = iconId;
+            this.iconExtension = iconExtension;
             Order = order;
             IsActive = isActive;
         }

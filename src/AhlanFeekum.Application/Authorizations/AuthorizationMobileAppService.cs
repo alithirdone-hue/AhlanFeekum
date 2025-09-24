@@ -144,11 +144,11 @@ namespace AhlanFeekum.Authorizations
             Guid admin = Guid.Parse("e1221a17-0636-1e3a-b1d9-3a1bdea75230");
             var roles = await _identityUserRepository.GetRolesAsync(user.Id);
             if (roles.Any(r => r.Id == guestUser))
-                tokenResponse.RoleId = 1;
+                tokenResponse.RoleId = 2;
             else
             {
                 if (roles.Any(r => r.Id == hostUser))
-                    tokenResponse.RoleId = 2;
+                    tokenResponse.RoleId = 1;
                 else
                 {
                     if (roles.Any(r => r.Id == admin))

@@ -22,6 +22,7 @@ namespace AhlanFeekum.Governorates
         public virtual async Task DeleteAllAsync(
             string? filterText = null,
                         string? title = null,
+            string? iconExtension = null,
             int? orderMin = null,
             int? orderMax = null,
             bool? isActive = null,
@@ -30,7 +31,7 @@ namespace AhlanFeekum.Governorates
 
             var query = await GetQueryableAsync();
 
-            query = ApplyFilter(query, filterText, title, orderMin, orderMax, isActive);
+            query = ApplyFilter(query, filterText, title, iconExtension, orderMin, orderMax, isActive);
 
             var ids = query.Select(x => x.Id);
             await DeleteManyAsync(ids, cancellationToken: GetCancellationToken(cancellationToken));
@@ -39,6 +40,7 @@ namespace AhlanFeekum.Governorates
         public virtual async Task<List<Governorate>> GetListAsync(
             string? filterText = null,
             string? title = null,
+            string? iconExtension = null,
             int? orderMin = null,
             int? orderMax = null,
             bool? isActive = null,
@@ -47,7 +49,7 @@ namespace AhlanFeekum.Governorates
             int skipCount = 0,
             CancellationToken cancellationToken = default)
         {
-            var query = ApplyFilter((await GetQueryableAsync()), filterText, title, orderMin, orderMax, isActive);
+            var query = ApplyFilter((await GetQueryableAsync()), filterText, title, iconExtension, orderMin, orderMax, isActive);
             query = query.OrderBy(string.IsNullOrWhiteSpace(sorting) ? GovernorateConsts.GetDefaultSorting(false) : sorting);
             return await query.PageBy(skipCount, maxResultCount).ToListAsync(cancellationToken);
         }
@@ -55,12 +57,13 @@ namespace AhlanFeekum.Governorates
         public virtual async Task<long> GetCountAsync(
             string? filterText = null,
             string? title = null,
+            string? iconExtension = null,
             int? orderMin = null,
             int? orderMax = null,
             bool? isActive = null,
             CancellationToken cancellationToken = default)
         {
-            var query = ApplyFilter((await GetDbSetAsync()), filterText, title, orderMin, orderMax, isActive);
+            var query = ApplyFilter((await GetDbSetAsync()), filterText, title, iconExtension, orderMin, orderMax, isActive);
             return await query.LongCountAsync(GetCancellationToken(cancellationToken));
         }
 
@@ -68,13 +71,15 @@ namespace AhlanFeekum.Governorates
             IQueryable<Governorate> query,
             string? filterText = null,
             string? title = null,
+            string? iconExtension = null,
             int? orderMin = null,
             int? orderMax = null,
             bool? isActive = null)
         {
             return query
-                    .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.Title!.Contains(filterText!))
+                    .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.Title!.Contains(filterText!) || e.iconExtension!.Contains(filterText!))
                     .WhereIf(!string.IsNullOrWhiteSpace(title), e => e.Title.Contains(title))
+                    .WhereIf(!string.IsNullOrWhiteSpace(iconExtension), e => e.iconExtension.Contains(iconExtension))
                     .WhereIf(orderMin.HasValue, e => e.Order >= orderMin!.Value)
                     .WhereIf(orderMax.HasValue, e => e.Order <= orderMax!.Value)
                     .WhereIf(isActive.HasValue, e => e.IsActive == isActive);

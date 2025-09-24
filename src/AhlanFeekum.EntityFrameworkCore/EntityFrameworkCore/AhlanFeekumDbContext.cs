@@ -12,8 +12,9 @@ using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SpecialAdvertisments;
 using AhlanFeekum.SpecialAdvertisments;
-using AhlanFeekum.UserProfiles;
 using AhlanFeekum.Statuses;
+using AhlanFeekum.UserProfiles;
+using AhlanFeekum.Governorates;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -216,18 +217,6 @@ public class AhlanFeekumDbContext :
             });
 
         }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<Governorate>(b =>
-            {
-                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "Governorates", AhlanFeekumConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.Property(x => x.Title).HasColumnName(nameof(Governorate.Title)).IsRequired();
-                b.Property(x => x.Order).HasColumnName(nameof(Governorate.Order));
-                b.Property(x => x.IsActive).HasColumnName(nameof(Governorate.IsActive));
-            });
-
-        }
 
         if (builder.IsHostDatabase())
         {
@@ -302,13 +291,7 @@ public class AhlanFeekumDbContext :
             });
 
         }
-        builder.Entity<AppFileDescriptors.AppFileDescriptor>(b =>
-        {
-            b.ToTable(AhlanFeekumConsts.DbTablePrefix + "FileDescriptors", AhlanFeekumConsts.DbSchema);
-            b.ConfigureByConvention();
-            b.Property(x => x.Name);
-            b.Property(x => x.MimeType);
-        });
+
         if (builder.IsHostDatabase())
         {
             builder.Entity<Status>(b =>
@@ -366,6 +349,29 @@ public class AhlanFeekumDbContext :
                 b.HasIndex(
                         x => new { x.SitePropertyId, x.PropertyFeatureId }
                 );
+            });
+
+            if (builder.IsHostDatabase())
+            {
+                builder.Entity<Governorate>(b =>
+                {
+                    b.ToTable(AhlanFeekumConsts.DbTablePrefix + "Governorates", AhlanFeekumConsts.DbSchema);
+                    b.ConfigureByConvention();
+                    b.Property(x => x.Title).HasColumnName(nameof(Governorate.Title)).IsRequired();
+                    b.Property(x => x.IconId).HasColumnName(nameof(Governorate.IconId));
+                    b.Property(x => x.iconExtension).HasColumnName(nameof(Governorate.iconExtension)).IsRequired();
+                    b.Property(x => x.Order).HasColumnName(nameof(Governorate.Order));
+                    b.Property(x => x.IsActive).HasColumnName(nameof(Governorate.IsActive));
+                });
+
+            }
+
+            builder.Entity<AppFileDescriptors.AppFileDescriptor>(b =>
+            {
+                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "FileDescriptors", AhlanFeekumConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.Property(x => x.Name);
+                b.Property(x => x.MimeType);
             });
         }
     }

@@ -10,6 +10,9 @@ namespace AhlanFeekum.Governorates
 {
     public partial interface IGovernoratesAppService : IApplicationService
     {
+        Task<IRemoteStreamContent> GetFileAsync(GetFileInput input);
+
+        Task<AppFileDescriptorDto> UploadFileAsync(IRemoteStreamContent input);
 
         Task<PagedResultDto<GovernorateDto>> GetListAsync(GetGovernoratesInput input);
 

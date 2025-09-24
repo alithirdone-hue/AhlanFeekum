@@ -13,11 +13,13 @@ namespace AhlanFeekum.UserProfiles
         Task<MobileResponseDto> VerifyAsync(VerifyRequestDto input);
 
         Task<MobileResponseDto> RegisterAsync(RegisterCreateMobileDto input);
+        Task<MobileResponseDto> UpdateMyProfileAsync(UserProfileUpdateMobileDto input);
         Task<MobileResponseDto> RequestPasswordResetAsync(PasswordResetRequestDto input);
         Task<MobileResponseDto> ConfirmPasswordResetAsync(PasswordConfirmResetRequestDto input);
         Task<MobileResponseDto> ChangePasswordAsync(PasswordChangeRequestDto input);
 
         Task<HomePageDto> GetHomePageAsync();
+        Task<UserProfileWithDetailsMobileDto> GetWithDetailsAsync(Guid? id);
 
     }
 }

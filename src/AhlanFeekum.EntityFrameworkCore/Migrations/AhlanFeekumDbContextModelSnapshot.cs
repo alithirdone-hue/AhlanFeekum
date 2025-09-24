@@ -149,6 +149,10 @@ namespace AhlanFeekum.Migrations
                     .HasColumnType("nvarchar(max)")
                     .HasColumnName("ExtraProperties");
 
+                b.Property<Guid>("IconId")
+               .HasColumnType("uniqueidentifier")
+               .HasColumnName("IconId");
+
                 b.Property<bool>("IsActive")
                     .HasColumnType("bit")
                     .HasColumnName("IsActive");
@@ -175,7 +179,10 @@ namespace AhlanFeekum.Migrations
                     .IsRequired()
                     .HasColumnType("nvarchar(max)")
                     .HasColumnName("Title");
-
+                b.Property<string>("iconExtension")
+               .IsRequired()
+               .HasColumnType("nvarchar(max)")
+               .HasColumnName("iconExtension");
                 b.HasKey("Id");
 
                 b.ToTable("AppGovernorates", (string)null);

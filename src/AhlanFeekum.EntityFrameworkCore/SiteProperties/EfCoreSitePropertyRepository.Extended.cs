@@ -1,7 +1,10 @@
 using AhlanFeekum.EntityFrameworkCore;
 using AhlanFeekum.Governorates;
+using AhlanFeekum.PropertyEvaluations;
 using AhlanFeekum.PropertyFeatures;
 using AhlanFeekum.PropertyTypes;
+using AhlanFeekum.Statuses;
+using AhlanFeekum.UserProfiles;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -32,6 +35,10 @@ namespace AhlanFeekum.SiteProperties
              from propertyType in propertyTypes.DefaultIfEmpty()
              join governorate in dbContext.Governorates on siteProperty.GovernorateId equals governorate.Id into governorates
              from governorate in governorates.DefaultIfEmpty()
+             join owner in (await GetDbContextAsync()).Set<UserProfile>() on siteProperty.OwnerId equals owner.Id into userProfiles
+             from owner in userProfiles.DefaultIfEmpty()
+             join status in (await GetDbContextAsync()).Set<Status>() on siteProperty.StatusId equals status.Id into statuses
+             from status in statuses.DefaultIfEmpty()
              select new SitePropertyWithDetails
              {
                  SiteProperty = siteProperty,
@@ -40,8 +47,20 @@ namespace AhlanFeekum.SiteProperties
                  PropertyFeatures = (from sitePropertyPropertyFeature in siteProperty.PropertyFeatures
                                      join _propertyFeature in dbContext.Set<PropertyFeature>() on sitePropertyPropertyFeature.PropertyFeatureId equals _propertyFeature.Id
                                      select _propertyFeature).ToList(),
+                 MainImage = dbContext.PropertyMedias.Where(pm => pm.SitePropertyId == siteProperty.Id).OrderBy(pm => pm.Order).FirstOrDefault(),
                  Medias = dbContext.PropertyMedias.Where(pm => pm.SitePropertyId == siteProperty.Id).OrderBy(pm => pm.Order).ToList(),
                  IsFavorite = userId == null ? false : dbContext.FavoriteProperties.Any(p => p.SitePropertyId == siteProperty.Id && p.UserProfileId == userId),
+                 Owner = owner,
+                 Status = status,
+                 PropertyEvaluationWithNavigationProperties = (from propertyEvaluation in (dbContext.PropertyEvaluations) where propertyEvaluation.SitePropertyId == siteProperty.Id
+                                                              join userProfile in (dbContext.UserProfiles) on propertyEvaluation.UserProfileId equals userProfile.Id into userProfiles
+                                                              from userProfile in userProfiles.DefaultIfEmpty()
+                                                              select new PropertyEvaluationWithNavigationProperties
+                                                              {
+                                                                  PropertyEvaluation = propertyEvaluation,
+                                                                  UserProfile = userProfile,
+                                                                  SiteProperty = null
+                                                              }).ToList()
              }).FirstOrDefault();
 
             //return (await GetDbSetAsync()).Where(b => b.Id == id).Include(x => x.PropertyFeatures)
@@ -83,13 +102,13 @@ namespace AhlanFeekum.SiteProperties
      bool? isActive = null,
      Guid? propertyTypeId = null,
      Guid? governorateId = null,
-     List<Guid?> propertyFeatureIds = null,
-    DateOnly? checkInDateMin = null,
-    DateOnly? checkInDateMax = null,
-    Guid? userId = null,
+     List<Guid> propertyFeatureIds = null,
+     DateOnly? checkInDateMin = null,
+     DateOnly? checkInDateMax = null,
+     Guid? userId = null,
      string? sorting = null,
-            int maxResultCount = int.MaxValue,
-            int skipCount = 0,
+     int maxResultCount = int.MaxValue,
+     int skipCount = 0,
      CancellationToken cancellationToken = default)
         {
             SitePropertyListWithDetails sitePropertyListWithDetails = new SitePropertyListWithDetails();
@@ -116,8 +135,10 @@ namespace AhlanFeekum.SiteProperties
                        PropertyType = propertyType,
                        Governorate = governorate,
                        PropertyFeatures = new List<PropertyFeature>(),
-                       IsFavorite = userId.HasValue ? dbContext.FavoriteProperties.Any(p => p.SitePropertyId == siteProperty.Id && p.UserProfileId == userId) : false,
-                       Medias = dbContext.PropertyMedias.Where(m=>m.SitePropertyId == siteProperty.Id).OrderBy(m=>m.Order).ToList()
+                       MainImage = dbContext.PropertyMedias.Where(pm => pm.SitePropertyId == siteProperty.Id).OrderBy(pm => pm.Order).FirstOrDefault(),
+                       Medias = new List<PropertyMedias.PropertyMedia>(),
+                       IsFavorite = userId == null ? false : dbContext.FavoriteProperties.Any(p => p.SitePropertyId == siteProperty.Id && p.UserProfileId == userId),
+                       AverageRating = dbContext.PropertyEvaluations.Where(p => p.SitePropertyId == siteProperty.Id).Average(e => (e.Cleanliness + e.PriceAndValue + e.Location + e.Accuracy + e.Attitude) / 5.0)
 
                    };
         }
@@ -149,7 +170,7 @@ namespace AhlanFeekum.SiteProperties
              bool? isActive = null,
              Guid? propertyTypeId = null,
              Guid? governorateId = null,
-             List<Guid?> propertyFeatureIds = null,
+             List<Guid> propertyFeatureIds = null,
              DateOnly? checkInDateMin = null,
              DateOnly? checkInDateMax = null,
              Guid? userId = null)

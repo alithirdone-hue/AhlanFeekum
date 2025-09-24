@@ -51,6 +51,12 @@ namespace AhlanFeekum.Controllers.UserProfiles
         {
             return _userProfilesAppService.ChangePasswordAsync(input);
         }
+
+        [HttpPost("update-my-profile")]
+        public virtual Task<MobileResponseDto> UpdateMyProfileAsync([FromForm] UserProfileUpdateMobileDto input)
+        {
+            return _userProfilesAppService.UpdateMyProfileAsync(input);
+        }
         [HttpPost("send-secret-key-email")]
         public virtual Task<MobileResponseDto> SendSecretKeyEmail(string email)
         {
@@ -74,6 +80,15 @@ namespace AhlanFeekum.Controllers.UserProfiles
         {
             return _userProfilesAppService.GetHomePageAsync();
         }
+
+
+        [HttpGet]
+        [Route("user-profile-details/{id:guid?}")]
+        public virtual Task<UserProfileWithDetailsMobileDto> GetWithDetailsAsync(Guid? id)
+        {
+            return _userProfilesAppService.GetWithDetailsAsync(id);
+        }
+
 
 
     }

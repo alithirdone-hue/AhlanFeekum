@@ -75,6 +75,7 @@ namespace AhlanFeekum.SiteProperties
             return ObjectMapper.Map<SiteProperty, SitePropertyDto>(await _sitePropertyRepository.GetAsync(id));
         }
 
+        [AllowAnonymous]
         public virtual async Task<PagedResultDto<LookupDto<Guid>>> GetPropertyTypeLookupAsync(LookupRequestDto input)
         {
             var query = (await _propertyTypeRepository.GetQueryableAsync())
@@ -90,7 +91,7 @@ namespace AhlanFeekum.SiteProperties
                 Items = ObjectMapper.Map<List<AhlanFeekum.PropertyTypes.PropertyType>, List<LookupDto<Guid>>>(lookupData)
             };
         }
-
+        [AllowAnonymous]
         public virtual async Task<PagedResultDto<LookupDto<Guid>>> GetGovernorateLookupAsync(LookupRequestDto input)
         {
             var query = (await _governorateRepository.GetQueryableAsync())
@@ -122,7 +123,7 @@ namespace AhlanFeekum.SiteProperties
                 Items = ObjectMapper.Map<List<AhlanFeekum.UserProfiles.UserProfile>, List<LookupDto<Guid>>>(lookupData)
             };
         }
-
+        [AllowAnonymous]
         public virtual async Task<PagedResultDto<LookupDto<Guid>>> GetStatusLookupAsync(LookupRequestDto input)
         {
             var query = (await _statusRepository.GetQueryableAsync())
@@ -138,7 +139,7 @@ namespace AhlanFeekum.SiteProperties
                 Items = ObjectMapper.Map<List<AhlanFeekum.Statuses.Status>, List<LookupDto<Guid>>>(lookupData)
             };
         }
-
+        [AllowAnonymous]
         public virtual async Task<PagedResultDto<LookupDto<Guid>>> GetPropertyFeatureLookupAsync(LookupRequestDto input)
         {
             var query = (await _propertyFeatureRepository.GetQueryableAsync())

@@ -33,6 +33,16 @@ namespace AhlanFeekum.Migrations
                 {
                     table.PrimaryKey("PK_AppStatuses", x => x.Id);
                 });
+
+            migrationBuilder.InsertData(
+       table: "AppStatuses",
+       columns: new[] { "Id", "ExtraProperties", "ConcurrencyStamp", "CreationTime", "IsDeleted", "Name", "Order", "IsActive" },
+       values: new object[,]
+       {
+            { Guid.Parse("418df7ef-4d26-1a23-f03a-3a1c7a6c6a7e"), "{}", Guid.NewGuid().ToString(), DateTime.UtcNow, false, "Pending", 1, true },
+            { Guid.NewGuid(), "{}", Guid.NewGuid().ToString(), DateTime.UtcNow, false, "Approved", 2, true },
+            { Guid.NewGuid(), "{}", Guid.NewGuid().ToString(), DateTime.UtcNow, false, "Decline", 3, true }
+       });
         }
 
         /// <inheritdoc />

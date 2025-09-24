@@ -77,7 +77,7 @@ namespace AhlanFeekum.Controllers.SiteProperties
 
         [HttpGet]
         [Route("search-property")]
-        public virtual Task<PagedResultDto<SitePropertyListingMobileDto>> GetListAsync(GetSitePropertiesMobileInput input)
+        public virtual Task<PagedResultDto<SitePropertyListingMobileDto>> GetListAsync( GetSitePropertiesMobileInput input)
         {
             return _sitePropertiesAppService.GetListMobileAsync(input);
         }
@@ -98,6 +98,12 @@ namespace AhlanFeekum.Controllers.SiteProperties
 
         [HttpGet("with-details/{id}")]
         public async Task<SitePropertyWithDetailsMobileDto> GetWithDetailsMobileAsync(Guid id)
+        {
+            return await _sitePropertiesAppService.GetSitePropertyWithDetailsAsync(id);
+        }
+
+        [HttpGet("property-rating/{id}")]
+        public async Task<SitePropertyWithDetailsMobileDto> RatePropertyMobileAsync(Guid id)
         {
             return await _sitePropertiesAppService.GetSitePropertyWithDetailsAsync(id);
         }

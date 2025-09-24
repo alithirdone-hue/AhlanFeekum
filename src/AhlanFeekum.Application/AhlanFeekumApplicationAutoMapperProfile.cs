@@ -62,6 +62,16 @@ public class AhlanFeekumApplicationAutoMapperProfile : Profile
         CreateMap<PropertyEvaluation, PropertyEvaluationDto>();
         CreateMap<PropertyEvaluation, PropertyEvaluationExcelDto>();
         CreateMap<PropertyEvaluationWithNavigationProperties, PropertyEvaluationWithNavigationPropertiesDto>();
+        CreateMap<PropertyEvaluationWithNavigationProperties, PropertyEvaluationMobileDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PropertyEvaluation.Id))
+            .ForMember(dest => dest.Cleanliness, opt => opt.MapFrom(src => src.PropertyEvaluation.Cleanliness))
+            .ForMember(dest => dest.PriceAndValue, opt => opt.MapFrom(src => src.PropertyEvaluation.PriceAndValue))
+            .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.PropertyEvaluation.Location))
+            .ForMember(dest => dest.Accuracy, opt => opt.MapFrom(src => src.PropertyEvaluation.Accuracy))
+            .ForMember(dest => dest.Attitude, opt => opt.MapFrom(src => src.PropertyEvaluation.Attitude))
+            .ForMember(dest => dest.RatingComment, opt => opt.MapFrom(src => src.PropertyEvaluation.RatingComment))
+            .ForMember(dest => dest.UserProfileId, opt => opt.MapFrom(src => src.UserProfile.Id))
+            .ForMember(dest => dest.UserProfileName, opt => opt.MapFrom(src => src.UserProfile.Name));
 
         CreateMap<PropertyMedia, PropertyMediaDto>();
         CreateMap<PropertyMedia, PropertyMediaExcelDto>();
@@ -75,7 +85,8 @@ public class AhlanFeekumApplicationAutoMapperProfile : Profile
 
 
         CreateMap<Governorate, GovernorateDto>();
-        CreateMap<Governorate, GovernorateMobileDto>();
+        CreateMap<Governorate, GovernorateMobileDto>()
+            .ForMember(dest => dest.Icon, opt => opt.MapFrom(src => src.IconId != null ? $"{MimeTypes.MimeTypeMap.GetAttachmentPath()}/governorate-file/{src.IconId.ToString("N")}{src.iconExtension}" : null));
         CreateMap<Governorate, GovernorateExcelDto>();
 
         CreateMap<Governorate, LookupDto<Guid>>().ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.Title));

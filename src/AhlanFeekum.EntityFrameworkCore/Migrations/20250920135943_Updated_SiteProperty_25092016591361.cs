@@ -23,7 +23,7 @@ namespace AhlanFeekum.Migrations
                 table: "AppSiteProperties",
                 type: "uniqueidentifier",
                 nullable: false,
-                defaultValue: new Guid("0c4c0bb2-458b-83ea-92c9-3a1bee71f5c1"));
+                defaultValue: new Guid("c196e05f-9169-43cf-bcf8-0500eaa7e1b7"));
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppSiteProperties_OwnerId",

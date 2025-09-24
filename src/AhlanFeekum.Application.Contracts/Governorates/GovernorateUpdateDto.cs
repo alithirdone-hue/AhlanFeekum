@@ -9,6 +9,9 @@ namespace AhlanFeekum.Governorates
     {
         [Required]
         public string Title { get; set; } = null!;
+        public Guid IconId { get; set; }
+        [Required]
+        public string iconExtension { get; set; } = null!;
         public int Order { get; set; }
         public bool IsActive { get; set; }
 

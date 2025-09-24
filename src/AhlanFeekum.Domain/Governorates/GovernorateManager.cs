@@ -20,13 +20,14 @@ namespace AhlanFeekum.Governorates
         }
 
         public virtual async Task<Governorate> CreateAsync(
-        string title, int order, bool isActive)
+        string title, Guid iconId, string iconExtension, int order, bool isActive)
         {
             Check.NotNullOrWhiteSpace(title, nameof(title));
+            Check.NotNullOrWhiteSpace(iconExtension, nameof(iconExtension));
 
             var governorate = new Governorate(
              GuidGenerator.Create(),
-             title, order, isActive
+             title, iconId, iconExtension, order, isActive
              );
 
             return await _governorateRepository.InsertAsync(governorate);
@@ -34,14 +35,17 @@ namespace AhlanFeekum.Governorates
 
         public virtual async Task<Governorate> UpdateAsync(
             Guid id,
-            string title, int order, bool isActive, [CanBeNull] string? concurrencyStamp = null
+            string title, Guid iconId, string iconExtension, int order, bool isActive, [CanBeNull] string? concurrencyStamp = null
         )
         {
             Check.NotNullOrWhiteSpace(title, nameof(title));
+            Check.NotNullOrWhiteSpace(iconExtension, nameof(iconExtension));
 
             var governorate = await _governorateRepository.GetAsync(id);
 
             governorate.Title = title;
+            governorate.IconId = iconId;
+            governorate.iconExtension = iconExtension;
             governorate.Order = order;
             governorate.IsActive = isActive;
 

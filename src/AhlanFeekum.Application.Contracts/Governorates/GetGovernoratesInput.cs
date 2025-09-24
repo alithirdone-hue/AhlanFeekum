@@ -9,6 +9,7 @@ namespace AhlanFeekum.Governorates
         public string? FilterText { get; set; }
 
         public string? Title { get; set; }
+        public string? iconExtension { get; set; }
         public int? OrderMin { get; set; }
         public int? OrderMax { get; set; }
         public bool? IsActive { get; set; }

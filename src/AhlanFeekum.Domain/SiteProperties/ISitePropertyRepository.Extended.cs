@@ -36,7 +36,7 @@ namespace AhlanFeekum.SiteProperties
         bool? isActive = null,
         Guid? propertyTypeId = null,
         Guid? governorateId = null,
-        List<Guid?> propertyFeatureId = null,
+        List<Guid> propertyFeatureId = null,
         DateOnly? checkInDateMin = null,
         DateOnly? checkOutDateMax = null,
         Guid? userId = null,

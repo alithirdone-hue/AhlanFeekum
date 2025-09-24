@@ -16,6 +16,7 @@ namespace AhlanFeekum.UserProfiles
         public List<SpecialAdvertismentMobileDto> SpecialAdvertismentMobileDtos { get; set; } = new List<SpecialAdvertismentMobileDto>();
         public List<SitePropertyListingMobileDto> SiteProperties { get; set; } = new List<SitePropertyListingMobileDto>();
         public List<SitePropertyListingMobileDto> HighlyRatedProperty { get; set; } = new List<SitePropertyListingMobileDto>();
+       // public List<HotelMobileDto> HotelOfTheweekDto { get; set; } = new List<GovernorateMobileDto>();
         public List<GovernorateMobileDto> GovernorateMobileDto { get; set; } = new List<GovernorateMobileDto>();
 
         public OnlyForYouSectionMobileDto onlyForYouSectionMobileDto { get; set; } = new OnlyForYouSectionMobileDto();

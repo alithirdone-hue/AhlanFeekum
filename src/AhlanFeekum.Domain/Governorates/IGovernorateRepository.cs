@@ -12,6 +12,7 @@ namespace AhlanFeekum.Governorates
         Task DeleteAllAsync(
             string? filterText = null,
             string? title = null,
+            string? iconExtension = null,
             int? orderMin = null,
             int? orderMax = null,
             bool? isActive = null,
@@ -19,6 +20,7 @@ namespace AhlanFeekum.Governorates
         Task<List<Governorate>> GetListAsync(
                     string? filterText = null,
                     string? title = null,
+                    string? iconExtension = null,
                     int? orderMin = null,
                     int? orderMax = null,
                     bool? isActive = null,
@@ -31,6 +33,7 @@ namespace AhlanFeekum.Governorates
         Task<long> GetCountAsync(
             string? filterText = null,
             string? title = null,
+            string? iconExtension = null,
             int? orderMin = null,
             int? orderMax = null,
             bool? isActive = null,

@@ -3,6 +3,8 @@ using AhlanFeekum.PropertyEvaluations;
 using AhlanFeekum.PropertyFeatures;
 using AhlanFeekum.PropertyMedias;
 using AhlanFeekum.PropertyTypes;
+using AhlanFeekum.Statuses;
+using AhlanFeekum.UserProfiles;
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
@@ -28,6 +30,10 @@ namespace AhlanFeekum.SiteProperties
         public List<PropertyFeature> PropertyFeatures { get; set; } = null!;
         public PropertyMedia? MainImage { get; set; } = null;
         public List<PropertyMedia> Medias { get; set; }
+
+        public UserProfile Owner { get; set; } = null!;
+        public Status Status { get; set; } = null!;
+        public List<PropertyEvaluationWithNavigationProperties> PropertyEvaluationWithNavigationProperties { get; set; } = null!;
 
    
     }

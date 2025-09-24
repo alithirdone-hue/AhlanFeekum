@@ -26,10 +26,10 @@ namespace AhlanFeekum.Blazor.Pages
 {
     public partial class Governorates
     {
-        
-        
+        [Inject]
+        protected IJSRuntime JsRuntime { get; set; }
             
-        
+        private IJSObjectReference? _jsObjectRef;
             
         protected List<Volo.Abp.BlazoriseUI.BreadcrumbItem> BreadcrumbItems = new List<Volo.Abp.BlazoriseUI.BreadcrumbItem>();
         protected PageToolbar Toolbar {get;} = new PageToolbar();
@@ -87,7 +87,7 @@ namespace AhlanFeekum.Blazor.Pages
         {
             if (firstRender)
             {
-                
+                _jsObjectRef = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "/Pages/Governorates.razor.js");
                 await SetBreadcrumbItemsAsync();
                 await SetToolbarItemsAsync();
                 await InvokeAsync(StateHasChanged);
@@ -154,7 +154,7 @@ namespace AhlanFeekum.Blazor.Pages
                 culture = "&culture=" + culture;
             }
             await RemoteServiceConfigurationProvider.GetConfigurationOrDefaultOrNullAsync("Default");
-            NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/governorates/as-excel-file?DownloadToken={token}&FilterText={HttpUtility.UrlEncode(Filter.FilterText)}{culture}&Title={HttpUtility.UrlEncode(Filter.Title)}&OrderMin={Filter.OrderMin}&OrderMax={Filter.OrderMax}&IsActive={Filter.IsActive}", forceLoad: true);
+            NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/governorates/as-excel-file?DownloadToken={token}&FilterText={HttpUtility.UrlEncode(Filter.FilterText)}{culture}&Title={HttpUtility.UrlEncode(Filter.Title)}&iconExtension={HttpUtility.UrlEncode(Filter.iconExtension)}&OrderMin={Filter.OrderMin}&OrderMax={Filter.OrderMax}&IsActive={Filter.IsActive}", forceLoad: true);
         }
 
         private async Task OnDataGridReadAsync(DataGridReadDataEventArgs<GovernorateDto> e)
@@ -177,7 +177,7 @@ namespace AhlanFeekum.Blazor.Pages
 
             SelectedCreateTab = "governorate-create-tab";
             
-            
+            await _jsObjectRef!.InvokeVoidAsync("FileCleanup.clearInputFiles");
             await NewGovernorateValidations.ClearAll();
             await CreateGovernorateModal.Show();
         }
@@ -195,12 +195,13 @@ namespace AhlanFeekum.Blazor.Pages
         {
             SelectedEditTab = "governorate-edit-tab";
             
-            
+            await _jsObjectRef!.InvokeVoidAsync("FileCleanup.clearInputFiles");
             var governorate = await GovernoratesAppService.GetAsync(input.Id);
             
             EditingGovernorateId = governorate.Id;
             EditingGovernorate = ObjectMapper.Map<GovernorateDto, GovernorateUpdateDto>(governorate);
-            
+            HasSelectedGovernorateIcon = EditingGovernorate.IconId != null && EditingGovernorate.IconId != Guid.Empty;
+
             await EditingGovernorateValidations.ClearAll();
             await EditGovernorateModal.Show();
         }
@@ -265,16 +266,98 @@ namespace AhlanFeekum.Blazor.Pages
         }
 
 
+        private bool IsCreateFormDisabled()
+        {
+            return OnNewGovernorateIconLoading ||NewGovernorate.IconId == Guid.Empty ;
+        }
+        
+        private bool IsEditFormDisabled()
+        {
+            return OnEditGovernorateIconLoading ||EditingGovernorate.IconId == Guid.Empty ;
+        }
+
+
+
+        private int MaxGovernorateIconFileUploadSize = 1024 * 1024 * 10; //10MB
+        private bool OnNewGovernorateIconLoading = false;
+        private async Task OnNewGovernorateIconChanged(InputFileChangeEventArgs e)
+        {
+            try
+            {
+                if (e.FileCount is 0 or > 1 || e.File.Size > MaxGovernorateIconFileUploadSize)
+                {
+                    throw new UserFriendlyException(L["UploadFailedMessage"]);
+                }
+    
+                OnNewGovernorateIconLoading = true;
+                
+                var result = await UploadFileAsync(e.File!);
+    
+                NewGovernorate.IconId = result.Id;
+                NewGovernorate.iconExtension = Path.GetExtension(e.File.Name);
+                OnNewGovernorateIconLoading = false;            
+            }
+            catch(Exception ex)
+            {
+                await HandleErrorAsync(ex);
+            }
+        }
+        private bool HasSelectedGovernorateIcon = false;
+        private bool OnEditGovernorateIconLoading = false;
+        private async Task OnEditGovernorateIconChanged(InputFileChangeEventArgs e)
+        {
+            try
+            {
+                if (e.FileCount is 0 or > 1 || e.File.Size > MaxGovernorateIconFileUploadSize)
+                {
+                    throw new UserFriendlyException(L["UploadFailedMessage"]);
+                }
+    
+                OnEditGovernorateIconLoading = true;
+                
+                var result = await UploadFileAsync(e.File!);
+    
+                EditingGovernorate.IconId = result.Id;
+                EditingGovernorate.iconExtension = Path.GetExtension(e.File.Name);
+                OnEditGovernorateIconLoading = false;            
+            }
+            catch(Exception ex)
+            {
+                await HandleErrorAsync(ex);
+            }            
+        }
 
 
 
 
+        private async Task<AppFileDescriptorDto> UploadFileAsync(IBrowserFile file)
+        {
+            using (var ms = new MemoryStream())
+            {
+                await file.OpenReadStream(long.MaxValue).CopyToAsync(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                
+                return await GovernoratesAppService.UploadFileAsync(new RemoteStreamContent(ms, file.Name, file.ContentType));
+            }
+        }
 
 
+
+        private async Task DownloadFileAsync(Guid fileId)
+        {
+            var token = (await GovernoratesAppService.GetDownloadTokenAsync()).Token;
+            var remoteService = await RemoteServiceConfigurationProvider.GetConfigurationOrDefaultOrNullAsync("AhlanFeekum") ?? await RemoteServiceConfigurationProvider.GetConfigurationOrDefaultOrNullAsync("Default");
+            NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/governorates/file?DownloadToken={token}&FileId={fileId}", forceLoad: true);
+        }
 
         protected virtual async Task OnTitleChangedAsync(string? title)
         {
             Filter.Title = title;
+            await SearchAsync();
+        }
+        protected virtual async Task OniconExtensionChangedAsync(string? iconExtension)
+        {
+            Filter.iconExtension = iconExtension;
             await SearchAsync();
         }
         protected virtual async Task OnOrderMinChangedAsync(int? orderMin)

@@ -46,6 +46,7 @@ namespace AhlanFeekum.SiteProperties
         }
 
 
+        [AllowAnonymous]
         public virtual async Task<SitePropertyWithDetailsMobileDto> GetSitePropertyWithDetailsAsync(Guid id)
         {
             Guid? userId = null;
@@ -57,6 +58,7 @@ namespace AhlanFeekum.SiteProperties
 
         }
 
+        [RemoteService(false)]
         [Authorize(AhlanFeekumPermissions.SiteProperties.Create)]
         public virtual async Task<SitePropertyDto> CreateAsync(SitePropertyCreateMobileDto input)
         {
@@ -111,15 +113,20 @@ namespace AhlanFeekum.SiteProperties
             mobileResponseDto.Data = true;
             return mobileResponseDto;
         }
+
+        [AllowAnonymous]
         public virtual async Task<PagedResultDto<SitePropertyListingMobileDto>> GetListMobileAsync(GetSitePropertiesMobileInput input)
         {
             Guid? userId = null;
+            List<Guid>? propertyFeatures = null;
             if (_currentUser == null)
                 userId = null;
             else
                 userId = _currentUser.Id;
+            if (!input.PropertyFeatureIds.IsNullOrEmpty())
+                propertyFeatures = input.PropertyFeatureIds;
 
-            var item = await _sitePropertyRepository.GetListWithDetailsAsync(input.FilterText, input.PropertyTitle, input.HotelName, input.BedroomsMin, input.BedroomsMax, input.BathroomsMin, input.BathroomsMax, input.NumberOfBedMin, input.NumberOfBedMax, input.FloorMin, input.FloorMax, input.MaximumNumberOfGuestMin, input.MaximumNumberOfGuestMax, input.LivingroomsMin, input.LivingroomsMax, input.PropertyDescription, input.HourseRules, input.ImportantInformation, input.Address, input.StreetAndBuildingNumber, input.LandMark, input.PricePerNightMin, input.PricePerNightMax, input.IsActive, input.PropertyTypeId, input.GovernorateId, input.PropertyFeatureIds, input.CheckInDate, input.CheckOutDate, userId, input.Sorting, input.MaxResultCount, input.SkipCount);
+            var item = await _sitePropertyRepository.GetListWithDetailsAsync(input.FilterText, input.PropertyTitle, input.HotelName, input.BedroomsMin, input.BedroomsMax, input.BathroomsMin, input.BathroomsMax, input.NumberOfBedMin, input.NumberOfBedMax, input.FloorMin, input.FloorMax, input.MaximumNumberOfGuestMin, input.MaximumNumberOfGuestMax, input.LivingroomsMin, input.LivingroomsMax, input.PropertyDescription, input.HouseRules, input.ImportantInformation, input.Address, input.StreetAndBuildingNumber, input.LandMark, input.PricePerNightMin, input.PricePerNightMax, input.IsActive, input.PropertyTypeId, input.GovernorateId, input.PropertyFeatureIds, input.CheckInDate, input.CheckOutDate, userId, input.Sorting, input.MaxResultCount, input.SkipCount);
 
             return new PagedResultDto<SitePropertyListingMobileDto>
             {

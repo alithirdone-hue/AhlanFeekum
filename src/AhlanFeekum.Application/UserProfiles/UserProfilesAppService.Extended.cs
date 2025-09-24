@@ -3,6 +3,7 @@ using AhlanFeekum.MobileResponses;
 using AhlanFeekum.Permissions;
 using AhlanFeekum.Shared;
 using AhlanFeekum.Shared;
+using AhlanFeekum.SiteProperties;
 using AhlanFeekum.UserProfiles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Distributed;
@@ -59,6 +60,14 @@ namespace AhlanFeekum.UserProfiles
             return ObjectMapper.Map<MobileResponse, MobileResponseDto>(user);
         }
 
+        [AllowAnonymous]
+        public virtual async Task<MobileResponseDto> UpdateMyProfileAsync(UserProfileUpdateMobileDto input)
+        {
+            if(_currentUser == null)
+                throw new UserFriendlyException("User not login");
+            var user = await _userProfileManager.UpdateMyProfileAsync(_currentUser.Id.Value, input.Name, input.ProfilePhoto, input.IsProfilePhotoChanged, input.Email, input.PhoneNumber, input.Latitude, input.Longitude, input.Address);
+            return ObjectMapper.Map<MobileResponse, MobileResponseDto>(user);
+        }
         [AllowAnonymous]
         public virtual async Task<MobileResponseDto> RequestPasswordResetAsync(PasswordResetRequestDto input)
         {
@@ -405,6 +414,23 @@ namespace AhlanFeekum.UserProfiles
             else
                 userId = _currentUser.Id;
                 return ObjectMapper.Map<HomePage, HomePageDto>(await _userProfileRepository.GetHomePageAsync(userId));
+        }
+
+        public virtual async Task<UserProfileWithDetailsMobileDto> GetWithDetailsAsync(Guid? id)
+        {
+
+            Guid? userId = null;
+            if (id == null)
+            {
+                if (_currentUser == null)
+                    throw new UserFriendlyException("No User Selected");
+                userId = _currentUser.Id;
+            }
+            else
+                userId = id;
+
+            return ObjectMapper.Map<UserProfileWithDetails, UserProfileWithDetailsMobileDto>(await _userProfileRepository.GetWithDetailsAsync(userId.Value));
+
         }
 
     }

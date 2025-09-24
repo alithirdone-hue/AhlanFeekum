@@ -1,12 +1,15 @@
-﻿using AhlanFeekum.PropertyFeatures;
+﻿using AhlanFeekum.MimeTypes;
+using AhlanFeekum.PropertyEvaluations;
+using AhlanFeekum.PropertyFeatures;
 using AhlanFeekum.PropertyMedias;
 using AhlanFeekum.SiteProperties;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Http;
 using Volo.Abp.ObjectMapping;
-using AhlanFeekum.MimeTypes;
+using static AhlanFeekum.Permissions.AhlanFeekumPermissions;
 using IObjectMapper = Volo.Abp.ObjectMapping.IObjectMapper;
 
 namespace SIBF.CustomMapper
@@ -74,10 +77,35 @@ namespace SIBF.CustomMapper
                 SitePropertyWithDetailsFront.PropertyMediaMobileDto = _objectMapper.Map<List<PropertyMedia>, List<PropertyMediaMobileDto>>(source.Medias);
             }
             SitePropertyWithDetailsFront.IsActive = source.SiteProperty.IsActive;
-            SitePropertyWithDetailsFront.IsActive = source.SiteProperty.IsActive;
-            SitePropertyWithDetailsFront.IsActive = source.SiteProperty.IsActive;
+            SitePropertyWithDetailsFront.OwnerId = source.SiteProperty.OwnerId;
+            SitePropertyWithDetailsFront.OwnerName = source.Owner.Name;
+            SitePropertyWithDetailsFront.StatusId = source.SiteProperty.StatusId;
+            SitePropertyWithDetailsFront.StatusName = source.Status.Name;
+            SitePropertyWithDetailsFront.Area = source.SiteProperty.Area;
 
-       
+            if(!source.PropertyEvaluationWithNavigationProperties.IsNullOrEmpty())
+                SitePropertyWithDetailsFront.PropertyEvaluationMobileDtos = _objectMapper.Map<List<PropertyEvaluationWithNavigationProperties>, List<PropertyEvaluationMobileDto>>(source.PropertyEvaluationWithNavigationProperties);
+
+            if (!source.PropertyEvaluationWithNavigationProperties.IsNullOrEmpty())
+            {
+                SitePropertyWithDetailsFront.AverageCleanliness = source.PropertyEvaluationWithNavigationProperties.Average(x => (double?)x.PropertyEvaluation.Cleanliness);
+                SitePropertyWithDetailsFront.AveragePriceAndValue = source.PropertyEvaluationWithNavigationProperties.Average(x => (double?)x.PropertyEvaluation.PriceAndValue);
+                SitePropertyWithDetailsFront.AverageLocation = source.PropertyEvaluationWithNavigationProperties.Average(x => (double?)x.PropertyEvaluation.Location);
+                SitePropertyWithDetailsFront.AverageAccuracy = source.PropertyEvaluationWithNavigationProperties.Average(x => (double?)x.PropertyEvaluation.Accuracy);
+                SitePropertyWithDetailsFront.AverageAttitude = source.PropertyEvaluationWithNavigationProperties.Average(x => (double?)x.PropertyEvaluation.Attitude);
+                SitePropertyWithDetailsFront.AverageRating = (SitePropertyWithDetailsFront.AverageCleanliness + SitePropertyWithDetailsFront.AveragePriceAndValue + SitePropertyWithDetailsFront.AverageLocation + SitePropertyWithDetailsFront.AverageAccuracy
+                                                                + SitePropertyWithDetailsFront.AverageAttitude) / 5;
+            }
+            else
+            {
+                SitePropertyWithDetailsFront.AverageCleanliness = null;
+                SitePropertyWithDetailsFront.AveragePriceAndValue = null;
+                SitePropertyWithDetailsFront.AverageLocation = null;
+                SitePropertyWithDetailsFront.AverageAccuracy = null;
+                SitePropertyWithDetailsFront.AverageAttitude = null;
+                SitePropertyWithDetailsFront.AverageRating = null;
+            }
+
             return SitePropertyWithDetailsFront;
         }
 

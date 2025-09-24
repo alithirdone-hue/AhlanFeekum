@@ -1,4 +1,4 @@
-using AhlanFeekum.MobileResponses;
+﻿using AhlanFeekum.MobileResponses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -13,6 +13,7 @@ using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
 using Volo.Abp.Http;
 using Volo.Abp.Identity;
+using static Volo.Abp.Identity.Settings.IdentitySettingNames;
 
 namespace AhlanFeekum.UserProfiles
 {
@@ -118,6 +119,113 @@ namespace AhlanFeekum.UserProfiles
             }
         }
 
+        public virtual async Task<MobileResponse> UpdateMyProfileAsync(Guid id, string name,  IFormFile profilePhoto, bool isProfileChanged = false, string? email = null, string? phoneNumber = null, string? latitude = null, string? longitude = null, string? address = null)
+        {
+            MobileResponse mobileResponse = new MobileResponse();
+            Check.NotNullOrWhiteSpace(name, nameof(name));
+
+            try
+            {
+
+                Check.NotNullOrWhiteSpace(name, nameof(name));
+
+                var userProfile = await _userProfileRepository.GetAsync(id);
+
+                userProfile.Name = name;
+                userProfile.Email = email;
+                userProfile.PhoneNumber = phoneNumber;
+                userProfile.Latitude = latitude;
+                userProfile.Longitude = longitude;
+                userProfile.Address = address;
+
+              //  return
+
+
+                string imageName = "";
+                var users = await _identityUserRepository.GetListAsync();
+                var identityUser = users.FirstOrDefault(u => u.Id == id );
+                if (identityUser == null)
+                {
+                    mobileResponse.Code = 501;
+                    mobileResponse.Message = "User not exists.";
+                    mobileResponse.Data = null;
+                    return mobileResponse;
+                }
+
+              
+               
+                await _identityUserManager.SetEmailAsync(identityUser, email);
+                identityUser.Name = name;
+                identityUser.Surname = name;
+                string formattedPhoneNumber = phoneNumber.StartsWith("+") ? phoneNumber : "+963" + phoneNumber;
+                identityUser.SetPhoneNumber(formattedPhoneNumber, false);
+                //Guid roleId = Guid.Parse("84840acb-9a32-4fc8-7b98-3a19d056874e");
+                //if (roleName.Trim() == "1")
+                //{
+                //    roleId = Guid.Parse("3f314e03-898d-92cd-8b2c-3a1bee2e46b4");
+                //    identityUser.AddRole(roleId);
+                //}
+                //if (roleName.Trim() == "2")
+                //{
+                //    roleId = Guid.Parse("3edb2ac3-49d8-5734-727e-3a1bee2e61b7");
+                //    identityUser.AddRole(roleId);
+                //}
+
+                var result = await _identityUserManager.UpdateAsync(identityUser);
+
+                if (result.Succeeded)
+                {
+                    if (isProfileChanged)
+                    {
+                        imageName = await uploadImage(profilePhoto);
+                        userProfile.ProfilePhoto = imageName;
+                    }
+
+                    await _userProfileRepository.UpdateAsync(userProfile);
+
+                    var currentRoles = await _identityUserManager.GetRolesAsync(identityUser);
+                    var roleId = "3";
+                    if (currentRoles != null && currentRoles.Contains("Guest"))
+                        roleId = "1";
+                    if (currentRoles != null && currentRoles.Contains("Host"))
+                        roleId = "2";
+
+                    var register = new RegisterResponse()
+                    {
+                        Id = userProfile.Id,
+                        Name = userProfile.Name,
+                        PhoneNumber = formattedPhoneNumber,
+                        Email = email,
+                        Latitude = latitude,
+                        Longitude = longitude,
+                        Address = address,
+                        IsSuperHost = userProfile.IsSuperHost,
+                        ProfilePhoto = $"{MimeTypes.MimeTypeMap.GetAttachmentPath()}/UserProfileImages/{imageName}",
+                        RoleId = roleId
+                    };
+                    mobileResponse.Code = 200;
+                    mobileResponse.Message = "SUCCESS";
+                    mobileResponse.Data = register;
+                    return mobileResponse;
+
+                }
+                else
+                {
+                    mobileResponse.Code = 501;
+                    mobileResponse.Message = result.ToString();
+                    mobileResponse.Data = null;
+                    return mobileResponse;
+                }
+
+            }
+            catch (Exception e)
+            {
+                mobileResponse.Code = 501;
+                mobileResponse.Message = "Internal server error";
+                mobileResponse.Data = null;
+                return mobileResponse;
+            }
+        }
         private async Task<string> uploadImage(IFormFile? formFile)
         {
             if (formFile == null)
