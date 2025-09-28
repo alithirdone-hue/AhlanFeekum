@@ -797,9 +797,17 @@ namespace AhlanFeekum.Migrations
                     .HasColumnType("uniqueidentifier")
                     .HasColumnName("LastModifierId");
 
+                b.Property<string>("Latitude")
+                               .HasColumnType("nvarchar(max)")
+                               .HasColumnName("Latitude");
+
                 b.Property<int>("Livingrooms")
                     .HasColumnType("int")
                     .HasColumnName("Livingrooms");
+
+                b.Property<string>("Longitude")
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("Longitude");
 
                 b.Property<int>("MaximumNumberOfGuest")
                     .HasColumnType("int")

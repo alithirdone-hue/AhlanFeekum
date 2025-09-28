@@ -24,7 +24,7 @@ namespace AhlanFeekum.SiteProperties
 
         //Write your custom code...
         public virtual async Task<SiteProperty> UpdateAsync(
-           Guid id,  string? address = null, string? streetAndBuildingNumber = null, string? landMark = null, [CanBeNull] string? concurrencyStamp = null
+           Guid id,  string? address = null, string? streetAndBuildingNumber = null, string? landMark = null, string? lat = null, string? lon = null, [CanBeNull] string? concurrencyStamp = null
        )
         {
 
@@ -37,7 +37,8 @@ namespace AhlanFeekum.SiteProperties
             siteProperty.Address = address;
             siteProperty.StreetAndBuildingNumber = streetAndBuildingNumber;
             siteProperty.LandMark = landMark;
-
+            siteProperty.Latitude = lat;
+            siteProperty.Longitude = lon;
             return await _sitePropertyRepository.UpdateAsync(siteProperty);
         }
     }

@@ -35,7 +35,7 @@ namespace AhlanFeekum.PropertyEvaluations
              userProfileId, sitePropertyId, cleanliness, priceAndValue, location, accuracy, attitude, ratingComment
              );
 
-            return await _propertyEvaluationRepository.InsertAsync(propertyEvaluation);
+            return await _propertyEvaluationRepository.InsertAsync(propertyEvaluation, autoSave: true);
         }
 
         public virtual async Task<PropertyEvaluation> UpdateAsync(
@@ -63,7 +63,7 @@ namespace AhlanFeekum.PropertyEvaluations
             propertyEvaluation.RatingComment = ratingComment;
 
             propertyEvaluation.SetConcurrencyStampIfNotNull(concurrencyStamp);
-            return await _propertyEvaluationRepository.UpdateAsync(propertyEvaluation);
+            return await _propertyEvaluationRepository.UpdateAsync(propertyEvaluation, autoSave: true);
         }
 
     }

@@ -55,6 +55,7 @@ namespace SIBF.CustomMapper
             HomePageFront.SiteProperties = _objectMapper.Map<List<SitePropertyWithDetails>, List<SitePropertyListingMobileDto>>(source.SiteProperties);
             HomePageFront.HighlyRatedProperty = _objectMapper.Map<List<SitePropertyWithDetails>, List<SitePropertyListingMobileDto>>(source.HighlyRated);
             HomePageFront.GovernorateMobileDto = _objectMapper.Map<List<Governorate>, List<GovernorateMobileDto>>(source.Governorates);
+            HomePageFront.HotelsOfTheWeek = _objectMapper.Map<List<UserProfile>, List<UserProfileMobileDto>>(source.HotelsOfTheWeek);
             HomePageFront.onlyForYouSectionMobileDto = _objectMapper.Map<OnlyForYouSection, OnlyForYouSectionMobileDto> (source.OnlyForYouSection);
                   
             return HomePageFront;

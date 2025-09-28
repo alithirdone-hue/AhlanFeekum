@@ -20,6 +20,8 @@ namespace AhlanFeekum.SiteProperties
         public string? LandMark { get; set; }
         public int PricePerNight { get; set; }
         public double Area { get; set; }
+        public string? Latitude { get; set; }
+        public string? Longitude { get; set; }
         public bool IsActive { get; set; }
     }
 }

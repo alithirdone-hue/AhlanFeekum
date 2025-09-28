@@ -44,6 +44,8 @@ namespace SIBF.CustomMapper
             UserProfileWithDetailsFront.Id = source.Id;
             UserProfileWithDetailsFront.Name = source.Name;
             UserProfileWithDetailsFront.Email = source.Email;
+            UserProfileWithDetailsFront.AverageRating = source.AverageRating;
+            
             if (source.ProfilePhoto != null)
             {
                 UserProfileWithDetailsFront.ProfilePhoto = $"{AhlanFeekum.MimeTypes.MimeTypeMap.GetAttachmentPath()}/UserProfileImages/{source.ProfilePhoto}";

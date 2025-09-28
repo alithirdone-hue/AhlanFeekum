@@ -46,6 +46,10 @@ namespace AhlanFeekum.SiteProperties
        
         public string? StreetAndBuildingNumber { get; set; }
         public string? LandMark { get; set; }
+        public double? AreaMin { get; set; }
+        public double? AreaMax { get; set; }
+        public string? Latitude { get; set; }
+        public string? Longitude { get; set; }
 
         public bool? IsActive { get; set; }
         public GetSitePropertiesMobileInput()

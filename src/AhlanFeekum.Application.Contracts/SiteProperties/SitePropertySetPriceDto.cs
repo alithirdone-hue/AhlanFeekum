@@ -9,5 +9,7 @@ namespace AhlanFeekum.SiteProperties
         public string? Address { get; set; }
         public string? StreetAndBuildingNumber { get; set; }
         public string? LandMark { get; set; }
+        public string? Latitude { get; set; }
+        public string? Longitude { get; set; }
     }
 }

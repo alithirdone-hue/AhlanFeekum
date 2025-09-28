@@ -1,5 +1,6 @@
 ﻿using AhlanFeekum.FavoriteProperties;
 using AhlanFeekum.Governorates;
+using AhlanFeekum.Governorates;
 using AhlanFeekum.OnlyForYouSections;
 using AhlanFeekum.OnlyForYouSections;
 using AhlanFeekum.PersonEvaluations;
@@ -14,7 +15,7 @@ using AhlanFeekum.SpecialAdvertisments;
 using AhlanFeekum.SpecialAdvertisments;
 using AhlanFeekum.Statuses;
 using AhlanFeekum.UserProfiles;
-using AhlanFeekum.Governorates;
+using AhlanFeekum.SiteProperties;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -326,6 +327,8 @@ public class AhlanFeekumDbContext :
                 b.Property(x => x.LandMark).HasColumnName(nameof(SiteProperty.LandMark));
                 b.Property(x => x.PricePerNight).HasColumnName(nameof(SiteProperty.PricePerNight));
                 b.Property(x => x.Area).HasColumnName(nameof(SiteProperty.Area));
+                b.Property(x => x.Latitude).HasColumnName(nameof(SiteProperty.Latitude));
+                b.Property(x => x.Longitude).HasColumnName(nameof(SiteProperty.Longitude));
                 b.Property(x => x.IsActive).HasColumnName(nameof(SiteProperty.IsActive));
                 b.HasOne<PropertyType>().WithMany().IsRequired().HasForeignKey(x => x.PropertyTypeId).OnDelete(DeleteBehavior.NoAction);
                 b.HasOne<Governorate>().WithMany().IsRequired().HasForeignKey(x => x.GovernorateId).OnDelete(DeleteBehavior.NoAction);

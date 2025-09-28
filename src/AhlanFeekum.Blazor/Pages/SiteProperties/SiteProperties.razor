@@ -250,6 +250,18 @@
                 </Column>
                 <Column ColumnSize="ColumnSize.Is3">
                     <Field>
+                        <FieldLabel>@L["Latitude"]</FieldLabel>
+                        <TextEdit Text="@Filter.Latitude" TextChanged="@OnLatitudeChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["Longitude"]</FieldLabel>
+                        <TextEdit Text="@Filter.Longitude" TextChanged="@OnLongitudeChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
                         <FieldLabel>@L["IsActive"]</FieldLabel>
                         <Select TValue="bool?"
 		SelectedValue="@Filter.IsActive"
@@ -552,6 +564,16 @@
               </DataGridColumn>
 
               <DataGridColumn TItem="SitePropertyWithNavigationPropertiesDto"
+                      Field="SiteProperty.Latitude"
+                      Caption="@L["Latitude"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="SitePropertyWithNavigationPropertiesDto"
+                      Field="SiteProperty.Longitude"
+                      Caption="@L["Longitude"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="SitePropertyWithNavigationPropertiesDto"
                       Field="SiteProperty.IsActive"
                       Caption="@L["IsActive"]">
                     <DisplayTemplate>
@@ -807,6 +829,30 @@
                              </NumericPicker>
                         </Field>
                      </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Latitude"]</FieldLabel>
+                            <TextEdit @bind-Text="@NewSiteProperty.Latitude"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Longitude"]</FieldLabel>
+                            <TextEdit @bind-Text="@NewSiteProperty.Longitude"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
 
 
                     <Field>
@@ -1148,6 +1194,30 @@
                              </NumericPicker>
                         </Field>
                      </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Latitude"]</FieldLabel>
+                            <TextEdit @bind-Text="@EditingSiteProperty.Latitude"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Longitude"]</FieldLabel>
+                            <TextEdit @bind-Text="@EditingSiteProperty.Longitude"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
 
 
                     <Field>

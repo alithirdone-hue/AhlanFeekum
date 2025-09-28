@@ -20,6 +20,7 @@ namespace AhlanFeekum.UserProfiles
        // public List<HotelMobileDto> HotelOfTheweekDto { get; set; } = new List<GovernorateMobileDto>();
         public List<GovernorateMobileDto> GovernorateMobileDto { get; set; } = new List<GovernorateMobileDto>();
 
+        public List<UserProfileMobileDto> HotelsOfTheWeek { get; set; } = new();
         public OnlyForYouSectionMobileDto onlyForYouSectionMobileDto { get; set; } = new OnlyForYouSectionMobileDto();
 
     }

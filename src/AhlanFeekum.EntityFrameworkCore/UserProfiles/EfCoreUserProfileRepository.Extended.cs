@@ -26,6 +26,10 @@ namespace AhlanFeekum.UserProfiles
         public async Task<HomePage> GetHomePageAsync(Guid? userId)
         {
             var dbContext = await GetDbContextAsync();
+            Guid? hotelPropertyTypeId = null;
+            PropertyType propertyType = dbContext.PropertyTypes.FirstOrDefault(p => p.Title.ToLower() == "hotel");
+            if (propertyType != null)
+                hotelPropertyTypeId = propertyType.Id;
             return (await GetDbSetAsync())
                 .Select(homePage => new HomePage
                 {
@@ -80,6 +84,14 @@ namespace AhlanFeekum.UserProfiles
                     //    IsFavorite = userId == null ? false : dbContext.FavoriteProperties.Any(p => p.SitePropertyId == siteProperty.Id && p.UserProfileId == userId),
                     //}).ToList(),
                     Governorates = dbContext.Governorates.OrderBy(g => g.Order).ToList(),
+                    HotelsOfTheWeek =
+                    (from siteProperty in (dbContext.SiteProperties.Where(p=>p.PropertyTypeId == hotelPropertyTypeId).Include(p => p.PropertyFeatures))
+                     from user in dbContext.UserProfiles where siteProperty.OwnerId == user.Id
+                     select new UserProfile(user.Id,user.IdentityRoleId, user.IdentityUserId,user.Name, user.IsSuperHost,user.Email,
+                     user.PhoneNumber, user.Latitude, user.Longitude,user.Address, user.ProfilePhoto)
+                     {
+                         AverageRating = dbContext.PropertyEvaluations.Where(p => p.SitePropertyId == siteProperty.Id).Average(e => (e.Cleanliness + e.PriceAndValue + e.Location + e.Accuracy + e.Attitude) / 5.0)
+                     }).Take(2).ToList(),
                     OnlyForYouSection = dbContext.OnlyForYouSections.FirstOrDefault()
                 }).FirstOrDefault();
         }

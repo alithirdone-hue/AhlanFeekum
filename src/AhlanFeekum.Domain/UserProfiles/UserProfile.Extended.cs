@@ -9,6 +9,7 @@ using Volo.Abp.MultiTenancy;
 using JetBrains.Annotations;
 
 using Volo.Abp;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AhlanFeekum.UserProfiles
 {
@@ -20,6 +21,8 @@ namespace AhlanFeekum.UserProfiles
 
         }
 
+        [NotMapped]
+        public double? AverageRating { get; set; } = null;
         public UserProfile(Guid id, Guid? identityRoleId, Guid identityUserId, string name, bool isSuperHost, string? email = null, string? phoneNumber = null, string? latitude = null, string? longitude = null, string? address = null, string? profilePhoto = null)
             : base(id, identityRoleId, identityUserId, name, isSuperHost, email, phoneNumber, latitude, longitude, address, profilePhoto)
         {

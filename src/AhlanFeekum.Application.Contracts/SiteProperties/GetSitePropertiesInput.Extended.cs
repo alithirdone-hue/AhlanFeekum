@@ -1,3 +1,5 @@
+using AhlanFeekum.SiteProperties;
+
 namespace AhlanFeekum.SiteProperties
 {
     public class GetSitePropertiesInput : GetSitePropertiesInputBase

@@ -181,7 +181,7 @@ private IReadOnlyList<LookupDto<Guid>> PropertyFeatures { get; set; } = new List
                 culture = "&culture=" + culture;
             }
             await RemoteServiceConfigurationProvider.GetConfigurationOrDefaultOrNullAsync("Default");
-            NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/site-properties/as-excel-file?DownloadToken={token}&FilterText={HttpUtility.UrlEncode(Filter.FilterText)}{culture}&PropertyTitle={HttpUtility.UrlEncode(Filter.PropertyTitle)}&HotelName={HttpUtility.UrlEncode(Filter.HotelName)}&BedroomsMin={Filter.BedroomsMin}&BedroomsMax={Filter.BedroomsMax}&BathroomsMin={Filter.BathroomsMin}&BathroomsMax={Filter.BathroomsMax}&NumberOfBedMin={Filter.NumberOfBedMin}&NumberOfBedMax={Filter.NumberOfBedMax}&FloorMin={Filter.FloorMin}&FloorMax={Filter.FloorMax}&MaximumNumberOfGuestMin={Filter.MaximumNumberOfGuestMin}&MaximumNumberOfGuestMax={Filter.MaximumNumberOfGuestMax}&LivingroomsMin={Filter.LivingroomsMin}&LivingroomsMax={Filter.LivingroomsMax}&PropertyDescription={HttpUtility.UrlEncode(Filter.PropertyDescription)}&HourseRules={HttpUtility.UrlEncode(Filter.HourseRules)}&ImportantInformation={HttpUtility.UrlEncode(Filter.ImportantInformation)}&Address={HttpUtility.UrlEncode(Filter.Address)}&StreetAndBuildingNumber={HttpUtility.UrlEncode(Filter.StreetAndBuildingNumber)}&LandMark={HttpUtility.UrlEncode(Filter.LandMark)}&PricePerNightMin={Filter.PricePerNightMin}&PricePerNightMax={Filter.PricePerNightMax}&AreaMin={Filter.AreaMin}&AreaMax={Filter.AreaMax}&IsActive={Filter.IsActive}&PropertyTypeId={Filter.PropertyTypeId}&GovernorateId={Filter.GovernorateId}&OwnerId={Filter.OwnerId}&StatusId={Filter.StatusId}&PropertyFeatureId={Filter.PropertyFeatureId}", forceLoad: true);
+            NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/site-properties/as-excel-file?DownloadToken={token}&FilterText={HttpUtility.UrlEncode(Filter.FilterText)}{culture}&PropertyTitle={HttpUtility.UrlEncode(Filter.PropertyTitle)}&HotelName={HttpUtility.UrlEncode(Filter.HotelName)}&BedroomsMin={Filter.BedroomsMin}&BedroomsMax={Filter.BedroomsMax}&BathroomsMin={Filter.BathroomsMin}&BathroomsMax={Filter.BathroomsMax}&NumberOfBedMin={Filter.NumberOfBedMin}&NumberOfBedMax={Filter.NumberOfBedMax}&FloorMin={Filter.FloorMin}&FloorMax={Filter.FloorMax}&MaximumNumberOfGuestMin={Filter.MaximumNumberOfGuestMin}&MaximumNumberOfGuestMax={Filter.MaximumNumberOfGuestMax}&LivingroomsMin={Filter.LivingroomsMin}&LivingroomsMax={Filter.LivingroomsMax}&PropertyDescription={HttpUtility.UrlEncode(Filter.PropertyDescription)}&HourseRules={HttpUtility.UrlEncode(Filter.HourseRules)}&ImportantInformation={HttpUtility.UrlEncode(Filter.ImportantInformation)}&Address={HttpUtility.UrlEncode(Filter.Address)}&StreetAndBuildingNumber={HttpUtility.UrlEncode(Filter.StreetAndBuildingNumber)}&LandMark={HttpUtility.UrlEncode(Filter.LandMark)}&PricePerNightMin={Filter.PricePerNightMin}&PricePerNightMax={Filter.PricePerNightMax}&AreaMin={Filter.AreaMin}&AreaMax={Filter.AreaMax}&Latitude={HttpUtility.UrlEncode(Filter.Latitude)}&Longitude={HttpUtility.UrlEncode(Filter.Longitude)}&IsActive={Filter.IsActive}&PropertyTypeId={Filter.PropertyTypeId}&GovernorateId={Filter.GovernorateId}&OwnerId={Filter.OwnerId}&StatusId={Filter.StatusId}&PropertyFeatureId={Filter.PropertyFeatureId}", forceLoad: true);
         }
 
         private async Task OnDataGridReadAsync(DataGridReadDataEventArgs<SitePropertyWithNavigationPropertiesDto> e)
@@ -437,6 +437,16 @@ StatusId = StatusesCollection.Select(i=>i.Id).FirstOrDefault(),
         protected virtual async Task OnAreaMaxChangedAsync(double? areaMax)
         {
             Filter.AreaMax = areaMax;
+            await SearchAsync();
+        }
+        protected virtual async Task OnLatitudeChangedAsync(string? latitude)
+        {
+            Filter.Latitude = latitude;
+            await SearchAsync();
+        }
+        protected virtual async Task OnLongitudeChangedAsync(string? longitude)
+        {
+            Filter.Longitude = longitude;
             await SearchAsync();
         }
         protected virtual async Task OnIsActiveChangedAsync(bool? isActive)

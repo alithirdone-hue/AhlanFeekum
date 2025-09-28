@@ -1,6 +1,7 @@
 using AhlanFeekum.Authorizations;
 using AhlanFeekum.MobileResponses;
 using AhlanFeekum.PropertyCalendars;
+using AhlanFeekum.PropertyEvaluations;
 using AhlanFeekum.PropertyMedias;
 using AhlanFeekum.SiteProperties;
 using Asp.Versioning;
@@ -25,11 +26,13 @@ namespace AhlanFeekum.Controllers.SiteProperties
         protected ISitePropertiesAppService _sitePropertiesAppService;
         protected IPropertyMediasAppService _propertyMediasAppService;
         protected IPropertyCalendarsAppService _propertyCalendarsAppService;
-        public PropertyController(ISitePropertiesAppService sitePropertiesAppService, IPropertyMediasAppService propertyMediasAppService, IPropertyCalendarsAppService propertyCalendarsAppService)
+        protected IPropertyEvaluationsAppService _propertyEvaluationsAppService;
+        public PropertyController(ISitePropertiesAppService sitePropertiesAppService, IPropertyMediasAppService propertyMediasAppService, IPropertyCalendarsAppService propertyCalendarsAppService, IPropertyEvaluationsAppService propertyEvaluationsAppService)
         {
             _sitePropertiesAppService = sitePropertiesAppService;
             _propertyMediasAppService = propertyMediasAppService;
             _propertyCalendarsAppService = propertyCalendarsAppService;
+            _propertyEvaluationsAppService = propertyEvaluationsAppService;
         }
 
         [HttpPost("create-step-one")]
@@ -48,7 +51,11 @@ namespace AhlanFeekum.Controllers.SiteProperties
             return _propertyCalendarsAppService.CreateManyAsync(input);
         }
 
-  
+        [HttpPost("property-rating")]
+        public virtual Task<PropertyEvaluationMobileDto> RatePropertyAsync(PropertyEvaluationCreateMobileDto input)
+        {
+            return _propertyEvaluationsAppService.CreateMobileAsync(input);
+        }
         //[HttpPost("add-availability11")]
         //public virtual Task CreateManyProperty11CalendarAsync([FromBody] List<PropertyCalendarItemDto> input)
         //{
@@ -103,7 +110,7 @@ namespace AhlanFeekum.Controllers.SiteProperties
         }
 
         [HttpGet("property-rating/{id}")]
-        public async Task<SitePropertyWithDetailsMobileDto> RatePropertyMobileAsync(Guid id)
+        public async Task<SitePropertyWithDetailsMobileDto> GetPropertyRatingAsync(Guid id)
         {
             return await _sitePropertiesAppService.GetSitePropertyWithDetailsAsync(id);
         }

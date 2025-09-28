@@ -63,6 +63,8 @@ namespace SIBF.CustomMapper
             SitePropertyWithDetailsFront.ImportantInformation = source.SiteProperty.ImportantInformation;
             SitePropertyWithDetailsFront.StreetAndBuildingNumber = source.SiteProperty.StreetAndBuildingNumber;
             SitePropertyWithDetailsFront.LandMark = source.SiteProperty.LandMark;
+            SitePropertyWithDetailsFront.Latitude = source.SiteProperty.Latitude;
+            SitePropertyWithDetailsFront.Longitude = source.SiteProperty.Longitude;
             SitePropertyWithDetailsFront.PricePerNight = source.SiteProperty.PricePerNight;
             SitePropertyWithDetailsFront.IsActive = source.SiteProperty.IsActive;
             SitePropertyWithDetailsFront.IsFavorite = source.IsFavorite;

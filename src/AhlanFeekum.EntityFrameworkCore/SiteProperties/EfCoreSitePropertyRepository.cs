@@ -51,6 +51,8 @@ namespace AhlanFeekum.SiteProperties
             int? pricePerNightMax = null,
             double? areaMin = null,
             double? areaMax = null,
+            string? latitude = null,
+            string? longitude = null,
             bool? isActive = null,
             Guid? propertyTypeId = null,
             Guid? governorateId = null,
@@ -61,7 +63,7 @@ namespace AhlanFeekum.SiteProperties
         {
             var query = await GetQueryForNavigationPropertiesAsync();
 
-            query = ApplyFilter(query, filterText, propertyTitle, hotelName, bedroomsMin, bedroomsMax, bathroomsMin, bathroomsMax, numberOfBedMin, numberOfBedMax, floorMin, floorMax, maximumNumberOfGuestMin, maximumNumberOfGuestMax, livingroomsMin, livingroomsMax, propertyDescription, hourseRules, importantInformation, address, streetAndBuildingNumber, landMark, pricePerNightMin, pricePerNightMax, areaMin, areaMax, isActive, propertyTypeId, governorateId, ownerId, statusId, propertyFeatureId);
+            query = ApplyFilter(query, filterText, propertyTitle, hotelName, bedroomsMin, bedroomsMax, bathroomsMin, bathroomsMax, numberOfBedMin, numberOfBedMax, floorMin, floorMax, maximumNumberOfGuestMin, maximumNumberOfGuestMax, livingroomsMin, livingroomsMax, propertyDescription, hourseRules, importantInformation, address, streetAndBuildingNumber, landMark, pricePerNightMin, pricePerNightMax, areaMin, areaMax, latitude, longitude, isActive, propertyTypeId, governorateId, ownerId, statusId, propertyFeatureId);
 
             var ids = query.Select(x => x.SiteProperty.Id);
             await DeleteManyAsync(ids, cancellationToken: GetCancellationToken(cancellationToken));
@@ -111,6 +113,8 @@ namespace AhlanFeekum.SiteProperties
             int? pricePerNightMax = null,
             double? areaMin = null,
             double? areaMax = null,
+            string? latitude = null,
+            string? longitude = null,
             bool? isActive = null,
             Guid? propertyTypeId = null,
             Guid? governorateId = null,
@@ -123,7 +127,7 @@ namespace AhlanFeekum.SiteProperties
             CancellationToken cancellationToken = default)
         {
             var query = await GetQueryForNavigationPropertiesAsync();
-            query = ApplyFilter(query, filterText, propertyTitle, hotelName, bedroomsMin, bedroomsMax, bathroomsMin, bathroomsMax, numberOfBedMin, numberOfBedMax, floorMin, floorMax, maximumNumberOfGuestMin, maximumNumberOfGuestMax, livingroomsMin, livingroomsMax, propertyDescription, hourseRules, importantInformation, address, streetAndBuildingNumber, landMark, pricePerNightMin, pricePerNightMax, areaMin, areaMax, isActive, propertyTypeId, governorateId, ownerId, statusId, propertyFeatureId);
+            query = ApplyFilter(query, filterText, propertyTitle, hotelName, bedroomsMin, bedroomsMax, bathroomsMin, bathroomsMax, numberOfBedMin, numberOfBedMax, floorMin, floorMax, maximumNumberOfGuestMin, maximumNumberOfGuestMax, livingroomsMin, livingroomsMax, propertyDescription, hourseRules, importantInformation, address, streetAndBuildingNumber, landMark, pricePerNightMin, pricePerNightMax, areaMin, areaMax, latitude, longitude, isActive, propertyTypeId, governorateId, ownerId, statusId, propertyFeatureId);
             query = query.OrderBy(string.IsNullOrWhiteSpace(sorting) ? SitePropertyConsts.GetDefaultSorting(true) : sorting);
             return await query.PageBy(skipCount, maxResultCount).ToListAsync(cancellationToken);
         }
@@ -177,6 +181,8 @@ namespace AhlanFeekum.SiteProperties
             int? pricePerNightMax = null,
             double? areaMin = null,
             double? areaMax = null,
+            string? latitude = null,
+            string? longitude = null,
             bool? isActive = null,
             Guid? propertyTypeId = null,
             Guid? governorateId = null,
@@ -185,7 +191,7 @@ namespace AhlanFeekum.SiteProperties
             Guid? propertyFeatureId = null)
         {
             return query
-                .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.SiteProperty.PropertyTitle!.Contains(filterText!) || e.SiteProperty.HotelName!.Contains(filterText!) || e.SiteProperty.PropertyDescription!.Contains(filterText!) || e.SiteProperty.HourseRules!.Contains(filterText!) || e.SiteProperty.ImportantInformation!.Contains(filterText!) || e.SiteProperty.Address!.Contains(filterText!) || e.SiteProperty.StreetAndBuildingNumber!.Contains(filterText!) || e.SiteProperty.LandMark!.Contains(filterText!))
+                .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.SiteProperty.PropertyTitle!.Contains(filterText!) || e.SiteProperty.HotelName!.Contains(filterText!) || e.SiteProperty.PropertyDescription!.Contains(filterText!) || e.SiteProperty.HourseRules!.Contains(filterText!) || e.SiteProperty.ImportantInformation!.Contains(filterText!) || e.SiteProperty.Address!.Contains(filterText!) || e.SiteProperty.StreetAndBuildingNumber!.Contains(filterText!) || e.SiteProperty.LandMark!.Contains(filterText!) || e.SiteProperty.Latitude!.Contains(filterText!) || e.SiteProperty.Longitude!.Contains(filterText!))
                     .WhereIf(!string.IsNullOrWhiteSpace(propertyTitle), e => e.SiteProperty.PropertyTitle.Contains(propertyTitle))
                     .WhereIf(!string.IsNullOrWhiteSpace(hotelName), e => e.SiteProperty.HotelName.Contains(hotelName))
                     .WhereIf(bedroomsMin.HasValue, e => e.SiteProperty.Bedrooms >= bedroomsMin!.Value)
@@ -210,6 +216,8 @@ namespace AhlanFeekum.SiteProperties
                     .WhereIf(pricePerNightMax.HasValue, e => e.SiteProperty.PricePerNight <= pricePerNightMax!.Value)
                     .WhereIf(areaMin.HasValue, e => e.SiteProperty.Area >= areaMin!.Value)
                     .WhereIf(areaMax.HasValue, e => e.SiteProperty.Area <= areaMax!.Value)
+                    .WhereIf(!string.IsNullOrWhiteSpace(latitude), e => e.SiteProperty.Latitude.Contains(latitude))
+                    .WhereIf(!string.IsNullOrWhiteSpace(longitude), e => e.SiteProperty.Longitude.Contains(longitude))
                     .WhereIf(isActive.HasValue, e => e.SiteProperty.IsActive == isActive)
                     .WhereIf(propertyTypeId != null && propertyTypeId != Guid.Empty, e => e.PropertyType != null && e.PropertyType.Id == propertyTypeId)
                     .WhereIf(governorateId != null && governorateId != Guid.Empty, e => e.Governorate != null && e.Governorate.Id == governorateId)
@@ -244,13 +252,15 @@ namespace AhlanFeekum.SiteProperties
             int? pricePerNightMax = null,
             double? areaMin = null,
             double? areaMax = null,
+            string? latitude = null,
+            string? longitude = null,
             bool? isActive = null,
             string? sorting = null,
             int maxResultCount = int.MaxValue,
             int skipCount = 0,
             CancellationToken cancellationToken = default)
         {
-            var query = ApplyFilter((await GetQueryableAsync()), filterText, propertyTitle, hotelName, bedroomsMin, bedroomsMax, bathroomsMin, bathroomsMax, numberOfBedMin, numberOfBedMax, floorMin, floorMax, maximumNumberOfGuestMin, maximumNumberOfGuestMax, livingroomsMin, livingroomsMax, propertyDescription, hourseRules, importantInformation, address, streetAndBuildingNumber, landMark, pricePerNightMin, pricePerNightMax, areaMin, areaMax, isActive);
+            var query = ApplyFilter((await GetQueryableAsync()), filterText, propertyTitle, hotelName, bedroomsMin, bedroomsMax, bathroomsMin, bathroomsMax, numberOfBedMin, numberOfBedMax, floorMin, floorMax, maximumNumberOfGuestMin, maximumNumberOfGuestMax, livingroomsMin, livingroomsMax, propertyDescription, hourseRules, importantInformation, address, streetAndBuildingNumber, landMark, pricePerNightMin, pricePerNightMax, areaMin, areaMax, latitude, longitude, isActive);
             query = query.OrderBy(string.IsNullOrWhiteSpace(sorting) ? SitePropertyConsts.GetDefaultSorting(false) : sorting);
             return await query.PageBy(skipCount, maxResultCount).ToListAsync(cancellationToken);
         }
@@ -281,6 +291,8 @@ namespace AhlanFeekum.SiteProperties
             int? pricePerNightMax = null,
             double? areaMin = null,
             double? areaMax = null,
+            string? latitude = null,
+            string? longitude = null,
             bool? isActive = null,
             Guid? propertyTypeId = null,
             Guid? governorateId = null,
@@ -290,7 +302,7 @@ namespace AhlanFeekum.SiteProperties
             CancellationToken cancellationToken = default)
         {
             var query = await GetQueryForNavigationPropertiesAsync();
-            query = ApplyFilter(query, filterText, propertyTitle, hotelName, bedroomsMin, bedroomsMax, bathroomsMin, bathroomsMax, numberOfBedMin, numberOfBedMax, floorMin, floorMax, maximumNumberOfGuestMin, maximumNumberOfGuestMax, livingroomsMin, livingroomsMax, propertyDescription, hourseRules, importantInformation, address, streetAndBuildingNumber, landMark, pricePerNightMin, pricePerNightMax, areaMin, areaMax, isActive, propertyTypeId, governorateId, ownerId, statusId, propertyFeatureId);
+            query = ApplyFilter(query, filterText, propertyTitle, hotelName, bedroomsMin, bedroomsMax, bathroomsMin, bathroomsMax, numberOfBedMin, numberOfBedMax, floorMin, floorMax, maximumNumberOfGuestMin, maximumNumberOfGuestMax, livingroomsMin, livingroomsMax, propertyDescription, hourseRules, importantInformation, address, streetAndBuildingNumber, landMark, pricePerNightMin, pricePerNightMax, areaMin, areaMax, latitude, longitude, isActive, propertyTypeId, governorateId, ownerId, statusId, propertyFeatureId);
             return await query.LongCountAsync(GetCancellationToken(cancellationToken));
         }
 
@@ -321,10 +333,12 @@ namespace AhlanFeekum.SiteProperties
             int? pricePerNightMax = null,
             double? areaMin = null,
             double? areaMax = null,
+            string? latitude = null,
+            string? longitude = null,
             bool? isActive = null)
         {
             return query
-                    .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.PropertyTitle!.Contains(filterText!) || e.HotelName!.Contains(filterText!) || e.PropertyDescription!.Contains(filterText!) || e.HourseRules!.Contains(filterText!) || e.ImportantInformation!.Contains(filterText!) || e.Address!.Contains(filterText!) || e.StreetAndBuildingNumber!.Contains(filterText!) || e.LandMark!.Contains(filterText!))
+                    .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.PropertyTitle!.Contains(filterText!) || e.HotelName!.Contains(filterText!) || e.PropertyDescription!.Contains(filterText!) || e.HourseRules!.Contains(filterText!) || e.ImportantInformation!.Contains(filterText!) || e.Address!.Contains(filterText!) || e.StreetAndBuildingNumber!.Contains(filterText!) || e.LandMark!.Contains(filterText!) || e.Latitude!.Contains(filterText!) || e.Longitude!.Contains(filterText!))
                     .WhereIf(!string.IsNullOrWhiteSpace(propertyTitle), e => e.PropertyTitle.Contains(propertyTitle))
                     .WhereIf(!string.IsNullOrWhiteSpace(hotelName), e => e.HotelName.Contains(hotelName))
                     .WhereIf(bedroomsMin.HasValue, e => e.Bedrooms >= bedroomsMin!.Value)
@@ -349,6 +363,8 @@ namespace AhlanFeekum.SiteProperties
                     .WhereIf(pricePerNightMax.HasValue, e => e.PricePerNight <= pricePerNightMax!.Value)
                     .WhereIf(areaMin.HasValue, e => e.Area >= areaMin!.Value)
                     .WhereIf(areaMax.HasValue, e => e.Area <= areaMax!.Value)
+                    .WhereIf(!string.IsNullOrWhiteSpace(latitude), e => e.Latitude.Contains(latitude))
+                    .WhereIf(!string.IsNullOrWhiteSpace(longitude), e => e.Longitude.Contains(longitude))
                     .WhereIf(isActive.HasValue, e => e.IsActive == isActive);
         }
     }

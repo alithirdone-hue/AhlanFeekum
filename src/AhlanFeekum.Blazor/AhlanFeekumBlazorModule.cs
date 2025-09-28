@@ -20,6 +20,7 @@ using OpenIddict.Validation.AspNetCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json.Serialization;
 using Volo.Abp;
 using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.Components.Server.LeptonXLiteTheme;
@@ -27,6 +28,7 @@ using Volo.Abp.AspNetCore.Components.Server.LeptonXLiteTheme.Bundling;
 using Volo.Abp.AspNetCore.Components.Web;
 using Volo.Abp.AspNetCore.Components.Web.Theming.Routing;
 using Volo.Abp.AspNetCore.Mvc;
+using Volo.Abp.AspNetCore.Mvc.AntiForgery;
 using Volo.Abp.AspNetCore.Mvc.Localization;
 using Volo.Abp.AspNetCore.Mvc.UI;
 using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap;
@@ -51,7 +53,6 @@ using Volo.Abp.UI;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
-using System.Text.Json.Serialization;
 
 namespace AhlanFeekum.Blazor;
 
@@ -150,6 +151,10 @@ public class AhlanFeekumBlazorModule : AbpModule
                     fileSystem.BasePath = Path.Combine(hostingEnvironment.WebRootPath, "ahlanfeekumassets");
                 });
             });
+        });
+        Configure<AbpAntiForgeryOptions>(options =>
+        {
+            options.AutoValidate = false;
         });
         //Configure<AbpJsonOptions>(options =>
         //{

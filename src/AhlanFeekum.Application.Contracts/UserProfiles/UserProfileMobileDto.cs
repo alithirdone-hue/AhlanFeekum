@@ -9,6 +9,7 @@ namespace AhlanFeekum.UserProfiles
         public string Name { get; set; } = null!;
         public string? Email { get; set; }
         public string? ProfilePhoto { get; set; }
+        public double? AverageRating { get; set; }
         public bool IsSuperHost { get; set; }
     }
 }

@@ -33,6 +33,8 @@ namespace AhlanFeekum.SiteProperties
         public int? PricePerNightMax { get; set; }
         public double? AreaMin { get; set; }
         public double? AreaMax { get; set; }
+        public string? Latitude { get; set; }
+        public string? Longitude { get; set; }
         public bool? IsActive { get; set; }
         public Guid? PropertyTypeId { get; set; }
         public Guid? GovernorateId { get; set; }

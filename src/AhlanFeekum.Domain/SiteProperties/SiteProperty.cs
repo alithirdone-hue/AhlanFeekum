@@ -57,6 +57,12 @@ namespace AhlanFeekum.SiteProperties
 
         public virtual double Area { get; set; }
 
+        [CanBeNull]
+        public virtual string? Latitude { get; set; }
+
+        [CanBeNull]
+        public virtual string? Longitude { get; set; }
+
         public virtual bool IsActive { get; set; }
         public Guid PropertyTypeId { get; set; }
         public Guid GovernorateId { get; set; }
@@ -69,7 +75,7 @@ namespace AhlanFeekum.SiteProperties
 
         }
 
-        public SitePropertyBase(Guid id, Guid propertyTypeId, Guid governorateId, Guid ownerId, Guid statusId, string propertyTitle, int bedrooms, int bathrooms, int numberOfBed, int floor, int maximumNumberOfGuest, int livingrooms, string propertyDescription, int pricePerNight, double area, bool isActive, string? hotelName = null, string? hourseRules = null, string? importantInformation = null, string? address = null, string? streetAndBuildingNumber = null, string? landMark = null)
+        public SitePropertyBase(Guid id, Guid propertyTypeId, Guid governorateId, Guid ownerId, Guid statusId, string propertyTitle, int bedrooms, int bathrooms, int numberOfBed, int floor, int maximumNumberOfGuest, int livingrooms, string propertyDescription, int pricePerNight, double area, bool isActive, string? hotelName = null, string? hourseRules = null, string? importantInformation = null, string? address = null, string? streetAndBuildingNumber = null, string? landMark = null, string? latitude = null, string? longitude = null)
         {
 
             Id = id;
@@ -92,6 +98,8 @@ namespace AhlanFeekum.SiteProperties
             Address = address;
             StreetAndBuildingNumber = streetAndBuildingNumber;
             LandMark = landMark;
+            Latitude = latitude;
+            Longitude = longitude;
             PropertyTypeId = propertyTypeId;
             GovernorateId = governorateId;
             OwnerId = ownerId;
