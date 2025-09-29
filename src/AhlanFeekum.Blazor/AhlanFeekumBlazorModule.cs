@@ -6,6 +6,7 @@ using AhlanFeekum.Localization;
 using AhlanFeekum.MultiTenancy;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
+using Blazorise.RichTextEdit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
@@ -156,12 +157,16 @@ public class AhlanFeekumBlazorModule : AbpModule
         {
             options.AutoValidate = false;
         });
+
+        ConfigureRichTextEdit(context);
         //Configure<AbpJsonOptions>(options =>
         //{
         //    options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
         //    options.JsonSerializerOptions.Converters.Add(new TimeOnlyJsonConverter());
         //});
         context.Services.AddSingleton<IActionResultExecutor<ObjectResult>, AhlanFeekumWrapResultExecutor>();
+
+
     }
 
     private void ConfigureAuthentication(ServiceConfigurationContext context)
@@ -297,7 +302,14 @@ options.CustomSchemaIds(type => type.FullName);
             options.AddMaps<AhlanFeekumBlazorModule>();
         });
     }
-
+    private void ConfigureRichTextEdit(ServiceConfigurationContext context)
+    {
+        context.Services
+         .AddBlazoriseRichTextEdit(options =>
+         {
+             options.UseBubbleTheme = true;
+         });
+    }
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
         var env = context.GetEnvironment();

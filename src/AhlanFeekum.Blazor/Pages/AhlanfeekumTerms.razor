@@ -4,6 +4,7 @@
 
 @attribute [Authorize(AhlanFeekumPermissions.AhlanfeekumTerms.Default)]
 @using AhlanFeekum.AhlanfeekumTerms
+@using AhlanFeekum.Blazor.Components
 @using AhlanFeekum.Localization
 @using AhlanFeekum.Shared
 @using Microsoft.AspNetCore.Authorization
@@ -323,7 +324,7 @@
 
 @* ************************* CREATE MODAL ************************* *@
 <Modal @ref="CreateAhlanfeekumTermModal" Closing="@CreateAhlanfeekumTermModal.CancelClosingModalWhenFocusLost">
-    <ModalContent Centered="true">
+    <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
 @*//<suite-custom-code-block-5>*@
 @*//</suite-custom-code-block-5>*@
         <Form id="CreateAhlanfeekumTermForm">
@@ -361,8 +362,11 @@
                         </Field>
                     </Validation>
 
-
-                    <Validation MessageLocalizer="@LH.Localize">
+                    <Field>
+                        <FieldLabel>@L["TermsDescription"]</FieldLabel>
+                        <CustomRichTextEditor ContentChanged="@CreatingTermsDescriptionOnContentChanged"></CustomRichTextEditor>
+                    </Field>
+@*                     <Validation MessageLocalizer="@LH.Localize">
                         <Field>
                             <FieldLabel>@L["TermsDescription"] *</FieldLabel>
                             <MemoEdit @bind-Text="@NewAhlanfeekumTerm.TermsDescription"  >
@@ -371,7 +375,7 @@
                                 </Feedback>
                             </MemoEdit>
                         </Field>
-                    </Validation>
+                    </Validation> *@
 
 
                         <Field>
@@ -410,8 +414,11 @@
                         </Field>
                     </Validation>
 
-
-                    <Validation MessageLocalizer="@LH.Localize">
+                    <Field>
+                        <FieldLabel>@L["WhoAreWeDescription"]</FieldLabel>
+                        <CustomRichTextEditor ContentChanged="@CreatingWhoWeAreDescriptionOnContentChanged"></CustomRichTextEditor>
+                    </Field>
+@*                     <Validation MessageLocalizer="@LH.Localize">
                         <Field>
                             <FieldLabel>@L["WhoAreWeDescription"] *</FieldLabel>
                             <MemoEdit @bind-Text="@NewAhlanfeekumTerm.WhoAreWeDescription"  >
@@ -420,7 +427,7 @@
                                 </Feedback>
                             </MemoEdit>
                         </Field>
-                    </Validation>
+                    </Validation> *@
 
 
                         <Field>
@@ -461,7 +468,7 @@
 
 @* ************************* EDIT MODAL ************************* *@
 <Modal @ref="EditAhlanfeekumTermModal" Closing="@EditAhlanfeekumTermModal.CancelClosingModalWhenFocusLost">
-    <ModalContent Centered="true">
+    <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
 @*//<suite-custom-code-block-8>*@
 @*//</suite-custom-code-block-8>*@
         <Form id="EditAhlanfeekumTermForm">
@@ -499,8 +506,12 @@
                         </Field>
                     </Validation>
 
+                    <Field>
+                        <FieldLabel>@L["TermsDescription"]</FieldLabel>
+                        <CustomRichTextEditor InitValue="@EditingAhlanfeekumTerm.TermsDescription" ContentChanged="@EditingTermsDescriptionOnContentChanged"></CustomRichTextEditor>
+                    </Field>
 
-                    <Validation MessageLocalizer="@LH.Localize">
+    @*                 <Validation MessageLocalizer="@LH.Localize">
                         <Field>
                             <FieldLabel>@L["TermsDescription"] *</FieldLabel>
                             <MemoEdit @bind-Text="@EditingAhlanfeekumTerm.TermsDescription"  >
@@ -509,7 +520,7 @@
                                 </Feedback>
                             </MemoEdit>
                         </Field>
-                    </Validation>
+                    </Validation> *@
 
 
                     <Field>
@@ -561,8 +572,12 @@
                         </Field>
                     </Validation>
 
+                    <Field>
+                        <FieldLabel>@L["WhoAreWeDescription"]</FieldLabel>
+                        <CustomRichTextEditor InitValue="@EditingAhlanfeekumTerm.WhoAreWeDescription" ContentChanged="@EditingWhoWeAreDescriptionOnContentChanged"></CustomRichTextEditor>
+                    </Field>
 
-                    <Validation MessageLocalizer="@LH.Localize">
+                   @*  <Validation MessageLocalizer="@LH.Localize">
                         <Field>
                             <FieldLabel>@L["WhoAreWeDescription"] *</FieldLabel>
                             <MemoEdit @bind-Text="@EditingAhlanfeekumTerm.WhoAreWeDescription"  >
@@ -571,7 +586,7 @@
                                 </Feedback>
                             </MemoEdit>
                         </Field>
-                    </Validation>
+                    </Validation> *@
 
 
                     <Field>

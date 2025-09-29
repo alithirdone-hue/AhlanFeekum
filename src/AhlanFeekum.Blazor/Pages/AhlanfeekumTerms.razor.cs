@@ -320,6 +320,7 @@ HasSelectedAhlanfeekumTermWhoAreWeIcon = EditingAhlanfeekumTerm.WhoAreWeIconId !
                 var result = await UploadFileAsync(e.File!);
     
                 NewAhlanfeekumTerm.WhoAreWeIconId = result.Id;
+                NewAhlanfeekumTerm.WhoAreWeIconExtension = Path.GetExtension(e.File.Name);
                 OnNewAhlanfeekumTermWhoAreWeIconLoading = false;            
             }
             catch(Exception ex)
@@ -369,6 +370,7 @@ HasSelectedAhlanfeekumTermWhoAreWeIcon = EditingAhlanfeekumTerm.WhoAreWeIconId !
                 var result = await UploadFileAsync(e.File!);
     
                 EditingAhlanfeekumTerm.WhoAreWeIconId = result.Id;
+                EditingAhlanfeekumTerm.WhoAreWeIconExtension = Path.GetExtension(e.File.Name);
                 OnEditAhlanfeekumTermWhoAreWeIconLoading = false;            
             }
             catch(Exception ex)
@@ -500,6 +502,21 @@ HasSelectedAhlanfeekumTermWhoAreWeIcon = EditingAhlanfeekumTerm.WhoAreWeIconId !
             await GetAhlanfeekumTermsAsync();
         }
 
-
+        public async Task CreatingTermsDescriptionOnContentChanged(string value)
+        {
+            NewAhlanfeekumTerm.TermsDescription = value;
+        }
+        public async Task EditingTermsDescriptionOnContentChanged(string value)
+        {
+            EditingAhlanfeekumTerm.TermsDescription = value;
+        }
+        public async Task CreatingWhoWeAreDescriptionOnContentChanged(string value)
+        {
+            NewAhlanfeekumTerm.WhoAreWeDescription = value;
+        }
+        public async Task EditingWhoWeAreDescriptionOnContentChanged(string value)
+        {
+            EditingAhlanfeekumTerm.WhoAreWeDescription = value;
+        }
     }
 }
