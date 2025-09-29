@@ -10,5 +10,7 @@ namespace AhlanFeekum.Authorizations
     public interface IAuthorizationMobileAppService : IApplicationService
     {
         Task<MobileResponseDto> GetAbpLogInAsync(TokenRequest request);
+        Task<MobileResponseDto> GoogleAuthAsync(GoogleAuthRequest request);
+        Task<MobileResponseDto> FirebaseAuthAsync(FirebaseAuthRequest request);
     }
 }

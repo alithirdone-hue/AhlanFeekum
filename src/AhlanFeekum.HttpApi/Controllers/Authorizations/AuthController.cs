@@ -23,7 +23,7 @@ namespace AhlanFeekum.Controllers.Authorizations
     [ControllerName("AuthController")]
     [Route("api/mobile/auth")]
 
-    public class AuthController : AbpController, IAuthorizationMobileAppService
+    public class AuthController : AbpController
     {
         private readonly IConfiguration _configuration;
         private readonly IAuthorizationMobileAppService _authorizeMobileAppService;
@@ -53,7 +53,22 @@ namespace AhlanFeekum.Controllers.Authorizations
         public Task<MobileResponseDto> GetAbpLogInAsync(TokenRequest request)
         {
             return _authorizeMobileAppService.GetAbpLogInAsync(request);
-
         }
+
+        //[HttpPost]
+        //[Route("google-auth")]
+        //public Task<MobileResponseDto> GoogleAuthAsync(GoogleAuthRequest request)
+        //{
+        //    return _authorizeMobileAppService.GoogleAuthAsync(request);
+        //}
+
+        [HttpPost]
+        [Route("firebase-auth")]
+        public Task<MobileResponseDto> FirebaseAuthAsync(FirebaseAuthRequest request)
+        {
+            return _authorizeMobileAppService.FirebaseAuthAsync(request);
+        }
+
+
     }
 }
