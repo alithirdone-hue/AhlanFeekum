@@ -1,0 +1,791 @@
+
+
+@page "/reservations"
+
+@attribute [Authorize(AhlanFeekumPermissions.Reservations.Default)]
+@using AhlanFeekum.Reservations
+@using AhlanFeekum.Localization
+@using AhlanFeekum.Shared
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Components.Web
+@using Blazorise
+@using Blazorise.Components
+@using Blazorise.DataGrid
+@using Volo.Abp.BlazoriseUI
+@using Volo.Abp.BlazoriseUI.Components
+@using Volo.Abp.ObjectMapping
+@using Volo.Abp.AspNetCore.Components.Messages
+@using Volo.Abp.AspNetCore.Components.Web.Theming.Layout
+
+@using AhlanFeekum.Permissions
+@using Volo.Abp.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components
+@using Volo.Abp.Http.Client
+@inherits AhlanFeekumComponentBase
+@inject IReservationsAppService ReservationsAppService
+
+@inject IUiMessageService UiMessageService
+@inject AbpBlazorMessageLocalizerHelper<AhlanFeekumResource> LH
+@inject IRemoteServiceConfigurationProvider RemoteServiceConfigurationProvider
+@inject NavigationManager NavigationManager
+@using AhlanFeekum.Reservations
+
+
+@* ************************* PAGE HEADER ************************* *@
+<PageHeader Title="@L["Reservations"]" BreadcrumbItems="BreadcrumbItems" Toolbar="Toolbar">
+
+</PageHeader>
+
+@* ************************* SEARCH ************************* *@
+<Card>
+    <CardBody>
+@*//<suite-custom-code-block-1>*@
+@*//</suite-custom-code-block-1>*@
+        <Row>
+            <div class="col-md-8 col-lg-10">
+                <div class="mb-3">
+                    <Form id="ReservationSearchForm">
+                        <Addons>
+                            <Addon AddonType="AddonType.Body">
+                                <TextEdit @bind-Text="@Filter.FilterText"
+                                        Autofocus="true"
+                                        Placeholder="@L["Search"]">
+                                </TextEdit>
+                            </Addon>
+                            <Addon AddonType="AddonType.End">
+                                <SubmitButton Form="ReservationSearchForm" Clicked="GetReservationsAsync">
+                                    <Icon Name="IconName.Search" Class="me-1"></Icon>@L["Search"]
+                                </SubmitButton>
+                            </Addon>
+                        </Addons>
+                    </Form>
+                </div>
+            </div>
+                
+                   <div class="col-md-4 col-lg-2">
+            <div class="mb-3">
+               <Button Color="Color.Primary" Outline Style="width:100%" id="AdvancedFilterSectionToggler"
+                         Clicked="@(() => ShowAdvancedFilters = !ShowAdvancedFilters)">@L["Filters"]
+                         <i aria-hidden="true" class="fa ms-1 @(!ShowAdvancedFilters ? "fa-angle-down" : "fa-angle-up")"></i>
+               </Button>
+            </div>
+       </div>
+        
+        <div style="display: @(!ShowAdvancedFilters ? "none" : "block")"  class="mt-3">
+            <Row>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MinFromeDate"]</FieldLabel>
+                        <DateEdit TValue="DateOnly?"
+          Date="@Filter.FromeDateMin"
+          DateChanged="@OnFromeDateMinChangedAsync"
+          Placeholder="@string.Empty" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MaxFromeDate"]</FieldLabel>
+                        <DateEdit TValue="DateOnly?"
+          Date="@Filter.FromeDateMax"
+          DateChanged="@OnFromeDateMaxChangedAsync"
+          Placeholder="@string.Empty" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MinToDate"]</FieldLabel>
+                        <DateEdit TValue="DateOnly?"
+          Date="@Filter.ToDateMin"
+          DateChanged="@OnToDateMinChangedAsync"
+          Placeholder="@string.Empty" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MaxToDate"]</FieldLabel>
+                        <DateEdit TValue="DateOnly?"
+          Date="@Filter.ToDateMax"
+          DateChanged="@OnToDateMaxChangedAsync"
+          Placeholder="@string.Empty" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MinCheckInDate"]</FieldLabel>
+                        <DatePicker TValue="DateTime?"
+            InputMode="DateInputMode.Date"
+            Date="@Filter.CheckInDateMin"
+            DateChanged="@OnCheckInDateMinChangedAsync"
+            Placeholder="@string.Empty" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MaxCheckInDate"]</FieldLabel>
+                        <DatePicker TValue="DateTime?"
+            InputMode="DateInputMode.Date"
+            Date="@Filter.CheckInDateMax"
+            DateChanged="@OnCheckInDateMaxChangedAsync"
+            Placeholder="@string.Empty" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MinCheckOutDate"]</FieldLabel>
+                        <DatePicker TValue="DateTime?"
+            InputMode="DateInputMode.Date"
+            Date="@Filter.CheckOutDateMin"
+            DateChanged="@OnCheckOutDateMinChangedAsync"
+            Placeholder="@string.Empty" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MaxCheckOutDate"]</FieldLabel>
+                        <DatePicker TValue="DateTime?"
+            InputMode="DateInputMode.Date"
+            Date="@Filter.CheckOutDateMax"
+            DateChanged="@OnCheckOutDateMaxChangedAsync"
+            Placeholder="@string.Empty" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MinNumberOfGuest"]</FieldLabel>
+                        <NumericEdit TValue="int?" 
+             Value="@Filter.NumberOfGuestMin"
+             ValueChanged="@OnNumberOfGuestMinChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MaxNumberOfGuest"]</FieldLabel>
+                        <NumericEdit TValue="int?" 
+             Value="@Filter.NumberOfGuestMax"
+             ValueChanged="@OnNumberOfGuestMaxChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MinPrice"]</FieldLabel>
+                        <NumericEdit TValue="double?" 
+             Value="@Filter.PriceMin"
+             ValueChanged="@OnPriceMinChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MaxPrice"]</FieldLabel>
+                        <NumericEdit TValue="double?" 
+             Value="@Filter.PriceMax"
+             ValueChanged="@OnPriceMaxChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MinDiscount"]</FieldLabel>
+                        <NumericEdit TValue="double?" 
+             Value="@Filter.DiscountMin"
+             ValueChanged="@OnDiscountMinChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MaxDiscount"]</FieldLabel>
+                        <NumericEdit TValue="double?" 
+             Value="@Filter.DiscountMax"
+             ValueChanged="@OnDiscountMaxChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["ReservationStatus"]</FieldLabel>
+                        <Select TValue="ReservationStatus?"
+		SelectedValue="@Filter.ReservationStatus"
+		SelectedValueChanged="@OnReservationStatusChangedAsync">
+
+<SelectItem></SelectItem>
+
+@foreach(ReservationStatus value in Enum.GetValues(typeof(ReservationStatus)))
+{
+	<SelectItem Value="value">
+		@value
+	</SelectItem>
+}
+
+</Select>                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["Notes"]</FieldLabel>
+                        <TextEdit Text="@Filter.Notes" TextChanged="@OnNotesChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["UserProfile"]</FieldLabel>
+                        <Select TValue="Guid?"
+		SelectedValue="@Filter.UserProfileId"
+		SelectedValueChanged="@OnUserProfileIdChangedAsync">
+
+<SelectItem></SelectItem>
+
+@foreach(var item in UserProfilesCollection)
+{
+	<SelectItem TValue="Guid" Value="@item.Id">
+		@item.DisplayName
+	</SelectItem>
+}
+
+</Select>                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["SiteProperty"]</FieldLabel>
+                        <Select TValue="Guid?"
+		SelectedValue="@Filter.SitePropertyId"
+		SelectedValueChanged="@OnSitePropertyIdChangedAsync">
+
+<SelectItem></SelectItem>
+
+@foreach(var item in SitePropertiesCollection)
+{
+	<SelectItem TValue="Guid" Value="@item.Id">
+		@item.DisplayName
+	</SelectItem>
+}
+
+</Select>                       
+                    </Field>
+                </Column>
+            </Row>
+@*//<suite-custom-code-block-2>*@
+@*//</suite-custom-code-block-2>*@
+        </div>
+
+        </Row>
+
+@*//<suite-custom-code-block-3>*@
+@*//</suite-custom-code-block-3>*@
+    </CardBody>
+</Card>
+
+@* ************************* DATA GRID ************************* *@
+<Card>
+    <CardBody>        
+        @if (SelectedReservations.Any())
+        {
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                @if (AllReservationsSelected)
+                {
+                    <p class="lead mb-0">
+                        @L["AllItemsAreSelected", TotalCount]
+                    </p>
+                }
+                else
+                {
+                    <p class="lead mb-0">
+                        @if (SelectedReservations.Count > 1)
+                        {
+                            @L["NumberOfItemsOnThisPageAreSelected", SelectedReservations.Count]
+                        }
+                        else
+                        {
+                            @L["OneItemOnThisPageIsSelected"]
+                        }
+                    </p>
+                }
+                    
+                <div>
+                    @if ((SelectedReservations.Count == PageSize || SelectedReservations.Count == ReservationList.Count) && TotalCount > SelectedReservations.Count)
+                    {
+                        if (!AllReservationsSelected)
+                        {
+                            <Button Clicked="SelectAllItems" Class="mx-1 btn-outline-secondary">@L["SelectAllItems", TotalCount]</Button>
+                        }
+                        else
+                        {
+                            <Button Clicked="ClearSelection" Class="mx-1 btn-outline-secondary">@L["ClearSelection"]</Button>
+                        }
+                    }
+                    
+                    <Button Color="Color.Danger" Class="mx-1" Size="Size.Medium" Clicked="DeleteSelectedReservationsAsync">
+                        <Icon Name="@IconName.Delete" /> @L["Delete"]
+                    </Button>
+                </div>
+            </div>
+            
+            <hr class="my-1 mx-0"/>
+        }
+        <DataGrid TItem="ReservationWithNavigationPropertiesDto"
+                  Data="ReservationList"
+                  
+                  SelectionMode="DataGridSelectionMode.Multiple"
+                  SelectedRows="SelectedReservations"
+                  RowSelectable="@((args) => CanDeleteReservation)"
+                  SelectedRowsChanged="SelectedReservationRowsChanged"
+                  
+                  
+                  
+                  ReadData="OnDataGridReadAsync"
+                  TotalItems="TotalCount"
+                  ShowPager="true"
+                  Responsive="true"
+                  PageSize="PageSize"
+                  Class="datagrid-detail">
+            <LoadingTemplate>
+                <Row Class="w-100 align-items-center" Style="height: 150px;">
+                    <Column>
+                       <RadarSpinner />
+                    </Column>
+                </Row>
+            </LoadingTemplate>
+            <EmptyTemplate>
+                <Row Class="w-100 align-items-center" Style="height: 150px;">
+                    <Column>
+                        <Heading Size="HeadingSize.Is4" TextAlignment="TextAlignment.Center">@L["NoDataAvailable"]</Heading>
+                    </Column>
+                </Row>
+            </EmptyTemplate>   
+            <DataGridColumns>
+                
+                @if (CanDeleteReservation && ReservationList.Any())
+                {
+                    <DataGridMultiSelectColumn TItem="ReservationWithNavigationPropertiesDto" DisplayOrder="-1" Width="30px"></DataGridMultiSelectColumn>
+                }
+                
+                <DataGridEntityActionsColumn TItem="ReservationWithNavigationPropertiesDto" @ref="@EntityActionsColumn">
+                    <DisplayTemplate>
+                        <EntityActions TItem="ReservationWithNavigationPropertiesDto" EntityActionsColumn="@EntityActionsColumn">
+                            <EntityAction TItem="ReservationWithNavigationPropertiesDto"
+                                          Visible="@CanEditReservation"
+                                          Clicked="async () => await OpenEditReservationModalAsync(context)"
+                                          Text="@L["Edit"]"></EntityAction>
+                            <EntityAction TItem="ReservationWithNavigationPropertiesDto"
+                                          Visible="@CanDeleteReservation"
+                                          Clicked="() => DeleteReservationAsync(context)"
+                                          ConfirmationMessage="@(()=> L["DeleteConfirmationMessage"])"
+                                          Text="@L["Delete"]"></EntityAction>
+@*//<suite-custom-code-block-4>*@
+@*//</suite-custom-code-block-4>*@
+                        </EntityActions>
+                    </DisplayTemplate>
+                </DataGridEntityActionsColumn>
+               
+              <DataGridColumn TItem="ReservationWithNavigationPropertiesDto"
+                      Field="Reservation.FromeDate"
+                      Caption="@L["FromeDate"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="ReservationWithNavigationPropertiesDto"
+                      Field="Reservation.ToDate"
+                      Caption="@L["ToDate"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="ReservationWithNavigationPropertiesDto"
+                      Field="Reservation.CheckInDate"
+                      Caption="@L["CheckInDate"]">
+                  <DisplayTemplate>
+                        @(context.Reservation.CheckInDate.HasValue ? context.Reservation.CheckInDate.Value.ToShortDateString() : string.Empty)
+                  </DisplayTemplate>
+              </DataGridColumn>
+
+              <DataGridColumn TItem="ReservationWithNavigationPropertiesDto"
+                      Field="Reservation.CheckOutDate"
+                      Caption="@L["CheckOutDate"]">
+                  <DisplayTemplate>
+                        @(context.Reservation.CheckOutDate.HasValue ? context.Reservation.CheckOutDate.Value.ToShortDateString() : string.Empty)
+                  </DisplayTemplate>
+              </DataGridColumn>
+
+              <DataGridColumn TItem="ReservationWithNavigationPropertiesDto"
+                      Field="Reservation.NumberOfGuest"
+                      Caption="@L["NumberOfGuest"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="ReservationWithNavigationPropertiesDto"
+                      Field="Reservation.Price"
+                      Caption="@L["Price"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="ReservationWithNavigationPropertiesDto"
+                      Field="Reservation.Discount"
+                      Caption="@L["Discount"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="ReservationWithNavigationPropertiesDto"
+                      Field="Reservation.ReservationStatus"
+                      Caption="@L["ReservationStatus"]">
+                    <DisplayTemplate>
+                        @L[$"Enum:ReservationStatus.{(int)context.Reservation.ReservationStatus}"]
+                    </DisplayTemplate>
+              </DataGridColumn>
+
+
+              <DataGridColumn TItem="ReservationWithNavigationPropertiesDto"
+                      Field="Reservation.Notes"
+                      Caption="@L["Notes"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="ReservationWithNavigationPropertiesDto"
+                      Field="UserProfile.Name"
+                      Caption="@L["UserProfile"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="ReservationWithNavigationPropertiesDto"
+                      Field="SiteProperty.PropertyTitle"
+                      Caption="@L["SiteProperty"]">
+              </DataGridColumn>
+
+            </DataGridColumns>
+            
+            
+        </DataGrid>
+    </CardBody>
+</Card>
+
+@* ************************* CREATE MODAL ************************* *@
+<Modal @ref="CreateReservationModal" Closing="@CreateReservationModal.CancelClosingModalWhenFocusLost">
+    <ModalContent Centered="true">
+@*//<suite-custom-code-block-5>*@
+@*//</suite-custom-code-block-5>*@
+        <Form id="CreateReservationForm">
+            <ModalHeader>
+                <ModalTitle>@L["NewReservation"]</ModalTitle>
+                <CloseButton Clicked="CloseCreateReservationModalAsync" />
+            </ModalHeader>
+            <ModalBody>
+                <Validations @ref="@NewReservationValidations"
+                            Mode="ValidationMode.Auto"
+                            Model="@NewReservation"
+                            ValidateOnLoad="false">
+                    
+                    
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["FromeDate"]</FieldLabel>
+                            <DateEdit TValue="DateOnly" InputMode="DateInputMode.Date" @bind-Date="@NewReservation.FromeDate" >
+                               <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </DateEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["ToDate"]</FieldLabel>
+                            <DateEdit TValue="DateOnly" InputMode="DateInputMode.Date" @bind-Date="@NewReservation.ToDate" >
+                               <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </DateEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["CheckInDate"]</FieldLabel>
+                            <DateEdit TValue="DateTime?" InputMode="DateInputMode.Date" @bind-Date="@NewReservation.CheckInDate" >
+                               <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </DateEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["CheckOutDate"]</FieldLabel>
+                            <DateEdit TValue="DateTime?" InputMode="DateInputMode.Date" @bind-Date="@NewReservation.CheckOutDate" >
+                               <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </DateEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["NumberOfGuest"]</FieldLabel>
+                            <NumericPicker TValue="int?" @bind-Value="@NewReservation.NumberOfGuest"  Decimals="0" >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                             </NumericPicker>
+                        </Field>
+                     </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Price"]</FieldLabel>
+                            <NumericPicker TValue="double" @bind-Value="@NewReservation.Price"   >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                             </NumericPicker>
+                        </Field>
+                     </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Discount"]</FieldLabel>
+                            <NumericPicker TValue="double?" @bind-Value="@NewReservation.Discount"   >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                             </NumericPicker>
+                        </Field>
+                     </Validation>
+
+
+                    <Field>
+                        <FieldLabel>@L["ReservationStatus"]</FieldLabel>
+                        <Select TValue="ReservationStatus" @bind-SelectedValue="@NewReservation.ReservationStatus" >
+                            @foreach (var itemValue in Enum.GetValues(typeof(ReservationStatus)))
+                            {
+                                <SelectItem TValue="ReservationStatus" Value="@((ReservationStatus) itemValue)">
+                                    @L[$"Enum:ReservationStatus.{((ReservationStatus) itemValue).ToString("d")}"]
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Notes"]</FieldLabel>
+                            <TextEdit @bind-Text="@NewReservation.Notes"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Field>
+                        <FieldLabel>@L["UserProfile"]</FieldLabel>
+                        <Select TValue="Guid" @bind-SelectedValue="@NewReservation.UserProfileId">
+                            @foreach (var userProfile in UserProfilesCollection)
+                            {
+                                <SelectItem TValue="Guid" Value="@(userProfile.Id)">
+                                    @(userProfile.DisplayName)
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    <Field>
+                        <FieldLabel>@L["SiteProperty"]</FieldLabel>
+                        <Select TValue="Guid" @bind-SelectedValue="@NewReservation.SitePropertyId">
+                            @foreach (var siteProperty in SitePropertiesCollection)
+                            {
+                                <SelectItem TValue="Guid" Value="@(siteProperty.Id)">
+                                    @(siteProperty.DisplayName)
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    
+                    
+                </Validations>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary"
+                        Clicked="CloseCreateReservationModalAsync">
+                    @L["Cancel"]
+                </Button>
+                <SubmitButton Form="CreateReservationForm" Clicked="CreateReservationAsync"/>
+@*//<suite-custom-code-block-6>*@
+@*//</suite-custom-code-block-6>*@
+            </ModalFooter>
+        </Form>
+@*//<suite-custom-code-block-7>*@
+@*//</suite-custom-code-block-7>*@
+    </ModalContent>
+</Modal>
+
+@* ************************* EDIT MODAL ************************* *@
+<Modal @ref="EditReservationModal" Closing="@EditReservationModal.CancelClosingModalWhenFocusLost">
+    <ModalContent Centered="true">
+@*//<suite-custom-code-block-8>*@
+@*//</suite-custom-code-block-8>*@
+        <Form id="EditReservationForm">
+            <ModalHeader>
+                <ModalTitle>@L["Update"]</ModalTitle>
+                <CloseButton Clicked="CloseEditReservationModalAsync" />
+            </ModalHeader>
+            <ModalBody>
+                <Validations @ref="@EditingReservationValidations"
+                            Mode="ValidationMode.Auto"
+                            Model="@EditingReservation"
+                            ValidateOnLoad="false">
+                    
+                    
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["FromeDate"]</FieldLabel>
+                            <DateEdit TValue="DateOnly" InputMode="DateInputMode.Date" @bind-Date="@EditingReservation.FromeDate" >
+                               <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </DateEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["ToDate"]</FieldLabel>
+                            <DateEdit TValue="DateOnly" InputMode="DateInputMode.Date" @bind-Date="@EditingReservation.ToDate" >
+                               <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </DateEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["CheckInDate"]</FieldLabel>
+                            <DateEdit TValue="DateTime?" InputMode="DateInputMode.Date" @bind-Date="@EditingReservation.CheckInDate" >
+                               <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </DateEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["CheckOutDate"]</FieldLabel>
+                            <DateEdit TValue="DateTime?" InputMode="DateInputMode.Date" @bind-Date="@EditingReservation.CheckOutDate" >
+                               <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </DateEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["NumberOfGuest"]</FieldLabel>
+                            <NumericPicker TValue="int?" @bind-Value="@EditingReservation.NumberOfGuest"  Decimals="0" >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                             </NumericPicker>
+                        </Field>
+                     </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Price"]</FieldLabel>
+                            <NumericPicker TValue="double" @bind-Value="@EditingReservation.Price"   >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                             </NumericPicker>
+                        </Field>
+                     </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Discount"]</FieldLabel>
+                            <NumericPicker TValue="double?" @bind-Value="@EditingReservation.Discount"   >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                             </NumericPicker>
+                        </Field>
+                     </Validation>
+
+
+                    <Field>
+                        <FieldLabel>@L["ReservationStatus"]</FieldLabel>
+                        <Select TValue="ReservationStatus" @bind-SelectedValue="@EditingReservation.ReservationStatus" >
+                            @foreach (var itemValue in Enum.GetValues(typeof(ReservationStatus)))
+                            {
+                                <SelectItem TValue="ReservationStatus" Value="@((ReservationStatus) itemValue)">
+                                    @L[$"Enum:ReservationStatus.{((ReservationStatus) itemValue).ToString("d")}"]
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Notes"]</FieldLabel>
+                            <TextEdit @bind-Text="@EditingReservation.Notes"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Field>
+                        <FieldLabel>@L["UserProfile"]</FieldLabel>
+                        <Select TValue="Guid" @bind-SelectedValue="@EditingReservation.UserProfileId">
+                            @foreach (var userProfile in UserProfilesCollection)
+                            {
+                                <SelectItem TValue="Guid" Value="@(userProfile.Id)">
+                                    @(userProfile.DisplayName)
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    <Field>
+                        <FieldLabel>@L["SiteProperty"]</FieldLabel>
+                        <Select TValue="Guid" @bind-SelectedValue="@EditingReservation.SitePropertyId">
+                            @foreach (var siteProperty in SitePropertiesCollection)
+                            {
+                                <SelectItem TValue="Guid" Value="@(siteProperty.Id)">
+                                    @(siteProperty.DisplayName)
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    
+                    
+                </Validations>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary"
+                        Clicked="CloseEditReservationModalAsync">
+                    @L["Cancel"]
+                </Button>
+                <SubmitButton Form="EditReservationForm" Clicked="UpdateReservationAsync" />
+@*//<suite-custom-code-block-9>*@
+@*//</suite-custom-code-block-9>*@
+            </ModalFooter>
+        </Form>
+@*//<suite-custom-code-block-10>*@
+@*//</suite-custom-code-block-10>*@
+    </ModalContent>
+</Modal>
+

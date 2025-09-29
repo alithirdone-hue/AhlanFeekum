@@ -165,6 +165,16 @@ icon: "fa fa-file-alt",
                 icon: "fa fa-file-alt",
                 requiredPermissionName: AhlanFeekumPermissions.Statuses.Default)
         );
+
+
+        context.Menu.AddItem(
+            new ApplicationMenuItem(
+                AhlanFeekumMenus.Reservations,
+                l["Menu:Reservations"],
+                url: "/reservations",
+                icon: "fa fa-file-alt",
+                requiredPermissionName: AhlanFeekumPermissions.Reservations.Default)
+        );
         return Task.CompletedTask;
     }
 }

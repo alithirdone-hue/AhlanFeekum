@@ -11,8 +11,9 @@ using AhlanFeekum.PropertyTypes;
 using AhlanFeekum.Shared;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SpecialAdvertisments;
-using AhlanFeekum.UserProfiles;
 using AhlanFeekum.Statuses;
+using AhlanFeekum.UserProfiles;
+using AhlanFeekum.Reservations;
 using AutoMapper;
 using System;
 using Volo.Abp.AutoMapper;
@@ -145,6 +146,30 @@ public class AhlanFeekumApplicationAutoMapperProfile : Profile
 
         CreateMap<StatusDto, StatusUpdateDto>();
         CreateMap<Status, LookupDto<Guid>>().ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.Name));
+
+
+        CreateMap<Reservation, ReservationDto>();
+        CreateMap<Reservation, ReservationExcelDto>();
+        CreateMap<ReservationWithNavigationProperties, ReservationWithNavigationPropertiesDto>();
+        CreateMap<ReservationWithNavigationProperties, ReservationMobileDto>()
+              .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Reservation.Id))
+              .ForMember(dest => dest.FromeDate, opt => opt.MapFrom(src => src.Reservation.FromeDate))
+              .ForMember(dest => dest.ToDate, opt => opt.MapFrom(src => src.Reservation.ToDate))
+              .ForMember(dest => dest.CheckInDate, opt => opt.MapFrom(src => src.Reservation.CheckInDate))
+              .ForMember(dest => dest.CheckOutDate, opt => opt.MapFrom(src => src.Reservation.CheckOutDate))
+              .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Reservation.Price))
+              .ForMember(dest => dest.NumberOfGuest, opt => opt.MapFrom(src => src.Reservation.NumberOfGuest))
+              .ForMember(dest => dest.ReservationStatus, opt => opt.MapFrom(src => src.Reservation.ReservationStatus))
+              .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Reservation.Notes))
+              .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Reservation.Discount))
+              .ForMember(dest => dest.UserProfileId, opt => opt.MapFrom(src => src.Reservation.UserProfileId))
+              .ForMember(dest => dest.UserProfileName, opt => opt.MapFrom(src => src.UserProfile.Name))
+              .ForMember(dest => dest.SitePropertyId, opt => opt.MapFrom(src => src.Reservation.SitePropertyId))
+              .ForMember(dest => dest.SitePropertyTitle, opt => opt.MapFrom(src => src.SiteProperty.PropertyTitle));
+          //  .ForMember(dest => dest.FirstPhoto, opt => opt.MapFrom(src => src.FirstPhotoId != null ? $"{MimeTypes.MimeTypeMap.GetAttachmentPath()}/onlyforyousection-file/{src.FirstPhotoId.ToString("N")}{src.FirstPhotoExtension}" : null))
+
+
+        CreateMap<ReservationDto, ReservationUpdateDto>();
 
     }
 }

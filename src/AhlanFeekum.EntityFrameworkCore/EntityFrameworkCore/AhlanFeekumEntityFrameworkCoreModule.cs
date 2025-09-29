@@ -9,8 +9,9 @@ using AhlanFeekum.PropertyMedias;
 using AhlanFeekum.PropertyTypes;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SpecialAdvertisments;
-using AhlanFeekum.UserProfiles;
 using AhlanFeekum.Statuses;
+using AhlanFeekum.UserProfiles;
+using AhlanFeekum.Reservations;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
@@ -79,6 +80,7 @@ public class AhlanFeekumEntityFrameworkCoreModule : AbpModule
            
             options.AddRepository<PropertyCalendar, PropertyCalendars.EfCorePropertyCalendarRepository>();
             options.AddRepository<Status, Statuses.EfCoreStatusRepository>();
+            options.AddRepository<Reservation, Reservations.EfCoreReservationRepository>();
 
         });
 

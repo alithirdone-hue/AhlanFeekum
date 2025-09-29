@@ -11,11 +11,12 @@ using AhlanFeekum.PropertyMedias;
 using AhlanFeekum.PropertyTypes;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SiteProperties;
+using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SpecialAdvertisments;
 using AhlanFeekum.SpecialAdvertisments;
 using AhlanFeekum.Statuses;
 using AhlanFeekum.UserProfiles;
-using AhlanFeekum.SiteProperties;
+using AhlanFeekum.Reservations;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -43,6 +44,9 @@ public class AhlanFeekumDbContext :
     ITenantManagementDbContext
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
+
+    public DbSet<Reservation> Reservations { get; set; } = null!;
+
     public DbSet<Status> Statuses { get; set; } = null!;
 
     public DbSet<AppFileDescriptors.AppFileDescriptor> AppFileDescriptors { get; set; } = null!;
@@ -377,7 +381,32 @@ public class AhlanFeekumDbContext :
                 b.Property(x => x.MimeType);
             });
         }
-    }
+
+
+        if (builder.IsHostDatabase())
+        {
+
+        }
+        if (builder.IsHostDatabase())
+        {
+            builder.Entity<Reservation>(b =>
+            {
+                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "Reservations", AhlanFeekumConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.Property(x => x.FromeDate).HasColumnName(nameof(Reservation.FromeDate));
+                b.Property(x => x.ToDate).HasColumnName(nameof(Reservation.ToDate));
+                b.Property(x => x.CheckInDate).HasColumnName(nameof(Reservation.CheckInDate));
+                b.Property(x => x.CheckOutDate).HasColumnName(nameof(Reservation.CheckOutDate));
+                b.Property(x => x.NumberOfGuest).HasColumnName(nameof(Reservation.NumberOfGuest));
+                b.Property(x => x.Price).HasColumnName(nameof(Reservation.Price));
+                b.Property(x => x.Discount).HasColumnName(nameof(Reservation.Discount));
+                b.Property(x => x.ReservationStatus).HasColumnName(nameof(Reservation.ReservationStatus));
+                b.Property(x => x.Notes).HasColumnName(nameof(Reservation.Notes));
+                b.HasOne<UserProfile>().WithMany().IsRequired().HasForeignKey(x => x.UserProfileId).OnDelete(DeleteBehavior.NoAction);
+                b.HasOne<SiteProperty>().WithMany().IsRequired().HasForeignKey(x => x.SitePropertyId).OnDelete(DeleteBehavior.NoAction);
+            });
+        }
+        }
 
 
 }

@@ -78,6 +78,12 @@ public class AhlanFeekumPermissionDefinitionProvider : PermissionDefinitionProvi
         statusPermission.AddChild(AhlanFeekumPermissions.Statuses.Create, L("Permission:Create"));
         statusPermission.AddChild(AhlanFeekumPermissions.Statuses.Edit, L("Permission:Edit"));
         statusPermission.AddChild(AhlanFeekumPermissions.Statuses.Delete, L("Permission:Delete"));
+
+
+        var reservationPermission = myGroup.AddPermission(AhlanFeekumPermissions.Reservations.Default, L("Permission:Reservations"));
+        reservationPermission.AddChild(AhlanFeekumPermissions.Reservations.Create, L("Permission:Create"));
+        reservationPermission.AddChild(AhlanFeekumPermissions.Reservations.Edit, L("Permission:Edit"));
+        reservationPermission.AddChild(AhlanFeekumPermissions.Reservations.Delete, L("Permission:Delete"));
     }
 
     private static LocalizableString L(string name)

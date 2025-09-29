@@ -36,6 +36,7 @@ public class AhlanFeekumMenus
     public const string OnlyForYouSections = Prefix + ".OnlyForYouSections";
     public const string PropertyCalendars = Prefix + ".PropertyCalendars";
     public const string Statuses = Prefix + ".Statuses";
+    public const string Reservations = Prefix + ".Reservations";
 
 
 }
