@@ -43,6 +43,8 @@ namespace AhlanFeekum.SiteProperties
         List<Guid> propertyFeatureId = null,
         DateOnly? checkInDateMin = null,
         DateOnly? checkOutDateMax = null,
+              Guid? ownerId = null,
+            Guid? statusId = null,
         Guid? userId = null,
         string? sorting = null,
         int maxResultCount = int.MaxValue,

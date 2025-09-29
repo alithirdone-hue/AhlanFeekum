@@ -788,7 +788,23 @@ namespace AhlanFeekum.MimeTypes
 
         public static string GetAttachmentPath()
         {
-            return "/ahlanfeekumassets/host";
+
+            var selfUrl = System.Environment.GetEnvironmentVariable("App__SelfUrl");
+            if (string.IsNullOrWhiteSpace(selfUrl))
+            {
+                // Fallback to alternative env var format if available
+                selfUrl = System.Environment.GetEnvironmentVariable("App:SelfUrl");
+            }
+
+            if (string.IsNullOrWhiteSpace(selfUrl))
+            {
+                // Default to relative path when no SelfUrl is configured
+                return "/ahlanfeekumassets/host";
+            }
+
+            return $"{selfUrl.TrimEnd('/')}/ahlanfeekumassets/host";
+
+           // return "/ahlanfeekumassets/host";
         }
 
         public static bool IsImage(string file)

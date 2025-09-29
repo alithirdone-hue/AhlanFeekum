@@ -180,6 +180,14 @@ public class AhlanFeekumBlazorModule : AbpModule
             options.Applications["MVC"].RootUrl = configuration["App:SelfUrl"];
             options.RedirectAllowedUrls.AddRange(configuration["App:RedirectAllowedUrls"]?.Split(',') ?? Array.Empty<string>());
         });
+
+
+        // Ensure GetAttachmentPath() can read SelfUrl via env var when only appsettings is used
+        var selfUrl = configuration["App:SelfUrl"];
+        if (!string.IsNullOrWhiteSpace(selfUrl))
+        {
+            System.Environment.SetEnvironmentVariable("App__SelfUrl", selfUrl);
+        }
     }
 
     private void ConfigureBundles()

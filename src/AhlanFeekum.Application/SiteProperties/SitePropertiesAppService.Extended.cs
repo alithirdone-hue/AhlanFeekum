@@ -126,8 +126,11 @@ namespace AhlanFeekum.SiteProperties
             if (!input.PropertyFeatureIds.IsNullOrEmpty())
                 propertyFeatures = input.PropertyFeatureIds;
 
-            
-            var item = await _sitePropertyRepository.GetListWithDetailsAsync(input.FilterText, input.PropertyTitle, input.HotelName, input.BedroomsMin, input.BedroomsMax, input.BathroomsMin, input.BathroomsMax, input.NumberOfBedMin, input.NumberOfBedMax, input.FloorMin, input.FloorMax, input.MaximumNumberOfGuestMin, input.MaximumNumberOfGuestMax, input.LivingroomsMin, input.LivingroomsMax, input.PropertyDescription, input.HouseRules, input.ImportantInformation, input.Address, input.StreetAndBuildingNumber, input.LandMark, input.PricePerNightMin, input.PricePerNightMax, input.AreaMin, input.AreaMax, input.Latitude, input.Longitude, input.IsActive, input.PropertyTypeId, input.GovernorateId, input.PropertyFeatureIds, input.CheckInDate, input.CheckOutDate, userId, input.Sorting, input.MaxResultCount, input.SkipCount);
+            Status status = await _statusRepository.FirstOrDefaultAsync(s => s.Name == "Approved");
+            if (status == null)
+                throw new UserFriendlyException(L["Approved Status not found"]);
+
+            var item = await _sitePropertyRepository.GetListWithDetailsAsync(input.FilterText, input.PropertyTitle, input.HotelName, input.BedroomsMin, input.BedroomsMax, input.BathroomsMin, input.BathroomsMax, input.NumberOfBedMin, input.NumberOfBedMax, input.FloorMin, input.FloorMax, input.MaximumNumberOfGuestMin, input.MaximumNumberOfGuestMax, input.LivingroomsMin, input.LivingroomsMax, input.PropertyDescription, input.HouseRules, input.ImportantInformation, input.Address, input.StreetAndBuildingNumber, input.LandMark, input.PricePerNightMin, input.PricePerNightMax, input.AreaMin, input.AreaMax, input.Latitude, input.Longitude, input.IsActive, input.PropertyTypeId, input.GovernorateId, input.PropertyFeatureIds, input.CheckInDate, input.CheckOutDate, input.OwnerId, status.Id, userId, input.Sorting, input.MaxResultCount, input.SkipCount);
 
             return new PagedResultDto<SitePropertyListingMobileDto>
             {

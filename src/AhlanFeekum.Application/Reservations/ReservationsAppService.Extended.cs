@@ -72,7 +72,7 @@ namespace AhlanFeekum.Reservations
                 SkipCount = 0,
                 MaxResultCount= 1000
             };
-            var totalCount = await _reservationRepository.GetCountAsync(input.FilterText, input.FromeDateMin, input.FromeDateMax, input.ToDateMin, input.ToDateMax, input.CheckInDateMin, input.CheckInDateMax, input.CheckOutDateMin, input.CheckOutDateMax, input.NumberOfGuestMin, input.NumberOfGuestMax, input.PriceMin, input.PriceMax, input.DiscountMin, input.DiscountMax, input.ReservationStatus, input.Notes, input.UserProfileId, input.SitePropertyId);
+          //  var totalCount = await _reservationRepository.GetCountAsync(input.FilterText, input.FromeDateMin, input.FromeDateMax, input.ToDateMin, input.ToDateMax, input.CheckInDateMin, input.CheckInDateMax, input.CheckOutDateMin, input.CheckOutDateMax, input.NumberOfGuestMin, input.NumberOfGuestMax, input.PriceMin, input.PriceMax, input.DiscountMin, input.DiscountMax, input.ReservationStatus, input.Notes, input.UserProfileId, input.SitePropertyId);
             var items = await _reservationRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.FromeDateMin, input.FromeDateMax, input.ToDateMin, input.ToDateMax, input.CheckInDateMin, input.CheckInDateMax, input.CheckOutDateMin, input.CheckOutDateMax, input.NumberOfGuestMin, input.NumberOfGuestMax, input.PriceMin, input.PriceMax, input.DiscountMin, input.DiscountMax, input.ReservationStatus, input.Notes, input.UserProfileId, input.SitePropertyId, input.Sorting, input.MaxResultCount, input.SkipCount);
             return ObjectMapper.Map<List<ReservationWithNavigationProperties>, List<ReservationMobileDto>>(items);
             //return new PagedResultDto<ReservationWithNavigationPropertiesDto>

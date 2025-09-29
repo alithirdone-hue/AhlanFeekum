@@ -160,12 +160,19 @@ public class AhlanFeekumApplicationAutoMapperProfile : Profile
               .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Reservation.Price))
               .ForMember(dest => dest.NumberOfGuest, opt => opt.MapFrom(src => src.Reservation.NumberOfGuest))
               .ForMember(dest => dest.ReservationStatus, opt => opt.MapFrom(src => src.Reservation.ReservationStatus))
+              .ForMember(dest => dest.ReservationStatusAsString, opt => opt.MapFrom(src => src.Reservation.ReservationStatus.ToString()))
               .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Reservation.Notes))
               .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Reservation.Discount))
               .ForMember(dest => dest.UserProfileId, opt => opt.MapFrom(src => src.Reservation.UserProfileId))
               .ForMember(dest => dest.UserProfileName, opt => opt.MapFrom(src => src.UserProfile.Name))
-              .ForMember(dest => dest.SitePropertyId, opt => opt.MapFrom(src => src.Reservation.SitePropertyId))
-              .ForMember(dest => dest.SitePropertyTitle, opt => opt.MapFrom(src => src.SiteProperty.PropertyTitle));
+              .ForMember(dest => dest.UserProfilePhoto, opt => opt.MapFrom(src => !src.UserProfile.ProfilePhoto .IsNullOrEmpty() ? $"{AhlanFeekum.MimeTypes.MimeTypeMap.GetAttachmentPath()}/UserProfileImages/{src.UserProfile.ProfilePhoto}" : ""))
+              .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => src.PropertyOwner!= null  ? src.PropertyOwner.Id : (Guid?)null))
+              .ForMember(dest => dest.OwnerName, opt => opt.MapFrom(src => src.PropertyOwner != null ? src.PropertyOwner.Name : ""))
+              .ForMember(dest => dest.OwnerProfilePhoto, opt => opt.MapFrom(src => src.PropertyOwner != null ?  $"{AhlanFeekum.MimeTypes.MimeTypeMap.GetAttachmentPath()}/UserProfileImages/{src.PropertyOwner.ProfilePhoto}" : ""))
+              .ForMember(dest => dest.PropertyId, opt => opt.MapFrom(src => src.Reservation.SitePropertyId))
+              .ForMember(dest => dest.PropertyTitle, opt => opt.MapFrom(src => src.SiteProperty.PropertyTitle))
+              .ForMember(dest => dest.PropertyArea, opt => opt.MapFrom(src => src.SiteProperty.Area))
+              .ForMember(dest => dest.PropertyMainImage, opt => opt.MapFrom(src => src.PropertyMedia != null? $"{MimeTypes.MimeTypeMap.GetAttachmentPath()}/propertyMedias/{src.PropertyMedia.Image}" : ""));
           //  .ForMember(dest => dest.FirstPhoto, opt => opt.MapFrom(src => src.FirstPhotoId != null ? $"{MimeTypes.MimeTypeMap.GetAttachmentPath()}/onlyforyousection-file/{src.FirstPhotoId.ToString("N")}{src.FirstPhotoExtension}" : null))
 
 

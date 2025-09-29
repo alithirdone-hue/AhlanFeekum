@@ -18,11 +18,19 @@ namespace AhlanFeekum.Reservations
         public double Price { get; set; }
         public double? Discount { get; set; }
         public ReservationStatus ReservationStatus { get; set; }
+        public string ReservationStatusAsString { get; set; }
         public string? Notes { get; set; }
         public Guid UserProfileId { get; set; }
         public string UserProfileName { get; set; } = string.Empty;
-        public Guid SitePropertyId { get; set; }
-        public string SitePropertyTitle { get; set; } = string.Empty;
+        public string UserProfilePhoto { get; set; } = string.Empty;
+
+        public Guid? OwnerId { get; set; }
+        public string OwnerName { get; set; } = string.Empty;
+        public string OwnerProfilePhoto { get; set; } = string.Empty;
+        public Guid PropertyId { get; set; }
+        public string PropertyTitle { get; set; } = string.Empty;
+        public string PropertyArea { get; set; } = string.Empty;
+        public string PropertyMainImage { get; set; } = string.Empty;
 
     }
 }

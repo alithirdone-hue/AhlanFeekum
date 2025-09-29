@@ -24,6 +24,7 @@ namespace AhlanFeekum.SiteProperties
         public int? NumberOfBedMax { get; set; }
 
         public Guid? GovernorateId { get; set; }
+        public Guid? OwnerId { get; set; }
         // public List<Guid?> PropertyFeatureIds { get; set; }
         public List<Guid> PropertyFeatureIds { get; set; } = new();
 

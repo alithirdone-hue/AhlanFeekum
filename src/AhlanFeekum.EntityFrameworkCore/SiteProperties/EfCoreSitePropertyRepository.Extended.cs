@@ -109,7 +109,9 @@ namespace AhlanFeekum.SiteProperties
      List<Guid> propertyFeatureIds = null,
      DateOnly? checkInDateMin = null,
      DateOnly? checkInDateMax = null,
-     Guid? userId = null,
+      Guid? ownerId = null,
+            Guid? statusId = null,
+                 Guid? userId = null,
      string? sorting = null,
      int maxResultCount = int.MaxValue,
      int skipCount = 0,
@@ -117,7 +119,7 @@ namespace AhlanFeekum.SiteProperties
         {
             SitePropertyListWithDetails sitePropertyListWithDetails = new SitePropertyListWithDetails();
             var query = await GetQueryForDetailssAsync(userId);
-            query = ApplyFilterWithDetails(query, filterText, propertyTitle, hotelName, bedroomsMin, bedroomsMax, bathroomsMin, bathroomsMax, numberOfBedMin, numberOfBedMax, floorMin, floorMax, maximumNumberOfGuestMin, maximumNumberOfGuestMax, livingroomsMin, livingroomsMax, propertyDescription, hourseRules, importantInformation, address, streetAndBuildingNumber, landMark, pricePerNightMin, pricePerNightMax, areaMin, areaMax, latitude, longitude, isActive, propertyTypeId, governorateId, propertyFeatureIds, checkInDateMin, checkInDateMax);
+            query = ApplyFilterWithDetails(query, filterText, propertyTitle, hotelName, bedroomsMin, bedroomsMax, bathroomsMin, bathroomsMax, numberOfBedMin, numberOfBedMax, floorMin, floorMax, maximumNumberOfGuestMin, maximumNumberOfGuestMax, livingroomsMin, livingroomsMax, propertyDescription, hourseRules, importantInformation, address, streetAndBuildingNumber, landMark, pricePerNightMin, pricePerNightMax, areaMin, areaMax, latitude, longitude, isActive, propertyTypeId, governorateId, propertyFeatureIds, checkInDateMin, checkInDateMax, ownerId, statusId);
             sitePropertyListWithDetails.TotalCount = await query.LongCountAsync(GetCancellationToken(cancellationToken));
             query = query.OrderBy(string.IsNullOrWhiteSpace(sorting) ? SitePropertyConsts.GetDefaultSorting(true) : sorting);
             sitePropertyListWithDetails.SitePropertyWithDetails =  await query.PageBy(skipCount, maxResultCount).ToListAsync(cancellationToken);
@@ -181,7 +183,8 @@ namespace AhlanFeekum.SiteProperties
              List<Guid> propertyFeatureIds = null,
              DateOnly? checkInDateMin = null,
              DateOnly? checkInDateMax = null,
-             Guid? userId = null)
+                   Guid? ownerId = null,
+            Guid? statusId = null)
         {
             return query
                 .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.SiteProperty.PropertyTitle!.Contains(filterText!) || e.SiteProperty.HotelName!.Contains(filterText!) || e.SiteProperty.PropertyDescription!.Contains(filterText!) || e.SiteProperty.HourseRules!.Contains(filterText!) || e.SiteProperty.ImportantInformation!.Contains(filterText!) || e.SiteProperty.Address!.Contains(filterText!) || e.SiteProperty.StreetAndBuildingNumber!.Contains(filterText!) || e.SiteProperty.LandMark!.Contains(filterText!))
@@ -214,6 +217,8 @@ namespace AhlanFeekum.SiteProperties
                     .WhereIf(isActive.HasValue, e => e.SiteProperty.IsActive == isActive)
                     .WhereIf(propertyTypeId != null && propertyTypeId != Guid.Empty, e => e.PropertyType != null && e.PropertyType.Id == propertyTypeId)
                     .WhereIf(governorateId != null && governorateId != Guid.Empty, e => e.Governorate != null && e.Governorate.Id == governorateId)
+                    .WhereIf(ownerId != null && ownerId != Guid.Empty, e => e.SiteProperty.OwnerId == ownerId)
+                    .WhereIf(statusId != null && statusId != Guid.Empty, e => e.SiteProperty.StatusId  == statusId)
                     .WhereIf(propertyFeatureIds != null && propertyFeatureIds.Count > 0, e => e.SiteProperty.PropertyFeatures.Any(x => propertyFeatureIds.Contains(x.PropertyFeatureId)));
 
         }

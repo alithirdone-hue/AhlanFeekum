@@ -4,6 +4,7 @@ using AhlanFeekum.PropertyFeatures;
 using AhlanFeekum.PropertyTypes;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SpecialAdvertisments;
+using AhlanFeekum.Statuses;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,8 @@ using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading;
 using System.Threading.Tasks;
+using Volo.Abp;
+using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
 
@@ -18,13 +21,19 @@ namespace AhlanFeekum.UserProfiles
 {
     public class EfCoreUserProfileRepository : EfCoreUserProfileRepositoryBase, IUserProfileRepository
     {
-        public EfCoreUserProfileRepository(IDbContextProvider<AhlanFeekumDbContext> dbContextProvider)
+        public IStatusRepository _statusRepository;
+        public EfCoreUserProfileRepository(IDbContextProvider<AhlanFeekumDbContext> dbContextProvider, IStatusRepository statusRepository)
             : base(dbContextProvider)
         {
+            _statusRepository = statusRepository;
         }
 
         public async Task<HomePage> GetHomePageAsync(Guid? userId)
         {
+            Status approvedStatus = await _statusRepository.FirstOrDefaultAsync(s => s.Name == "Approved");
+            if (approvedStatus == null)
+                throw new UserFriendlyException("Approved Status not found");
+
             var dbContext = await GetDbContextAsync();
             Guid? hotelPropertyTypeId = null;
             PropertyType propertyType = dbContext.PropertyTypes.FirstOrDefault(p => p.Title.ToLower() == "hotel");
@@ -42,7 +51,7 @@ namespace AhlanFeekum.UserProfiles
                                                 SiteProperty = dbContext.SiteProperties.Where(s=>s.Id == specialAdvertisment.SitePropertyId).FirstOrDefault()
                                             }).ToList(),
                     SiteProperties =
-                    (from siteProperty in (dbContext.SiteProperties.Include(p => p.PropertyFeatures))
+                    (from siteProperty in (dbContext.SiteProperties.Where(s=>s.StatusId == approvedStatus.Id).Include(p => p.PropertyFeatures))
                      select new SitePropertyWithDetails
                      {
                          SiteProperty = siteProperty,
@@ -54,7 +63,7 @@ namespace AhlanFeekum.UserProfiles
                          IsFavorite = userId == null ? false : dbContext.FavoriteProperties.Any(p => p.SitePropertyId == siteProperty.Id && p.UserProfileId == userId),
                      }).ToList(),
                     HighlyRated =
-                    (from siteProperty in (dbContext.SiteProperties.Include(p => p.PropertyFeatures))
+                    (from siteProperty in (dbContext.SiteProperties.Where(s => s.StatusId == approvedStatus.Id).Include(p => p.PropertyFeatures))
                      select new SitePropertyWithDetails
                      {
                          SiteProperty = siteProperty,
@@ -85,7 +94,7 @@ namespace AhlanFeekum.UserProfiles
                     //}).ToList(),
                     Governorates = dbContext.Governorates.OrderBy(g => g.Order).ToList(),
                     HotelsOfTheWeek =
-                    (from siteProperty in (dbContext.SiteProperties.Where(p=>p.PropertyTypeId == hotelPropertyTypeId).Include(p => p.PropertyFeatures))
+                    (from siteProperty in (dbContext.SiteProperties.Where(p=>p.PropertyTypeId == hotelPropertyTypeId && p.StatusId == approvedStatus.Id).Include(p => p.PropertyFeatures))
                      from user in dbContext.UserProfiles where siteProperty.OwnerId == user.Id
                      select new UserProfile(user.Id,user.IdentityRoleId, user.IdentityUserId,user.Name, user.IsSuperHost,user.Email,
                      user.PhoneNumber, user.Latitude, user.Longitude,user.Address, user.ProfilePhoto)

@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
 using AhlanFeekum.EntityFrameworkCore;
+using AhlanFeekum.PropertyMedias;
 
 namespace AhlanFeekum.Reservations
 {
@@ -61,7 +62,16 @@ namespace AhlanFeekum.Reservations
                 {
                     Reservation = reservation,
                     UserProfile = dbContext.Set<UserProfile>().FirstOrDefault(c => c.Id == reservation.UserProfileId),
-                    SiteProperty = dbContext.Set<SiteProperty>().FirstOrDefault(c => c.Id == reservation.SitePropertyId)
+                    SiteProperty = dbContext.Set<SiteProperty>().FirstOrDefault(c => c.Id == reservation.SitePropertyId),
+                    PropertyOwner = (from siteProperty in dbContext.Set<SiteProperty>()
+                                     where siteProperty.Id == reservation.SitePropertyId
+                                     join propertyOwner in dbContext.Set<UserProfile>()
+                                          on siteProperty.OwnerId equals propertyOwner.Id
+                                     select propertyOwner).FirstOrDefault(),
+                    PropertyMedia = dbContext.Set<PropertyMedia>()
+                                       .Where(pm => pm.SitePropertyId == reservation.SitePropertyId)
+                                       .OrderBy(pm => pm.Order)           // <-- order column
+                                       .FirstOrDefault(),
                 }).FirstOrDefault();
         }
 
@@ -98,16 +108,24 @@ namespace AhlanFeekum.Reservations
 
         protected virtual async Task<IQueryable<ReservationWithNavigationProperties>> GetQueryForNavigationPropertiesAsync()
         {
+            var dbContext = await GetDbContextAsync();
             return from reservation in (await GetDbSetAsync())
                    join userProfile in (await GetDbContextAsync()).Set<UserProfile>() on reservation.UserProfileId equals userProfile.Id into userProfiles
                    from userProfile in userProfiles.DefaultIfEmpty()
                    join siteProperty in (await GetDbContextAsync()).Set<SiteProperty>() on reservation.SitePropertyId equals siteProperty.Id into siteProperties
                    from siteProperty in siteProperties.DefaultIfEmpty()
+                   join propertyOwner in (await GetDbContextAsync()).Set<UserProfile>() on siteProperty.OwnerId equals propertyOwner.Id into propertyOwners
+                   from propertyOwner in propertyOwners.DefaultIfEmpty()
                    select new ReservationWithNavigationProperties
                    {
                        Reservation = reservation,
                        UserProfile = userProfile,
-                       SiteProperty = siteProperty
+                       SiteProperty = siteProperty,
+                       PropertyOwner = propertyOwner,
+                       PropertyMedia = dbContext.Set<PropertyMedia>()
+                                       .Where(pm => pm.SitePropertyId == siteProperty.Id)
+                                       .OrderBy(pm => pm.Order)           // <-- order column
+                                       .FirstOrDefault(),
                    };
         }
 
