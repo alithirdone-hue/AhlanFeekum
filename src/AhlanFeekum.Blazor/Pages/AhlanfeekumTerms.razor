@@ -1,0 +1,625 @@
+
+
+@page "/ahlanfeekum-terms"
+
+@attribute [Authorize(AhlanFeekumPermissions.AhlanfeekumTerms.Default)]
+@using AhlanFeekum.AhlanfeekumTerms
+@using AhlanFeekum.Localization
+@using AhlanFeekum.Shared
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Components.Web
+@using Blazorise
+@using Blazorise.Components
+@using Blazorise.DataGrid
+@using Volo.Abp.BlazoriseUI
+@using Volo.Abp.BlazoriseUI.Components
+@using Volo.Abp.ObjectMapping
+@using Volo.Abp.AspNetCore.Components.Messages
+@using Volo.Abp.AspNetCore.Components.Web.Theming.Layout
+
+@using AhlanFeekum.Permissions
+@using Volo.Abp.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components
+@using Volo.Abp.Http.Client
+@inherits AhlanFeekumComponentBase
+@inject IAhlanfeekumTermsAppService AhlanfeekumTermsAppService
+
+@inject IUiMessageService UiMessageService
+@inject AbpBlazorMessageLocalizerHelper<AhlanFeekumResource> LH
+@inject IRemoteServiceConfigurationProvider RemoteServiceConfigurationProvider
+@inject NavigationManager NavigationManager
+
+@* ************************* PAGE HEADER ************************* *@
+<PageHeader Title="@L["AhlanfeekumTerms"]" BreadcrumbItems="BreadcrumbItems" Toolbar="Toolbar">
+
+</PageHeader>
+
+@* ************************* SEARCH ************************* *@
+<Card>
+    <CardBody>
+@*//<suite-custom-code-block-1>*@
+@*//</suite-custom-code-block-1>*@
+        <Row>
+            <div class="col-md-8 col-lg-10">
+                <div class="mb-3">
+                    <Form id="AhlanfeekumTermSearchForm">
+                        <Addons>
+                            <Addon AddonType="AddonType.Body">
+                                <TextEdit @bind-Text="@Filter.FilterText"
+                                        Autofocus="true"
+                                        Placeholder="@L["Search"]">
+                                </TextEdit>
+                            </Addon>
+                            <Addon AddonType="AddonType.End">
+                                <SubmitButton Form="AhlanfeekumTermSearchForm" Clicked="GetAhlanfeekumTermsAsync">
+                                    <Icon Name="IconName.Search" Class="me-1"></Icon>@L["Search"]
+                                </SubmitButton>
+                            </Addon>
+                        </Addons>
+                    </Form>
+                </div>
+            </div>
+                
+                   <div class="col-md-4 col-lg-2">
+            <div class="mb-3">
+               <Button Color="Color.Primary" Outline Style="width:100%" id="AdvancedFilterSectionToggler"
+                         Clicked="@(() => ShowAdvancedFilters = !ShowAdvancedFilters)">@L["Filters"]
+                         <i aria-hidden="true" class="fa ms-1 @(!ShowAdvancedFilters ? "fa-angle-down" : "fa-angle-up")"></i>
+               </Button>
+            </div>
+       </div>
+        
+        <div style="display: @(!ShowAdvancedFilters ? "none" : "block")"  class="mt-3">
+            <Row>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["TermsTitle"]</FieldLabel>
+                        <TextEdit Text="@Filter.TermsTitle" TextChanged="@OnTermsTitleChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["TermsAnnotation"]</FieldLabel>
+                        <TextEdit Text="@Filter.TermsAnnotation" TextChanged="@OnTermsAnnotationChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["TermsDescription"]</FieldLabel>
+                        <TextEdit Text="@Filter.TermsDescription" TextChanged="@OnTermsDescriptionChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["WhoAreWeTitle"]</FieldLabel>
+                        <TextEdit Text="@Filter.WhoAreWeTitle" TextChanged="@OnWhoAreWeTitleChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["WhoAreWeAnnotation"]</FieldLabel>
+                        <TextEdit Text="@Filter.WhoAreWeAnnotation" TextChanged="@OnWhoAreWeAnnotationChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["WhoAreWeDescription"]</FieldLabel>
+                        <TextEdit Text="@Filter.WhoAreWeDescription" TextChanged="@OnWhoAreWeDescriptionChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["IsActive"]</FieldLabel>
+                        <Select TValue="bool?"
+		SelectedValue="@Filter.IsActive"
+		SelectedValueChanged="@OnIsActiveChangedAsync">
+
+<SelectItem></SelectItem>
+<SelectItem Value="true">@L["Yes"]</SelectItem>
+<SelectItem Value="false">@L["No"]</SelectItem>
+
+</Select>                       
+                    </Field>
+                </Column>
+            </Row>
+@*//<suite-custom-code-block-2>*@
+@*//</suite-custom-code-block-2>*@
+        </div>
+
+        </Row>
+
+@*//<suite-custom-code-block-3>*@
+@*//</suite-custom-code-block-3>*@
+    </CardBody>
+</Card>
+
+@* ************************* DATA GRID ************************* *@
+<Card>
+    <CardBody>        
+        @if (SelectedAhlanfeekumTerms.Any())
+        {
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                @if (AllAhlanfeekumTermsSelected)
+                {
+                    <p class="lead mb-0">
+                        @L["AllItemsAreSelected", TotalCount]
+                    </p>
+                }
+                else
+                {
+                    <p class="lead mb-0">
+                        @if (SelectedAhlanfeekumTerms.Count > 1)
+                        {
+                            @L["NumberOfItemsOnThisPageAreSelected", SelectedAhlanfeekumTerms.Count]
+                        }
+                        else
+                        {
+                            @L["OneItemOnThisPageIsSelected"]
+                        }
+                    </p>
+                }
+                    
+                <div>
+                    @if ((SelectedAhlanfeekumTerms.Count == PageSize || SelectedAhlanfeekumTerms.Count == AhlanfeekumTermList.Count) && TotalCount > SelectedAhlanfeekumTerms.Count)
+                    {
+                        if (!AllAhlanfeekumTermsSelected)
+                        {
+                            <Button Clicked="SelectAllItems" Class="mx-1 btn-outline-secondary">@L["SelectAllItems", TotalCount]</Button>
+                        }
+                        else
+                        {
+                            <Button Clicked="ClearSelection" Class="mx-1 btn-outline-secondary">@L["ClearSelection"]</Button>
+                        }
+                    }
+                    
+                    <Button Color="Color.Danger" Class="mx-1" Size="Size.Medium" Clicked="DeleteSelectedAhlanfeekumTermsAsync">
+                        <Icon Name="@IconName.Delete" /> @L["Delete"]
+                    </Button>
+                </div>
+            </div>
+            
+            <hr class="my-1 mx-0"/>
+        }
+        <DataGrid TItem="AhlanfeekumTermDto"
+                  Data="AhlanfeekumTermList"
+                  
+                  SelectionMode="DataGridSelectionMode.Multiple"
+                  SelectedRows="SelectedAhlanfeekumTerms"
+                  RowSelectable="@((args) => CanDeleteAhlanfeekumTerm)"
+                  SelectedRowsChanged="SelectedAhlanfeekumTermRowsChanged"
+                  
+                  
+                  
+                  ReadData="OnDataGridReadAsync"
+                  TotalItems="TotalCount"
+                  ShowPager="true"
+                  Responsive="true"
+                  PageSize="PageSize"
+                  Class="datagrid-detail">
+            <LoadingTemplate>
+                <Row Class="w-100 align-items-center" Style="height: 150px;">
+                    <Column>
+                       <RadarSpinner />
+                    </Column>
+                </Row>
+            </LoadingTemplate>
+            <EmptyTemplate>
+                <Row Class="w-100 align-items-center" Style="height: 150px;">
+                    <Column>
+                        <Heading Size="HeadingSize.Is4" TextAlignment="TextAlignment.Center">@L["NoDataAvailable"]</Heading>
+                    </Column>
+                </Row>
+            </EmptyTemplate>   
+            <DataGridColumns>
+                
+                @if (CanDeleteAhlanfeekumTerm && AhlanfeekumTermList.Any())
+                {
+                    <DataGridMultiSelectColumn TItem="AhlanfeekumTermDto" DisplayOrder="-1" Width="30px"></DataGridMultiSelectColumn>
+                }
+                
+                <DataGridEntityActionsColumn TItem="AhlanfeekumTermDto" @ref="@EntityActionsColumn">
+                    <DisplayTemplate>
+                        <EntityActions TItem="AhlanfeekumTermDto" EntityActionsColumn="@EntityActionsColumn">
+                            <EntityAction TItem="AhlanfeekumTermDto"
+                                          Visible="@CanEditAhlanfeekumTerm"
+                                          Clicked="async () => await OpenEditAhlanfeekumTermModalAsync(context)"
+                                          Text="@L["Edit"]"></EntityAction>
+                            <EntityAction TItem="AhlanfeekumTermDto"
+                                          Visible="@CanDeleteAhlanfeekumTerm"
+                                          Clicked="() => DeleteAhlanfeekumTermAsync(context)"
+                                          ConfirmationMessage="@(()=> L["DeleteConfirmationMessage"])"
+                                          Text="@L["Delete"]"></EntityAction>
+@*//<suite-custom-code-block-4>*@
+@*//</suite-custom-code-block-4>*@
+                        </EntityActions>
+                    </DisplayTemplate>
+                </DataGridEntityActionsColumn>
+               
+              <DataGridColumn TItem="AhlanfeekumTermDto"
+                      Field="TermsTitle"
+                      Caption="@L["TermsTitle"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="AhlanfeekumTermDto"
+                      Field="TermsAnnotation"
+                      Caption="@L["TermsAnnotation"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="AhlanfeekumTermDto"
+                      Field="TermsDescription"
+                      Caption="@L["TermsDescription"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="AhlanfeekumTermDto"
+                      Field="TermsIconId"
+                      Caption="@L["TermsIcon"]">
+                      <DisplayTemplate>
+                        @if (context.TermsIconId != null && context.TermsIconId != Guid.Empty)
+                        {   
+                            <Icon Name="IconName.FileAlt" Clicked="async () => await DownloadFileAsync(context.TermsIconId)" />
+                        }
+                        else
+                        {
+                            <span>"-"</span>
+                        }
+                      </DisplayTemplate>
+              </DataGridColumn>
+
+
+              <DataGridColumn TItem="AhlanfeekumTermDto"
+                      Field="WhoAreWeTitle"
+                      Caption="@L["WhoAreWeTitle"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="AhlanfeekumTermDto"
+                      Field="WhoAreWeAnnotation"
+                      Caption="@L["WhoAreWeAnnotation"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="AhlanfeekumTermDto"
+                      Field="WhoAreWeDescription"
+                      Caption="@L["WhoAreWeDescription"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="AhlanfeekumTermDto"
+                      Field="WhoAreWeIconId"
+                      Caption="@L["WhoAreWeIcon"]">
+                      <DisplayTemplate>
+                        @if (context.WhoAreWeIconId != null && context.WhoAreWeIconId != Guid.Empty)
+                        {   
+                            <Icon Name="IconName.FileAlt" Clicked="async () => await DownloadFileAsync(context.WhoAreWeIconId)" />
+                        }
+                        else
+                        {
+                            <span>"-"</span>
+                        }
+                      </DisplayTemplate>
+              </DataGridColumn>
+
+
+              <DataGridColumn TItem="AhlanfeekumTermDto"
+                      Field="IsActive"
+                      Caption="@L["IsActive"]">
+                    <DisplayTemplate>
+                        @if (context.IsActive)
+                        {
+                            <Icon TextColor="TextColor.Success" Name="@IconName.Check" />
+                        }
+                        else
+                        {
+                            <Icon TextColor="TextColor.Danger" Name="@IconName.Times" />
+                        }
+                    </DisplayTemplate>
+              </DataGridColumn>
+
+
+            </DataGridColumns>
+            
+            
+        </DataGrid>
+    </CardBody>
+</Card>
+
+@* ************************* CREATE MODAL ************************* *@
+<Modal @ref="CreateAhlanfeekumTermModal" Closing="@CreateAhlanfeekumTermModal.CancelClosingModalWhenFocusLost">
+    <ModalContent Centered="true">
+@*//<suite-custom-code-block-5>*@
+@*//</suite-custom-code-block-5>*@
+        <Form id="CreateAhlanfeekumTermForm">
+            <ModalHeader>
+                <ModalTitle>@L["NewAhlanfeekumTerm"]</ModalTitle>
+                <CloseButton Clicked="CloseCreateAhlanfeekumTermModalAsync" />
+            </ModalHeader>
+            <ModalBody>
+                <Validations @ref="@NewAhlanfeekumTermValidations"
+                            Mode="ValidationMode.Auto"
+                            Model="@NewAhlanfeekumTerm"
+                            ValidateOnLoad="false">
+                    
+                    
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["TermsTitle"] *</FieldLabel>
+                            <TextEdit @bind-Text="@NewAhlanfeekumTerm.TermsTitle"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["TermsAnnotation"] *</FieldLabel>
+                            <TextEdit @bind-Text="@NewAhlanfeekumTerm.TermsAnnotation"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["TermsDescription"] *</FieldLabel>
+                            <MemoEdit @bind-Text="@NewAhlanfeekumTerm.TermsDescription"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </MemoEdit>
+                        </Field>
+                    </Validation>
+
+
+                        <Field>
+                            <FieldLabel>@L["TermsIcon"] *</FieldLabel>
+                            <InputFile class="form-control file-input" OnChange="@OnNewAhlanfeekumTermTermsIconChanged" required/>
+                            @if (OnNewAhlanfeekumTermTermsIconLoading)
+                            {
+                                <p>@L["FileUploading"]</p>
+                            }
+                            <p class="text-muted pt-1"><i class="fa fa-info-circle"></i> @L["MaxFileSizeLimit", 10]</p>
+                        </Field>
+
+
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["WhoAreWeTitle"] *</FieldLabel>
+                            <TextEdit @bind-Text="@NewAhlanfeekumTerm.WhoAreWeTitle"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["WhoAreWeAnnotation"]</FieldLabel>
+                            <TextEdit @bind-Text="@NewAhlanfeekumTerm.WhoAreWeAnnotation"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["WhoAreWeDescription"] *</FieldLabel>
+                            <MemoEdit @bind-Text="@NewAhlanfeekumTerm.WhoAreWeDescription"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </MemoEdit>
+                        </Field>
+                    </Validation>
+
+
+                        <Field>
+                            <FieldLabel>@L["WhoAreWeIcon"] *</FieldLabel>
+                            <InputFile class="form-control file-input" OnChange="@OnNewAhlanfeekumTermWhoAreWeIconChanged" required/>
+                            @if (OnNewAhlanfeekumTermWhoAreWeIconLoading)
+                            {
+                                <p>@L["FileUploading"]</p>
+                            }
+                            <p class="text-muted pt-1"><i class="fa fa-info-circle"></i> @L["MaxFileSizeLimit", 10]</p>
+                        </Field>
+
+
+
+
+                    <Field>
+                        <Check TValue="bool" @bind-Checked="@NewAhlanfeekumTerm.IsActive" >@L["IsActive"]</Check>
+                    </Field>
+
+                    
+                    
+                </Validations>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary"
+                        Clicked="CloseCreateAhlanfeekumTermModalAsync">
+                    @L["Cancel"]
+                </Button>
+                <SubmitButton Form="CreateAhlanfeekumTermForm" Clicked="CreateAhlanfeekumTermAsync" Disabled="@IsCreateFormDisabled()"/>
+@*//<suite-custom-code-block-6>*@
+@*//</suite-custom-code-block-6>*@
+            </ModalFooter>
+        </Form>
+@*//<suite-custom-code-block-7>*@
+@*//</suite-custom-code-block-7>*@
+    </ModalContent>
+</Modal>
+
+@* ************************* EDIT MODAL ************************* *@
+<Modal @ref="EditAhlanfeekumTermModal" Closing="@EditAhlanfeekumTermModal.CancelClosingModalWhenFocusLost">
+    <ModalContent Centered="true">
+@*//<suite-custom-code-block-8>*@
+@*//</suite-custom-code-block-8>*@
+        <Form id="EditAhlanfeekumTermForm">
+            <ModalHeader>
+                <ModalTitle>@L["Update"]</ModalTitle>
+                <CloseButton Clicked="CloseEditAhlanfeekumTermModalAsync" />
+            </ModalHeader>
+            <ModalBody>
+                <Validations @ref="@EditingAhlanfeekumTermValidations"
+                            Mode="ValidationMode.Auto"
+                            Model="@EditingAhlanfeekumTerm"
+                            ValidateOnLoad="false">
+                    
+                    
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["TermsTitle"] *</FieldLabel>
+                            <TextEdit @bind-Text="@EditingAhlanfeekumTerm.TermsTitle"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["TermsAnnotation"] *</FieldLabel>
+                            <TextEdit @bind-Text="@EditingAhlanfeekumTerm.TermsAnnotation"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["TermsDescription"] *</FieldLabel>
+                            <MemoEdit @bind-Text="@EditingAhlanfeekumTerm.TermsDescription"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </MemoEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Field>
+                        <FieldLabel>@L["TermsIcon"] *</FieldLabel>
+                        @if (HasSelectedAhlanfeekumTermTermsIcon)
+                        {
+                            <div class="mb-2">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="@L["DownloadSelectedFile"].Value" @onclick="@(async () => await DownloadFileAsync(EditingAhlanfeekumTerm.TermsIconId))"><i class="fa fa-file-alt"></i></button>
+                                    <button type="button" class="btn btn-primary btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="@L["RemoveSelectedFile"].Value" @onclick="(() => { EditingAhlanfeekumTerm.TermsIconId = Guid.Empty; HasSelectedAhlanfeekumTermTermsIcon = false; })"><i class="fa fa-trash"></i></button>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <Field>
+                                <InputFile class="form-control file-input" OnChange="@OnEditAhlanfeekumTermTermsIconChanged" required/>
+                                @if (OnEditAhlanfeekumTermTermsIconLoading)
+                                {
+                                    <p>@L["FileUploading"]</p>
+                                }
+                                <p class="text-muted pt-1"><i class="fa fa-info-circle"></i> @L["MaxFileSizeLimit", 10]</p>
+                            </Field>
+                        }
+                    </Field>
+
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["WhoAreWeTitle"] *</FieldLabel>
+                            <TextEdit @bind-Text="@EditingAhlanfeekumTerm.WhoAreWeTitle"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["WhoAreWeAnnotation"]</FieldLabel>
+                            <TextEdit @bind-Text="@EditingAhlanfeekumTerm.WhoAreWeAnnotation"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["WhoAreWeDescription"] *</FieldLabel>
+                            <MemoEdit @bind-Text="@EditingAhlanfeekumTerm.WhoAreWeDescription"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </MemoEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Field>
+                        <FieldLabel>@L["WhoAreWeIcon"] *</FieldLabel>
+                        @if (HasSelectedAhlanfeekumTermWhoAreWeIcon)
+                        {
+                            <div class="mb-2">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="@L["DownloadSelectedFile"].Value" @onclick="@(async () => await DownloadFileAsync(EditingAhlanfeekumTerm.WhoAreWeIconId))"><i class="fa fa-file-alt"></i></button>
+                                    <button type="button" class="btn btn-primary btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="@L["RemoveSelectedFile"].Value" @onclick="(() => { EditingAhlanfeekumTerm.WhoAreWeIconId = Guid.Empty; HasSelectedAhlanfeekumTermWhoAreWeIcon = false; })"><i class="fa fa-trash"></i></button>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <Field>
+                                <InputFile class="form-control file-input" OnChange="@OnEditAhlanfeekumTermWhoAreWeIconChanged" required/>
+                                @if (OnEditAhlanfeekumTermWhoAreWeIconLoading)
+                                {
+                                    <p>@L["FileUploading"]</p>
+                                }
+                                <p class="text-muted pt-1"><i class="fa fa-info-circle"></i> @L["MaxFileSizeLimit", 10]</p>
+                            </Field>
+                        }
+                    </Field>
+
+
+
+                    <Field>
+                        <Check TValue="bool" @bind-Checked="@EditingAhlanfeekumTerm.IsActive" >@L["IsActive"]</Check>
+                    </Field>
+
+                    
+                    
+                </Validations>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary"
+                        Clicked="CloseEditAhlanfeekumTermModalAsync">
+                    @L["Cancel"]
+                </Button>
+                <SubmitButton Form="EditAhlanfeekumTermForm" Clicked="UpdateAhlanfeekumTermAsync" Disabled="@IsEditFormDisabled()" />
+@*//<suite-custom-code-block-9>*@
+@*//</suite-custom-code-block-9>*@
+            </ModalFooter>
+        </Form>
+@*//<suite-custom-code-block-10>*@
+@*//</suite-custom-code-block-10>*@
+    </ModalContent>
+</Modal>
+

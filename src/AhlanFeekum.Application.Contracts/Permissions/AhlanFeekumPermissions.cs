@@ -122,4 +122,21 @@ public static class AhlanFeekumPermissions
         public const string Create = Default + ".Create";
         public const string Delete = Default + ".Delete";
     }
+
+
+    public static class Tickets
+    {
+        public const string Default = GroupName + ".Tickets";
+        public const string Edit = Default + ".Edit";
+        public const string Create = Default + ".Create";
+        public const string Delete = Default + ".Delete";
+    }
+
+    public static class AhlanfeekumTerms
+    {
+        public const string Default = GroupName + ".AhlanfeekumTerms";
+        public const string Edit = Default + ".Edit";
+        public const string Create = Default + ".Create";
+        public const string Delete = Default + ".Delete";
+    }
 }

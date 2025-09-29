@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using AhlanFeekum.UserProfiles;
 using AhlanFeekum.MobileResponses;
 using AhlanFeekum.Authorizations;
+using AhlanFeekum.Tickets;
 
 namespace AhlanFeekum.Controllers.UserProfiles
 {
@@ -20,9 +21,11 @@ namespace AhlanFeekum.Controllers.UserProfiles
     public class UserProfileController : AbpController
     {
         protected IUserProfilesAppService _userProfilesAppService;
-        public UserProfileController(IUserProfilesAppService userProfilesAppService)
+        protected ITicketsAppService _ticketsAppService;
+        public UserProfileController(IUserProfilesAppService userProfilesAppService, ITicketsAppService ticketsAppService)
         {
             _userProfilesAppService = userProfilesAppService;
+            _ticketsAppService = ticketsAppService;
         }
 
         [AllowAnonymous]
@@ -89,7 +92,12 @@ namespace AhlanFeekum.Controllers.UserProfiles
             return _userProfilesAppService.GetWithDetailsAsync(id);
         }
 
-
+        [AllowAnonymous]
+        [HttpPost("create-ticket")]
+        public virtual Task<TicketDto> CreateTicketAsync(TicketCreateMobileDto input)
+        {
+            return _ticketsAppService.CreateAsync(input);
+        }
 
     }
 }

@@ -24,6 +24,111 @@ namespace AhlanFeekum.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+
+            modelBuilder.Entity("AhlanFeekum.AhlanfeekumTerms.AhlanfeekumTerm", b =>
+            {
+                b.Property<Guid>("Id")
+                    .HasColumnType("uniqueidentifier");
+
+                b.Property<string>("ConcurrencyStamp")
+                    .IsConcurrencyToken()
+                    .IsRequired()
+                    .HasMaxLength(40)
+                    .HasColumnType("nvarchar(40)")
+                    .HasColumnName("ConcurrencyStamp");
+
+                b.Property<DateTime>("CreationTime")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("CreationTime");
+
+                b.Property<Guid?>("CreatorId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("CreatorId");
+
+                b.Property<Guid?>("DeleterId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("DeleterId");
+
+                b.Property<DateTime?>("DeletionTime")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("DeletionTime");
+
+                b.Property<string>("ExtraProperties")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("ExtraProperties");
+
+                b.Property<bool>("IsActive")
+                    .HasColumnType("bit")
+                    .HasColumnName("IsActive");
+
+                b.Property<bool>("IsDeleted")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("bit")
+                    .HasDefaultValue(false)
+                    .HasColumnName("IsDeleted");
+
+                b.Property<DateTime?>("LastModificationTime")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("LastModificationTime");
+
+                b.Property<Guid?>("LastModifierId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("LastModifierId");
+
+                b.Property<string>("TermsAnnotation")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("TermsAnnotation");
+
+                b.Property<string>("TermsDescription")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("TermsDescription");
+
+                b.Property<Guid>("TermsIconId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("TermsIconId");
+
+                b.Property<string>("TermsIconExtension")
+     .IsRequired()
+     .HasColumnType("nvarchar(max)")
+     .HasColumnName("TermsIconExtension");
+
+
+                b.Property<string>("TermsTitle")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("TermsTitle");
+
+                b.Property<string>("WhoAreWeAnnotation")
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("WhoAreWeAnnotation");
+
+                b.Property<string>("WhoAreWeDescription")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("WhoAreWeDescription");
+
+                b.Property<Guid>("WhoAreWeIconId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("WhoAreWeIconId");
+                
+                b.Property<string>("WhoAreWeIconExtension")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("WhoAreWeIconExtension");
+
+                b.Property<string>("WhoAreWeTitle")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("WhoAreWeTitle");
+
+                b.HasKey("Id");
+
+                b.ToTable("AppAhlanfeekumTerms", (string)null);
+            });
+
             modelBuilder.Entity("AhlanFeekum.AppFileDescriptors.AppFileDescriptor", b =>
             {
                 b.Property<Guid>("Id")
@@ -1104,6 +1209,82 @@ namespace AhlanFeekum.Migrations
                 b.HasKey("Id");
 
                 b.ToTable("AppStatuses", (string)null);
+            });
+
+            modelBuilder.Entity("AhlanFeekum.Tickets.Ticket", b =>
+            {
+                b.Property<Guid>("Id")
+                    .HasColumnType("uniqueidentifier");
+
+                b.Property<string>("ConcurrencyStamp")
+                    .IsConcurrencyToken()
+                    .IsRequired()
+                    .HasMaxLength(40)
+                    .HasColumnType("nvarchar(40)")
+                    .HasColumnName("ConcurrencyStamp");
+
+                b.Property<DateTime>("CreationTime")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("CreationTime");
+
+                b.Property<Guid?>("CreatorId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("CreatorId");
+
+                b.Property<Guid?>("DeleterId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("DeleterId");
+
+                b.Property<DateTime?>("DeletionTime")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("DeletionTime");
+
+                b.Property<string>("Description")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("Description");
+
+                b.Property<string>("ExtraProperties")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("ExtraProperties");
+
+                b.Property<string>("FirstName")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("FirstName");
+
+                b.Property<bool>("IsDeleted")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("bit")
+                    .HasDefaultValue(false)
+                    .HasColumnName("IsDeleted");
+
+                b.Property<bool>("IsFixed")
+                    .HasColumnType("bit")
+                    .HasColumnName("IsFixed");
+
+                b.Property<DateTime?>("LastModificationTime")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("LastModificationTime");
+
+                b.Property<Guid?>("LastModifierId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("LastModifierId");
+
+                b.Property<string>("LastName")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("LastName");
+
+                b.Property<Guid?>("UserProfileId")
+                    .HasColumnType("uniqueidentifier");
+
+                b.HasKey("Id");
+
+                b.HasIndex("UserProfileId");
+
+                b.ToTable("AppTickets", (string)null);
             });
 
             modelBuilder.Entity("AhlanFeekum.UserProfiles.UserProfile", b =>
@@ -3075,6 +3256,13 @@ namespace AhlanFeekum.Migrations
                     .IsRequired();
             });
 
+            modelBuilder.Entity("AhlanFeekum.Tickets.Ticket", b =>
+            {
+                b.HasOne("AhlanFeekum.UserProfiles.UserProfile", null)
+                    .WithMany()
+                    .HasForeignKey("UserProfileId")
+                    .OnDelete(DeleteBehavior.SetNull);
+            });
             modelBuilder.Entity("AhlanFeekum.UserProfiles.UserProfile", b =>
             {
                 b.HasOne("Volo.Abp.Identity.IdentityRole", null)

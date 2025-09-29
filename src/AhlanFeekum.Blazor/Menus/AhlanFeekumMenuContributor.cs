@@ -175,6 +175,25 @@ icon: "fa fa-file-alt",
                 icon: "fa fa-file-alt",
                 requiredPermissionName: AhlanFeekumPermissions.Reservations.Default)
         );
+
+
+        context.Menu.AddItem(
+            new ApplicationMenuItem(
+                AhlanFeekumMenus.Tickets,
+                l["Menu:Tickets"],
+                url: "/tickets",
+icon: "fa fa-file-alt",
+                requiredPermissionName: AhlanFeekumPermissions.Tickets.Default)
+        );
+
+        context.Menu.AddItem(
+            new ApplicationMenuItem(
+                AhlanFeekumMenus.AhlanfeekumTerms,
+                l["Menu:AhlanfeekumTerms"],
+                url: "/ahlanfeekum-terms",
+icon: "fa fa-file-alt",
+                requiredPermissionName: AhlanFeekumPermissions.AhlanfeekumTerms.Default)
+        );
         return Task.CompletedTask;
     }
 }

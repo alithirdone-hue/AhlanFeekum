@@ -84,6 +84,17 @@ public class AhlanFeekumPermissionDefinitionProvider : PermissionDefinitionProvi
         reservationPermission.AddChild(AhlanFeekumPermissions.Reservations.Create, L("Permission:Create"));
         reservationPermission.AddChild(AhlanFeekumPermissions.Reservations.Edit, L("Permission:Edit"));
         reservationPermission.AddChild(AhlanFeekumPermissions.Reservations.Delete, L("Permission:Delete"));
+
+
+        var ticketPermission = myGroup.AddPermission(AhlanFeekumPermissions.Tickets.Default, L("Permission:Tickets"));
+        ticketPermission.AddChild(AhlanFeekumPermissions.Tickets.Create, L("Permission:Create"));
+        ticketPermission.AddChild(AhlanFeekumPermissions.Tickets.Edit, L("Permission:Edit"));
+        ticketPermission.AddChild(AhlanFeekumPermissions.Tickets.Delete, L("Permission:Delete"));
+
+        var ahlanfeekumTermPermission = myGroup.AddPermission(AhlanFeekumPermissions.AhlanfeekumTerms.Default, L("Permission:AhlanfeekumTerms"));
+        ahlanfeekumTermPermission.AddChild(AhlanFeekumPermissions.AhlanfeekumTerms.Create, L("Permission:Create"));
+        ahlanfeekumTermPermission.AddChild(AhlanFeekumPermissions.AhlanfeekumTerms.Edit, L("Permission:Edit"));
+        ahlanfeekumTermPermission.AddChild(AhlanFeekumPermissions.AhlanfeekumTerms.Delete, L("Permission:Delete"));
     }
 
     private static LocalizableString L(string name)

@@ -37,6 +37,9 @@ public class AhlanFeekumMenus
     public const string PropertyCalendars = Prefix + ".PropertyCalendars";
     public const string Statuses = Prefix + ".Statuses";
     public const string Reservations = Prefix + ".Reservations";
+    public const string Tickets = Prefix + ".Tickets";
+
+    public const string AhlanfeekumTerms = Prefix + ".AhlanfeekumTerms";
 
 
 }

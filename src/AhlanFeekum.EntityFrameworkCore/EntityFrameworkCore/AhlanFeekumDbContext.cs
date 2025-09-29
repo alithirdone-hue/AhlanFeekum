@@ -1,4 +1,5 @@
-﻿using AhlanFeekum.FavoriteProperties;
+﻿using AhlanFeekum.AhlanfeekumTerms;
+using AhlanFeekum.FavoriteProperties;
 using AhlanFeekum.Governorates;
 using AhlanFeekum.Governorates;
 using AhlanFeekum.OnlyForYouSections;
@@ -9,14 +10,16 @@ using AhlanFeekum.PropertyEvaluations;
 using AhlanFeekum.PropertyFeatures;
 using AhlanFeekum.PropertyMedias;
 using AhlanFeekum.PropertyTypes;
+using AhlanFeekum.Reservations;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SpecialAdvertisments;
 using AhlanFeekum.SpecialAdvertisments;
 using AhlanFeekum.Statuses;
+using AhlanFeekum.Tickets;
 using AhlanFeekum.UserProfiles;
-using AhlanFeekum.Reservations;
+using AhlanFeekum.AhlanfeekumTerms;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -44,7 +47,8 @@ public class AhlanFeekumDbContext :
     ITenantManagementDbContext
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
-
+    public DbSet<AhlanfeekumTerm> AhlanfeekumTerms { get; set; } = null!;
+    public DbSet<Ticket> Tickets { get; set; } = null!;
     public DbSet<Reservation> Reservations { get; set; } = null!;
 
     public DbSet<Status> Statuses { get; set; } = null!;
@@ -372,14 +376,6 @@ public class AhlanFeekumDbContext :
                 });
 
             }
-
-            builder.Entity<AppFileDescriptors.AppFileDescriptor>(b =>
-            {
-                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "FileDescriptors", AhlanFeekumConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.Property(x => x.Name);
-                b.Property(x => x.MimeType);
-            });
         }
 
 
@@ -406,7 +402,66 @@ public class AhlanFeekumDbContext :
                 b.HasOne<SiteProperty>().WithMany().IsRequired().HasForeignKey(x => x.SitePropertyId).OnDelete(DeleteBehavior.NoAction);
             });
         }
+
+        if (builder.IsHostDatabase())
+        {
+
         }
+        if (builder.IsHostDatabase())
+        {
+
+        }
+
+        if (builder.IsHostDatabase())
+        {
+
+        }
+
+        if (builder.IsHostDatabase())
+        {
+            builder.Entity<Ticket>(b =>
+            {
+                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "Tickets", AhlanFeekumConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.Property(x => x.FirstName).HasColumnName(nameof(Ticket.FirstName)).IsRequired();
+                b.Property(x => x.LastName).HasColumnName(nameof(Ticket.LastName)).IsRequired();
+                b.Property(x => x.Description).HasColumnName(nameof(Ticket.Description)).IsRequired();
+                b.Property(x => x.IsFixed).HasColumnName(nameof(Ticket.IsFixed));
+                b.HasOne<UserProfile>().WithMany().HasForeignKey(x => x.UserProfileId).OnDelete(DeleteBehavior.SetNull);
+            });
+
+        }
+        if (builder.IsHostDatabase())
+        {
+            builder.Entity<AhlanfeekumTerm>(b =>
+            {
+                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "AhlanfeekumTerms", AhlanFeekumConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.Property(x => x.TermsTitle).HasColumnName(nameof(AhlanfeekumTerm.TermsTitle)).IsRequired();
+                b.Property(x => x.TermsAnnotation).HasColumnName(nameof(AhlanfeekumTerm.TermsAnnotation)).IsRequired();
+                b.Property(x => x.TermsDescription).HasColumnName(nameof(AhlanfeekumTerm.TermsDescription)).IsRequired();
+                b.Property(x => x.TermsIconId).HasColumnName(nameof(AhlanfeekumTerm.TermsIconId));
+                b.Property(x => x.TermsIconExtension).HasColumnName(nameof(AhlanfeekumTerm.TermsIconExtension)).IsRequired();
+                b.Property(x => x.WhoAreWeTitle).HasColumnName(nameof(AhlanfeekumTerm.WhoAreWeTitle)).IsRequired();
+                b.Property(x => x.WhoAreWeAnnotation).HasColumnName(nameof(AhlanfeekumTerm.WhoAreWeAnnotation));
+                b.Property(x => x.WhoAreWeDescription).HasColumnName(nameof(AhlanfeekumTerm.WhoAreWeDescription)).IsRequired();
+                b.Property(x => x.WhoAreWeIconId).HasColumnName(nameof(AhlanfeekumTerm.WhoAreWeIconId));
+                b.Property(x => x.WhoAreWeIconExtension).HasColumnName(nameof(AhlanfeekumTerm.WhoAreWeIconExtension)).IsRequired();
+                b.Property(x => x.IsActive).HasColumnName(nameof(AhlanfeekumTerm.IsActive));
+            });
+
+        }
+
+        builder.Entity<AppFileDescriptors.AppFileDescriptor>(b =>
+        {
+            b.ToTable(AhlanFeekumConsts.DbTablePrefix + "FileDescriptors", AhlanFeekumConsts.DbSchema);
+            b.ConfigureByConvention();
+            b.Property(x => x.Name);
+            b.Property(x => x.MimeType);
+        });
+
+
+    }
 
 
 }
