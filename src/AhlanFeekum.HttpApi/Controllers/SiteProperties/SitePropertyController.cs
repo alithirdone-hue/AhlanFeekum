@@ -62,7 +62,7 @@ namespace AhlanFeekum.Controllers.SiteProperties
         //    return Task.CompletedTask;
         //}
         [HttpPost("upload-medias")]
-        public virtual Task<MobileResponseDto> CreateStepTwoAsync([FromForm]List<PropertyMediaItemDto> input)
+        public virtual Task<MobileResponseDto> UploadManyMediasAsync([FromForm]List<PropertyMediaItemDto> input)
         {
             return _propertyMediasAppService.AddMediaToPropertyAsync(input);
         }

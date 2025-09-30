@@ -505,11 +505,13 @@
                             </TextEdit>
                         </Field>
                     </Validation>
-
-                    <Field>
-                        <FieldLabel>@L["TermsDescription"]</FieldLabel>
+                    @if (EditingAhlanfeekumTerm != null)
+                    {
+                        <Field>
+                            <FieldLabel>@L["TermsDescription"]</FieldLabel>
                         <CustomRichTextEditor InitValue="@EditingAhlanfeekumTerm.TermsDescription" ContentChanged="@EditingTermsDescriptionOnContentChanged"></CustomRichTextEditor>
                     </Field>
+                    }
 
     @*                 <Validation MessageLocalizer="@LH.Localize">
                         <Field>
@@ -571,11 +573,13 @@
                             </TextEdit>
                         </Field>
                     </Validation>
-
-                    <Field>
-                        <FieldLabel>@L["WhoAreWeDescription"]</FieldLabel>
-                        <CustomRichTextEditor InitValue="@EditingAhlanfeekumTerm.WhoAreWeDescription" ContentChanged="@EditingWhoWeAreDescriptionOnContentChanged"></CustomRichTextEditor>
-                    </Field>
+                     @if (EditingAhlanfeekumTerm != null)
+                    {
+                        <Field>
+                            <FieldLabel>@L["WhoAreWeDescription"]</FieldLabel>
+                            <CustomRichTextEditor InitValue="@EditingAhlanfeekumTerm.WhoAreWeDescription" ContentChanged="@EditingWhoWeAreDescriptionOnContentChanged"></CustomRichTextEditor>
+                        </Field>
+                    }
 
                    @*  <Validation MessageLocalizer="@LH.Localize">
                         <Field>
