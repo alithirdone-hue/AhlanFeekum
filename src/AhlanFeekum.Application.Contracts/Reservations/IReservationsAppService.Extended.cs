@@ -9,5 +9,6 @@ namespace AhlanFeekum.Reservations
         //Write your custom code here...
         Task<ReservationMobileDto> CreateAsync(ReservationCreateMobileDto input);
         Task<List<ReservationMobileDto>> UserReservationsAsync(Guid? userId = null);
+        Task<List<ReservationMobileDto>> UpcomingReservationsAsync(Guid? userId = null, Guid? sitePropertyId = null);
     }
 }

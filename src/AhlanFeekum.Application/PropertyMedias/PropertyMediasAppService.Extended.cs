@@ -132,7 +132,7 @@ namespace AhlanFeekum.PropertyMedias
                     using (var stream = new MemoryStream())
                     {
                         item.Image.CopyTo(stream);
-                        string imageName = $"{Guid.NewGuid().ToString("N")}{Path.GetExtension(item.Image.FileName)}";
+                        string imageName = $"{Guid.NewGuid().ToString("N")}";
                         var extension = Path.GetExtension(item.Image.FileName);
                         if (!string.IsNullOrWhiteSpace(extension))
                         {

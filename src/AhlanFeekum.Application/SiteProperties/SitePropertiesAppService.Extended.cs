@@ -94,7 +94,8 @@ namespace AhlanFeekum.SiteProperties
             if(siteProp == null)
                 throw new UserFriendlyException("Property Not Found");
             var siteProperty = await _sitePropertyManager.UpdateAsync(
-            input.Id, input.Address, input.StreetAndBuildingNumber, input.LandMark
+            input.Id, input.Address, input.StreetAndBuildingNumber, input.LandMark, input.Latitude,
+            input.Longitude
             );
 
             return ObjectMapper.Map<SiteProperty, SitePropertyDto>(siteProperty);

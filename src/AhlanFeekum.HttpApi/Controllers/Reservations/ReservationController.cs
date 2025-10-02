@@ -46,6 +46,27 @@ namespace AhlanFeekum.Controllers.Reservations
         {
             return _reservationsAppService.UserReservationsAsync();
         }
-       
+
+        [AllowAnonymous]
+        [HttpGet("my-upcoming-reservations")]
+        public virtual Task<List<ReservationMobileDto>> UpcomingReservationAsync()
+        {
+            return _reservationsAppService.UpcomingReservationsAsync();
+        }
+
+        [AllowAnonymous]
+        [HttpGet("user-upcoming-reservations/{userId}")]
+        public virtual Task<List<ReservationMobileDto>> UpcomingReservationAsync(Guid userId)
+        {
+            return _reservationsAppService.UpcomingReservationsAsync(userId: userId);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("property-upcoming-reservations/{propertyId}")]
+        public virtual Task<List<ReservationMobileDto>> UpcomingPropertyReservationAsync(Guid propertyId)
+        {
+            return _reservationsAppService.UpcomingReservationsAsync(sitePropertyId: propertyId);
+        }
+
     }
 }

@@ -12,11 +12,11 @@ namespace AhlanFeekum.AhlanfeekumTerms
         public string TermsTitle { get; set; } = null!;
         public string TermsAnnotation { get; set; } = null!;
         public string TermsDescription { get; set; } = null!;
-        public Guid TermsIcon { get; set; }
+        public string TermsIcon { get; set; }
         public string WhoAreWeTitle { get; set; } = null!;
         public string? WhoAreWeAnnotation { get; set; }
         public string WhoAreWeDescription { get; set; } = null!;
-        public Guid WhoAreWeIcon { get; set; }
+        public string WhoAreWeIcon { get; set; }
         public bool IsActive { get; set; }
 
 
