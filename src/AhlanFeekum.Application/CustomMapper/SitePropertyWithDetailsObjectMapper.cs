@@ -1,4 +1,5 @@
 ﻿using AhlanFeekum.MimeTypes;
+using AhlanFeekum.PropertyCalendars;
 using AhlanFeekum.PropertyEvaluations;
 using AhlanFeekum.PropertyFeatures;
 using AhlanFeekum.PropertyMedias;
@@ -107,6 +108,9 @@ namespace SIBF.CustomMapper
                 SitePropertyWithDetailsFront.AverageAttitude = null;
                 SitePropertyWithDetailsFront.AverageRating = null;
             }
+
+            if (!source.PropertyCalendars.IsNullOrEmpty())
+                SitePropertyWithDetailsFront.PropertyCalendarMobileDtos = _objectMapper.Map<List<PropertyCalendar>, List<PropertyCalendarMobileDto>>(source.PropertyCalendars);
 
             return SitePropertyWithDetailsFront;
         }

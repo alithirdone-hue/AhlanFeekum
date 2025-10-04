@@ -136,9 +136,18 @@ public class AhlanFeekumApplicationAutoMapperProfile : Profile
 
 
         CreateMap<PropertyCalendar, PropertyCalendarDto>();
+        CreateMap<PropertyCalendar, PropertyCalendarMobileDto>()
+            .ForMember(dest=>dest.Id, opt=>opt.MapFrom(src => src.Id))
+            .ForMember(dest=>dest.PropertyId, opt=>opt.MapFrom(src => src.SitePropertyId));
         CreateMap<PropertyCalendar, PropertyCalendarExcelDto>();
         CreateMap<PropertyCalendarWithNavigationProperties, PropertyCalendarWithNavigationPropertiesDto>();
         CreateMap<PropertyCalendarDto, PropertyCalendarUpdateDto>();
+
+        CreateMap<PropertyCalendarWithNavigationProperties, PropertyCalendarMobileDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PropertyCalendar.Id))
+            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.PropertyCalendar.Date))
+            .ForMember(dest => dest.IsAvailable, opt => opt.MapFrom(src => src.PropertyCalendar.IsAvailable))
+            .ForMember(dest => dest.PropertyId, opt => opt.MapFrom(src => src.PropertyCalendar.SitePropertyId));
 
         CreateMap<AppFileDescriptors.AppFileDescriptor, AppFileDescriptorDto>();
 

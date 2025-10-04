@@ -5,6 +5,7 @@ using AhlanFeekum.PropertyEvaluations;
 using AhlanFeekum.PropertyMedias;
 using AhlanFeekum.SiteProperties;
 using Asp.Versioning;
+using FileSignatures.Formats;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -113,6 +114,15 @@ namespace AhlanFeekum.Controllers.SiteProperties
         public async Task<SitePropertyWithDetailsMobileDto> GetPropertyRatingAsync(Guid id)
         {
             return await _sitePropertiesAppService.GetSitePropertyWithDetailsAsync(id);
+        }
+
+        
+
+        [HttpGet]
+        [Route("property-calendar")]
+        public virtual Task<PagedResultDto<PropertyCalendarMobileDto>> GetListAsync(GetPropertyCalendarsInput input)
+        {
+            return _propertyCalendarsAppService.GetListMobileAsync(input);
         }
 
 

@@ -1,4 +1,5 @@
 using AhlanFeekum.Governorates;
+using AhlanFeekum.PropertyCalendars;
 using AhlanFeekum.PropertyEvaluations;
 using AhlanFeekum.PropertyFeatures;
 using AhlanFeekum.PropertyMedias;
@@ -34,6 +35,7 @@ namespace AhlanFeekum.SiteProperties
         public UserProfile Owner { get; set; } = null!;
         public Status Status { get; set; } = null!;
         public List<PropertyEvaluationWithNavigationProperties> PropertyEvaluationWithNavigationProperties { get; set; } = null!;
+        public List<PropertyCalendar> PropertyCalendars { get; set; } = null!;
 
    
     }

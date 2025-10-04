@@ -29,6 +29,7 @@ namespace AhlanFeekum.SiteProperties
         {
             var dbContext = await GetDbContextAsync();
 
+            DateOnly currentDay = DateOnly.FromDateTime(DateTime.Now);
             return
             (from siteProperty in (await GetDbSetAsync()).Where(b => b.Id == id).Include(x => x.PropertyFeatures)
              join propertyType in dbContext.PropertyTypes on siteProperty.PropertyTypeId equals propertyType.Id into propertyTypes
@@ -60,7 +61,8 @@ namespace AhlanFeekum.SiteProperties
                                                                   PropertyEvaluation = propertyEvaluation,
                                                                   UserProfile = userProfile,
                                                                   SiteProperty = null
-                                                              }).ToList()
+                                                              }).ToList(),
+                 PropertyCalendars = dbContext.PropertyCalendars.Where(p=> p.Date >= currentDay && p.IsAvailable == true && p.SitePropertyId == id).ToList()
              }).FirstOrDefault();
 
             //return (await GetDbSetAsync()).Where(b => b.Id == id).Include(x => x.PropertyFeatures)

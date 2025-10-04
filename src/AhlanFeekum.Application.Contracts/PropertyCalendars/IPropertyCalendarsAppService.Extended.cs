@@ -2,6 +2,7 @@ using AhlanFeekum.MobileResponses;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 
 namespace AhlanFeekum.PropertyCalendars
 {
@@ -9,5 +10,7 @@ namespace AhlanFeekum.PropertyCalendars
     {
         //Write your custom code here...
         Task<MobileResponseDto> CreateManyAsync(List<PropertyCalendarItemDto> input);
+
+        Task<PagedResultDto<PropertyCalendarMobileDto>> GetListMobileAsync(GetPropertyCalendarsInput input);
     }
 }

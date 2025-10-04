@@ -56,5 +56,18 @@ namespace AhlanFeekum.PropertyCalendars
             mobileResponseDto.Data = true;
             return mobileResponseDto;
         }
+
+        [AllowAnonymous]
+        public virtual async Task<PagedResultDto<PropertyCalendarMobileDto>> GetListMobileAsync(GetPropertyCalendarsInput input)
+        {
+            var totalCount = await _propertyCalendarRepository.GetCountAsync(input.FilterText, input.DateMin, input.DateMax, input.IsAvailable, input.PriceMin, input.PriceMax, input.Note, input.SitePropertyId);
+            var items = await _propertyCalendarRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.DateMin, input.DateMax, input.IsAvailable, input.PriceMin, input.PriceMax, input.Note, input.SitePropertyId, input.Sorting, input.MaxResultCount, input.SkipCount);
+
+            return new PagedResultDto<PropertyCalendarMobileDto>
+            {
+                TotalCount = totalCount,
+                Items = ObjectMapper.Map<List<PropertyCalendarWithNavigationProperties>, List<PropertyCalendarMobileDto>>(items)
+            };
+        }
     }
 }

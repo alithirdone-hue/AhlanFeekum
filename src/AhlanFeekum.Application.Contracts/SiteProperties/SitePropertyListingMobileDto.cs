@@ -1,3 +1,4 @@
+using AhlanFeekum.PropertyCalendars;
 using AhlanFeekum.PropertyEvaluations;
 using AhlanFeekum.PropertyFeatures;
 using AhlanFeekum.PropertyMedias;
@@ -53,6 +54,8 @@ namespace AhlanFeekum.SiteProperties
          public double? AverageLocation { get; set; } = null;
          public double? AverageAccuracy { get; set; } = null;
          public double? AverageAttitude { get; set; } = null;
+
+        public List<PropertyCalendarMobileDto> PropertyCalendarMobileDtos { get; set; }
 
     }
 }
