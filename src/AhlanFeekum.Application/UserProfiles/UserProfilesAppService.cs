@@ -1,24 +1,27 @@
 using AhlanFeekum.Shared;
-using Volo.Abp.Identity;
+using AhlanFeekum.UserProfiles;
+using AhlanFeekum.Permissions;
+using AhlanFeekum.Shared;
+using AhlanFeekum.Shared;
+using AhlanFeekum.UserProfiles;
+using AutoMapper.Internal.Mappers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Caching.Distributed;
+using MiniExcelLibs;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq.Dynamic.Core;
-using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
-using Volo.Abp.Domain.Repositories;
-using AhlanFeekum.Permissions;
-using AhlanFeekum.UserProfiles;
-using MiniExcelLibs;
-using Volo.Abp.Content;
 using Volo.Abp.Authorization;
 using Volo.Abp.Caching;
-using Microsoft.Extensions.Caching.Distributed;
-using AhlanFeekum.Shared;
+using Volo.Abp.Content;
+using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Identity;
 
 namespace AhlanFeekum.UserProfiles
 {
@@ -44,8 +47,8 @@ namespace AhlanFeekum.UserProfiles
 
         public virtual async Task<PagedResultDto<UserProfileWithNavigationPropertiesDto>> GetListAsync(GetUserProfilesInput input)
         {
-            var totalCount = await _userProfileRepository.GetCountAsync(input.FilterText, input.Name, input.Email, input.PhoneNumber, input.Latitude, input.Longitude, input.Address, input.ProfilePhoto, input.IsSuperHost, input.IdentityRoleId, input.IdentityUserId);
-            var items = await _userProfileRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.Name, input.Email, input.PhoneNumber, input.Latitude, input.Longitude, input.Address, input.ProfilePhoto, input.IsSuperHost, input.IdentityRoleId, input.IdentityUserId, input.Sorting, input.MaxResultCount, input.SkipCount);
+            var totalCount = await _userProfileRepository.GetCountAsync(input.FilterText, input.Name, input.Email, input.PhoneNumber, input.Latitude, input.Longitude, input.Address, input.ProfilePhoto, input.IsSuperHost, input.FcmToken, input.IdentityRoleId, input.IdentityUserId);
+            var items = await _userProfileRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.Name, input.Email, input.PhoneNumber, input.Latitude, input.Longitude, input.Address, input.ProfilePhoto, input.IsSuperHost, input.FcmToken, input.IdentityRoleId, input.IdentityUserId, input.Sorting, input.MaxResultCount, input.SkipCount);
 
             return new PagedResultDto<UserProfileWithNavigationPropertiesDto>
             {
@@ -112,7 +115,7 @@ namespace AhlanFeekum.UserProfiles
             }
 
             var userProfile = await _userProfileManager.CreateAsync(
-            input.IdentityRoleId, input.IdentityUserId, input.Name, input.IsSuperHost, input.Email, input.PhoneNumber, input.Latitude, input.Longitude, input.Address, input.ProfilePhoto
+            input.IdentityRoleId, input.IdentityUserId, input.Name, input.IsSuperHost, input.Email, input.PhoneNumber, input.Latitude, input.Longitude, input.Address, input.ProfilePhoto, input.FcmToken
             );
 
             return ObjectMapper.Map<UserProfile, UserProfileDto>(userProfile);
@@ -128,7 +131,7 @@ namespace AhlanFeekum.UserProfiles
 
             var userProfile = await _userProfileManager.UpdateAsync(
             id,
-            input.IdentityRoleId, input.IdentityUserId, input.Name, input.IsSuperHost, input.Email, input.PhoneNumber, input.Latitude, input.Longitude, input.Address, input.ProfilePhoto, input.ConcurrencyStamp
+            input.IdentityRoleId, input.IdentityUserId, input.Name, input.IsSuperHost, input.Email, input.PhoneNumber, input.Latitude, input.Longitude, input.Address, input.ProfilePhoto, input.FcmToken, input.ConcurrencyStamp
             );
 
             return ObjectMapper.Map<UserProfile, UserProfileDto>(userProfile);
@@ -143,7 +146,7 @@ namespace AhlanFeekum.UserProfiles
                 throw new AbpAuthorizationException("Invalid download token: " + input.DownloadToken);
             }
 
-            var userProfiles = await _userProfileRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.Name, input.Email, input.PhoneNumber, input.Latitude, input.Longitude, input.Address, input.ProfilePhoto, input.IsSuperHost, input.IdentityRoleId, input.IdentityUserId);
+            var userProfiles = await _userProfileRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.Name, input.Email, input.PhoneNumber, input.Latitude, input.Longitude, input.Address, input.ProfilePhoto, input.IsSuperHost, input.FcmToken, input.IdentityRoleId, input.IdentityUserId);
             var items = userProfiles.Select(item => new
             {
                 Name = item.UserProfile.Name,
@@ -154,6 +157,7 @@ namespace AhlanFeekum.UserProfiles
                 Address = item.UserProfile.Address,
                 ProfilePhoto = item.UserProfile.ProfilePhoto,
                 IsSuperHost = item.UserProfile.IsSuperHost,
+                FcmToken = item.UserProfile.FcmToken,
 
                 IdentityRole = item.IdentityRole?.Name,
                 IdentityUser = item.IdentityUser?.UserName,
@@ -176,7 +180,7 @@ namespace AhlanFeekum.UserProfiles
         [Authorize(AhlanFeekumPermissions.UserProfiles.Delete)]
         public virtual async Task DeleteAllAsync(GetUserProfilesInput input)
         {
-            await _userProfileRepository.DeleteAllAsync(input.FilterText, input.Name, input.Email, input.PhoneNumber, input.Latitude, input.Longitude, input.Address, input.ProfilePhoto, input.IsSuperHost, input.IdentityRoleId, input.IdentityUserId);
+            await _userProfileRepository.DeleteAllAsync(input.FilterText, input.Name, input.Email, input.PhoneNumber, input.Latitude, input.Longitude, input.Address, input.ProfilePhoto, input.IsSuperHost, input.FcmToken, input.IdentityRoleId, input.IdentityUserId);
         }
         public virtual async Task<AhlanFeekum.Shared.DownloadTokenResultDto> GetDownloadTokenAsync()
         {

@@ -1,4 +1,5 @@
-﻿using AhlanFeekum.FavoriteProperties;
+﻿using AhlanFeekum.AhlanfeekumTerms;
+using AhlanFeekum.FavoriteProperties;
 using AhlanFeekum.Governorates;
 using AhlanFeekum.MobileResponses;
 using AhlanFeekum.OnlyForYouSections;
@@ -13,9 +14,9 @@ using AhlanFeekum.Shared;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SpecialAdvertisments;
 using AhlanFeekum.Statuses;
-using AhlanFeekum.UserProfiles;
-using AhlanFeekum.AhlanfeekumTerms;
 using AhlanFeekum.Tickets;
+using AhlanFeekum.UserProfiles;
+using AhlanFeekum.UserNotifications;
 using AutoMapper;
 using System;
 using Volo.Abp.AutoMapper;
@@ -203,5 +204,12 @@ public class AhlanFeekumApplicationAutoMapperProfile : Profile
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
            .ForMember(dest => dest.TermsIcon, opt => opt.MapFrom(src => $"{MimeTypes.MimeTypeMap.GetAttachmentPath()}/ahlanfeekumterm-file/{src.TermsIconId.ToString("N")}{src.TermsIconExtension}"))
            .ForMember(dest => dest.WhoAreWeIcon, opt => opt.MapFrom(src => $"{MimeTypes.MimeTypeMap.GetAttachmentPath()}/ahlanfeekumterm-file/{src.WhoAreWeIconId.ToString("N")}{src.WhoAreWeIconExtension}"));
+
+
+
+        CreateMap<UserNotification, UserNotificationDto>();
+        CreateMap<UserNotification, UserNotificationExcelDto>();
+        CreateMap<UserNotificationWithNavigationProperties, UserNotificationWithNavigationPropertiesDto>();
+        CreateMap<UserNotificationDto, UserNotificationUpdateDto>().Ignore(x => x.UserProfileIds).Ignore(x => x.SitePropertyIds);
     }
 }

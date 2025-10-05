@@ -162,7 +162,7 @@ private IReadOnlyList<LookupDto<Guid>> IdentityUsersCollection { get; set; } = n
                 culture = "&culture=" + culture;
             }
             await RemoteServiceConfigurationProvider.GetConfigurationOrDefaultOrNullAsync("Default");
-            NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/user-profiles/as-excel-file?DownloadToken={token}&FilterText={HttpUtility.UrlEncode(Filter.FilterText)}{culture}&Name={HttpUtility.UrlEncode(Filter.Name)}&Email={HttpUtility.UrlEncode(Filter.Email)}&PhoneNumber={HttpUtility.UrlEncode(Filter.PhoneNumber)}&Latitude={HttpUtility.UrlEncode(Filter.Latitude)}&Longitude={HttpUtility.UrlEncode(Filter.Longitude)}&Address={HttpUtility.UrlEncode(Filter.Address)}&ProfilePhoto={HttpUtility.UrlEncode(Filter.ProfilePhoto)}&IsSuperHost={Filter.IsSuperHost}&IdentityRoleId={Filter.IdentityRoleId}&IdentityUserId={Filter.IdentityUserId}", forceLoad: true);
+            NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/user-profiles/as-excel-file?DownloadToken={token}&FilterText={HttpUtility.UrlEncode(Filter.FilterText)}{culture}&Name={HttpUtility.UrlEncode(Filter.Name)}&Email={HttpUtility.UrlEncode(Filter.Email)}&PhoneNumber={HttpUtility.UrlEncode(Filter.PhoneNumber)}&Latitude={HttpUtility.UrlEncode(Filter.Latitude)}&Longitude={HttpUtility.UrlEncode(Filter.Longitude)}&Address={HttpUtility.UrlEncode(Filter.Address)}&ProfilePhoto={HttpUtility.UrlEncode(Filter.ProfilePhoto)}&IsSuperHost={Filter.IsSuperHost}&FcmToken={HttpUtility.UrlEncode(Filter.FcmToken)}&IdentityRoleId={Filter.IdentityRoleId}&IdentityUserId={Filter.IdentityUserId}", forceLoad: true);
         }
 
         private async Task OnDataGridReadAsync(DataGridReadDataEventArgs<UserProfileWithNavigationPropertiesDto> e)
@@ -320,6 +320,11 @@ private IReadOnlyList<LookupDto<Guid>> IdentityUsersCollection { get; set; } = n
         protected virtual async Task OnIsSuperHostChangedAsync(bool? isSuperHost)
         {
             Filter.IsSuperHost = isSuperHost;
+            await SearchAsync();
+        }
+        protected virtual async Task OnFcmTokenChangedAsync(string? fcmToken)
+        {
+            Filter.FcmToken = fcmToken;
             await SearchAsync();
         }
         protected virtual async Task OnIdentityRoleIdChangedAsync(Guid? identityRoleId)

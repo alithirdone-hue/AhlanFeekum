@@ -1287,6 +1287,104 @@ namespace AhlanFeekum.Migrations
                 b.ToTable("AppTickets", (string)null);
             });
 
+
+            modelBuilder.Entity("AhlanFeekum.UserNotifications.UserNotification", b =>
+            {
+                b.Property<Guid>("Id")
+                    .HasColumnType("uniqueidentifier");
+
+                b.Property<string>("Body")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("Body");
+
+                b.Property<string>("ConcurrencyStamp")
+                    .IsConcurrencyToken()
+                    .IsRequired()
+                    .HasMaxLength(40)
+                    .HasColumnType("nvarchar(40)")
+                    .HasColumnName("ConcurrencyStamp");
+
+                b.Property<DateTime>("CreationTime")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("CreationTime");
+
+                b.Property<Guid?>("CreatorId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("CreatorId");
+
+                b.Property<Guid?>("DeleterId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("DeleterId");
+
+                b.Property<DateTime?>("DeletionTime")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("DeletionTime");
+
+                b.Property<string>("ExtraProperties")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("ExtraProperties");
+
+                b.Property<bool>("IsDeleted")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("bit")
+                    .HasDefaultValue(false)
+                    .HasColumnName("IsDeleted");
+
+                b.Property<DateTime?>("LastModificationTime")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("LastModificationTime");
+
+                b.Property<Guid?>("LastModifierId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("LastModifierId");
+
+                b.Property<string>("Title")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("Title");
+
+                b.HasKey("Id");
+
+                b.ToTable("AppUserNotifications", (string)null);
+            });
+
+            modelBuilder.Entity("AhlanFeekum.UserNotifications.UserNotificationSiteProperty", b =>
+            {
+                b.Property<Guid>("UserNotificationId")
+                    .HasColumnType("uniqueidentifier");
+
+                b.Property<Guid>("SitePropertyId")
+                    .HasColumnType("uniqueidentifier");
+
+                b.HasKey("UserNotificationId", "SitePropertyId");
+
+                b.HasIndex("SitePropertyId");
+
+                b.HasIndex("UserNotificationId", "SitePropertyId");
+
+                b.ToTable("AppUserNotificationSiteProperty", (string)null);
+            });
+
+            modelBuilder.Entity("AhlanFeekum.UserNotifications.UserNotificationUserProfile", b =>
+            {
+                b.Property<Guid>("UserNotificationId")
+                    .HasColumnType("uniqueidentifier");
+
+                b.Property<Guid>("UserProfileId")
+                    .HasColumnType("uniqueidentifier");
+
+                b.HasKey("UserNotificationId", "UserProfileId");
+
+                b.HasIndex("UserProfileId");
+
+                b.HasIndex("UserNotificationId", "UserProfileId");
+
+                b.ToTable("AppUserNotificationUserProfile", (string)null);
+            });
+
+
             modelBuilder.Entity("AhlanFeekum.UserProfiles.UserProfile", b =>
             {
                 b.Property<Guid>("Id")
@@ -1327,6 +1425,15 @@ namespace AhlanFeekum.Migrations
                     .IsRequired()
                     .HasColumnType("nvarchar(max)")
                     .HasColumnName("ExtraProperties");
+
+                b.Property<string>("FcmToken")
+    .HasColumnType("nvarchar(max)")
+    .HasColumnName("FcmToken");
+
+                b.Property<string>("FcmToken")
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("FcmToken");
+
 
                 b.Property<Guid?>("IdentityRoleId")
                     .HasColumnType("uniqueidentifier");
@@ -3263,6 +3370,39 @@ namespace AhlanFeekum.Migrations
                     .HasForeignKey("UserProfileId")
                     .OnDelete(DeleteBehavior.SetNull);
             });
+
+
+            modelBuilder.Entity("AhlanFeekum.UserNotifications.UserNotificationSiteProperty", b =>
+            {
+                b.HasOne("AhlanFeekum.SiteProperties.SiteProperty", null)
+                    .WithMany()
+                    .HasForeignKey("SitePropertyId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.HasOne("AhlanFeekum.UserNotifications.UserNotification", null)
+                    .WithMany("SiteProperties")
+                    .HasForeignKey("UserNotificationId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity("AhlanFeekum.UserNotifications.UserNotificationUserProfile", b =>
+            {
+                b.HasOne("AhlanFeekum.UserNotifications.UserNotification", null)
+                    .WithMany("UserProfiles")
+                    .HasForeignKey("UserNotificationId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.HasOne("AhlanFeekum.UserProfiles.UserProfile", null)
+                    .WithMany()
+                    .HasForeignKey("UserProfileId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
+
+
             modelBuilder.Entity("AhlanFeekum.UserProfiles.UserProfile", b =>
             {
                 b.HasOne("Volo.Abp.Identity.IdentityRole", null)
@@ -3422,6 +3562,14 @@ namespace AhlanFeekum.Migrations
             {
                 b.Navigation("PropertyFeatures");
             });
+
+            modelBuilder.Entity("AhlanFeekum.UserNotifications.UserNotification", b =>
+            {
+                b.Navigation("SiteProperties");
+
+                b.Navigation("UserProfiles");
+            });
+
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>
                 {
                     b.Navigation("Actions");

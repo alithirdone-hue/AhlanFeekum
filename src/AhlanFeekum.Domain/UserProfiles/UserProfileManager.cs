@@ -20,14 +20,14 @@ namespace AhlanFeekum.UserProfiles
         }
 
         public virtual async Task<UserProfile> CreateAsync(
-        Guid? identityRoleId, Guid identityUserId, string name, bool isSuperHost, string? email = null, string? phoneNumber = null, string? latitude = null, string? longitude = null, string? address = null, string? profilePhoto = null)
+        Guid? identityRoleId, Guid identityUserId, string name, bool isSuperHost, string? email = null, string? phoneNumber = null, string? latitude = null, string? longitude = null, string? address = null, string? profilePhoto = null, string? fcmToken = null)
         {
             Check.NotNull(identityUserId, nameof(identityUserId));
             Check.NotNullOrWhiteSpace(name, nameof(name));
 
             var userProfile = new UserProfile(
              GuidGenerator.Create(),
-             identityRoleId, identityUserId, name, isSuperHost, email, phoneNumber, latitude, longitude, address, profilePhoto
+             identityRoleId, identityUserId, name, isSuperHost, email, phoneNumber, latitude, longitude, address, profilePhoto, fcmToken
              );
 
             return await _userProfileRepository.InsertAsync(userProfile);
@@ -35,7 +35,7 @@ namespace AhlanFeekum.UserProfiles
 
         public virtual async Task<UserProfile> UpdateAsync(
             Guid id,
-            Guid? identityRoleId, Guid identityUserId, string name, bool isSuperHost, string? email = null, string? phoneNumber = null, string? latitude = null, string? longitude = null, string? address = null, string? profilePhoto = null, [CanBeNull] string? concurrencyStamp = null
+            Guid? identityRoleId, Guid identityUserId, string name, bool isSuperHost, string? email = null, string? phoneNumber = null, string? latitude = null, string? longitude = null, string? address = null, string? profilePhoto = null, string? fcmToken = null, [CanBeNull] string? concurrencyStamp = null
         )
         {
             Check.NotNull(identityUserId, nameof(identityUserId));
@@ -53,6 +53,7 @@ namespace AhlanFeekum.UserProfiles
             userProfile.Longitude = longitude;
             userProfile.Address = address;
             userProfile.ProfilePhoto = profilePhoto;
+            userProfile.FcmToken = fcmToken;
 
             userProfile.SetConcurrencyStampIfNotNull(concurrencyStamp);
             return await _userProfileRepository.UpdateAsync(userProfile);

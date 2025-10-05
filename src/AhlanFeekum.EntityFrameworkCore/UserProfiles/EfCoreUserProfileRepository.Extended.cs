@@ -97,7 +97,7 @@ namespace AhlanFeekum.UserProfiles
                     (from siteProperty in (dbContext.SiteProperties.Where(p=>p.PropertyTypeId == hotelPropertyTypeId && p.StatusId == approvedStatus.Id).Include(p => p.PropertyFeatures))
                      from user in dbContext.UserProfiles where siteProperty.OwnerId == user.Id
                      select new UserProfile(user.Id,user.IdentityRoleId, user.IdentityUserId,user.Name, user.IsSuperHost,user.Email,
-                     user.PhoneNumber, user.Latitude, user.Longitude,user.Address, user.ProfilePhoto)
+                     user.PhoneNumber, user.Latitude, user.Longitude,user.Address, user.ProfilePhoto, user.FcmToken)
                      {
                          AverageRating = dbContext.PropertyEvaluations.Where(p => p.SitePropertyId == siteProperty.Id).Average(e => (e.Cleanliness + e.PriceAndValue + e.Location + e.Accuracy + e.Attitude) / 5.0)
                      }).Take(2).ToList(),

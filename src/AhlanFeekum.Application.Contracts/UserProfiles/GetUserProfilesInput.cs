@@ -16,6 +16,7 @@ namespace AhlanFeekum.UserProfiles
         public string? Address { get; set; }
         public string? ProfilePhoto { get; set; }
         public bool? IsSuperHost { get; set; }
+        public string? FcmToken { get; set; }
         public Guid? IdentityRoleId { get; set; }
         public Guid? IdentityUserId { get; set; }
 

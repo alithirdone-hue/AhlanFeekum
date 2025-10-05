@@ -194,6 +194,16 @@ icon: "fa fa-file-alt",
 icon: "fa fa-file-alt",
                 requiredPermissionName: AhlanFeekumPermissions.AhlanfeekumTerms.Default)
         );
+
+
+        context.Menu.AddItem(
+            new ApplicationMenuItem(
+                AhlanFeekumMenus.UserNotifications,
+                l["Menu:UserNotifications"],
+                url: "/user-notifications",
+                icon: "fa fa-file-alt",
+                requiredPermissionName: AhlanFeekumPermissions.UserNotifications.Default)
+        );
         return Task.CompletedTask;
     }
 }

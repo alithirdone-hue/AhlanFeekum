@@ -1,4 +1,5 @@
 ﻿using AhlanFeekum.AhlanfeekumTerms;
+using AhlanFeekum.AhlanfeekumTerms;
 using AhlanFeekum.FavoriteProperties;
 using AhlanFeekum.Governorates;
 using AhlanFeekum.Governorates;
@@ -19,7 +20,8 @@ using AhlanFeekum.SpecialAdvertisments;
 using AhlanFeekum.Statuses;
 using AhlanFeekum.Tickets;
 using AhlanFeekum.UserProfiles;
-using AhlanFeekum.AhlanfeekumTerms;
+using AhlanFeekum.UserProfiles;
+using AhlanFeekum.UserNotifications;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -47,6 +49,8 @@ public class AhlanFeekumDbContext :
     ITenantManagementDbContext
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
+
+    public DbSet<UserNotification> UserNotifications { get; set; } = null!;
     public DbSet<AhlanfeekumTerm> AhlanfeekumTerms { get; set; } = null!;
     public DbSet<Ticket> Tickets { get; set; } = null!;
     public DbSet<Reservation> Reservations { get; set; } = null!;
@@ -141,25 +145,7 @@ public class AhlanFeekumDbContext :
             });
 
         }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<UserProfile>(b =>
-            {
-                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "UserProfiles", AhlanFeekumConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.Property(x => x.Name).HasColumnName(nameof(UserProfile.Name)).IsRequired();
-                b.Property(x => x.Email).HasColumnName(nameof(UserProfile.Email));
-                b.Property(x => x.PhoneNumber).HasColumnName(nameof(UserProfile.PhoneNumber));
-                b.Property(x => x.Latitude).HasColumnName(nameof(UserProfile.Latitude));
-                b.Property(x => x.Longitude).HasColumnName(nameof(UserProfile.Longitude));
-                b.Property(x => x.Address).HasColumnName(nameof(UserProfile.Address));
-                b.Property(x => x.ProfilePhoto).HasColumnName(nameof(UserProfile.ProfilePhoto));
-                b.Property(x => x.IsSuperHost).HasColumnName(nameof(UserProfile.IsSuperHost));
-                b.HasOne<IdentityRole>().WithMany().HasForeignKey(x => x.IdentityRoleId).OnDelete(DeleteBehavior.SetNull);
-                b.HasOne<IdentityUser>().WithMany().IsRequired().HasForeignKey(x => x.IdentityUserId).OnDelete(DeleteBehavior.NoAction);
-            });
-
-        }
+   
         if (builder.IsHostDatabase())
         {
             builder.Entity<PropertyType>(b =>
@@ -460,8 +446,74 @@ public class AhlanFeekumDbContext :
             b.Property(x => x.MimeType);
         });
 
+        if (builder.IsHostDatabase())
+        {
+            builder.Entity<UserProfile>(b =>
+            {
+                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "UserProfiles", AhlanFeekumConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.Property(x => x.Name).HasColumnName(nameof(UserProfile.Name)).IsRequired();
+                b.Property(x => x.Email).HasColumnName(nameof(UserProfile.Email));
+                b.Property(x => x.PhoneNumber).HasColumnName(nameof(UserProfile.PhoneNumber));
+                b.Property(x => x.Latitude).HasColumnName(nameof(UserProfile.Latitude));
+                b.Property(x => x.Longitude).HasColumnName(nameof(UserProfile.Longitude));
+                b.Property(x => x.Address).HasColumnName(nameof(UserProfile.Address));
+                b.Property(x => x.ProfilePhoto).HasColumnName(nameof(UserProfile.ProfilePhoto));
+                b.Property(x => x.IsSuperHost).HasColumnName(nameof(UserProfile.IsSuperHost));
+                b.Property(x => x.FcmToken).HasColumnName(nameof(UserProfile.FcmToken));
+                b.HasOne<IdentityRole>().WithMany().HasForeignKey(x => x.IdentityRoleId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne<IdentityUser>().WithMany().IsRequired().HasForeignKey(x => x.IdentityUserId).OnDelete(DeleteBehavior.NoAction);
+            });
 
-    }
+        }
+
+        if (builder.IsHostDatabase())
+        {
+            builder.Entity<UserNotification>(b =>
+            {
+                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "UserNotifications", AhlanFeekumConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.Property(x => x.Title).HasColumnName(nameof(UserNotification.Title)).IsRequired();
+                b.Property(x => x.Body).HasColumnName(nameof(UserNotification.Body)).IsRequired();
+                b.HasMany(x => x.UserProfiles).WithOne().HasForeignKey(x => x.UserNotificationId).IsRequired().OnDelete(DeleteBehavior.NoAction);
+                b.HasMany(x => x.SiteProperties).WithOne().HasForeignKey(x => x.UserNotificationId).IsRequired().OnDelete(DeleteBehavior.NoAction);
+            });
+
+            builder.Entity<UserNotificationUserProfile>(b =>
+            {
+                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "UserNotificationUserProfile", AhlanFeekumConsts.DbSchema);
+                b.ConfigureByConvention();
+
+                b.HasKey(
+                    x => new { x.UserNotificationId, x.UserProfileId }
+                );
+
+                b.HasOne<UserNotification>().WithMany(x => x.UserProfiles).HasForeignKey(x => x.UserNotificationId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+                b.HasOne<UserProfile>().WithMany().HasForeignKey(x => x.UserProfileId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+
+                b.HasIndex(
+                        x => new { x.UserNotificationId, x.UserProfileId }
+                );
+            });
+            builder.Entity<UserNotificationSiteProperty>(b =>
+            {
+                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "UserNotificationSiteProperty", AhlanFeekumConsts.DbSchema);
+                b.ConfigureByConvention();
+
+                b.HasKey(
+                    x => new { x.UserNotificationId, x.SitePropertyId }
+                );
+
+                b.HasOne<UserNotification>().WithMany(x => x.SiteProperties).HasForeignKey(x => x.UserNotificationId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+                b.HasOne<SiteProperty>().WithMany().HasForeignKey(x => x.SitePropertyId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+
+                b.HasIndex(
+                        x => new { x.UserNotificationId, x.SitePropertyId }
+                );
+            });
+        }
+
+        }
 
 
 }

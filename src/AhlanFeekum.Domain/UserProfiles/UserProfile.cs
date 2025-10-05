@@ -36,6 +36,9 @@ namespace AhlanFeekum.UserProfiles
         public virtual string? ProfilePhoto { get; set; }
 
         public virtual bool IsSuperHost { get; set; }
+
+        [CanBeNull]
+        public virtual string? FcmToken { get; set; }
         public Guid? IdentityRoleId { get; set; }
         public Guid IdentityUserId { get; set; }
 
@@ -44,7 +47,7 @@ namespace AhlanFeekum.UserProfiles
 
         }
 
-        public UserProfileBase(Guid id, Guid? identityRoleId, Guid identityUserId, string name, bool isSuperHost, string? email = null, string? phoneNumber = null, string? latitude = null, string? longitude = null, string? address = null, string? profilePhoto = null)
+        public UserProfileBase(Guid id, Guid? identityRoleId, Guid identityUserId, string name, bool isSuperHost, string? email = null, string? phoneNumber = null, string? latitude = null, string? longitude = null, string? address = null, string? profilePhoto = null, string? fcmToken = null)
         {
 
             Id = id;
@@ -57,6 +60,7 @@ namespace AhlanFeekum.UserProfiles
             Longitude = longitude;
             Address = address;
             ProfilePhoto = profilePhoto;
+            FcmToken = fcmToken;
             IdentityRoleId = identityRoleId;
             IdentityUserId = identityUserId;
         }

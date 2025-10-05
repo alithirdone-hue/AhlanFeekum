@@ -19,6 +19,7 @@ namespace AhlanFeekum.UserProfiles
             string? address = null,
             string? profilePhoto = null,
             bool? isSuperHost = null,
+            string? fcmToken = null,
             Guid? identityRoleId = null,
             Guid? identityUserId = null,
             CancellationToken cancellationToken = default);
@@ -37,6 +38,7 @@ namespace AhlanFeekum.UserProfiles
             string? address = null,
             string? profilePhoto = null,
             bool? isSuperHost = null,
+            string? fcmToken = null,
             Guid? identityRoleId = null,
             Guid? identityUserId = null,
             string? sorting = null,
@@ -55,6 +57,7 @@ namespace AhlanFeekum.UserProfiles
                     string? address = null,
                     string? profilePhoto = null,
                     bool? isSuperHost = null,
+                    string? fcmToken = null,
                     string? sorting = null,
                     int maxResultCount = int.MaxValue,
                     int skipCount = 0,
@@ -71,6 +74,7 @@ namespace AhlanFeekum.UserProfiles
             string? address = null,
             string? profilePhoto = null,
             bool? isSuperHost = null,
+            string? fcmToken = null,
             Guid? identityRoleId = null,
             Guid? identityUserId = null,
             CancellationToken cancellationToken = default);

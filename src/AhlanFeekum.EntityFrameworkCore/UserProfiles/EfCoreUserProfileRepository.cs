@@ -1,15 +1,16 @@
-using Volo.Abp.Identity;
-using Volo.Abp.Identity;
+using AhlanFeekum.UserProfiles;
+using AhlanFeekum.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
-using AhlanFeekum.EntityFrameworkCore;
+using Volo.Abp.Identity;
+using Volo.Abp.Identity;
 
 namespace AhlanFeekum.UserProfiles
 {
@@ -31,13 +32,14 @@ namespace AhlanFeekum.UserProfiles
             string? address = null,
             string? profilePhoto = null,
             bool? isSuperHost = null,
+            string? fcmToken = null,
             Guid? identityRoleId = null,
             Guid? identityUserId = null,
             CancellationToken cancellationToken = default)
         {
             var query = await GetQueryForNavigationPropertiesAsync();
 
-            query = ApplyFilter(query, filterText, name, email, phoneNumber, latitude, longitude, address, profilePhoto, isSuperHost, identityRoleId, identityUserId);
+            query = ApplyFilter(query, filterText, name, email, phoneNumber, latitude, longitude, address, profilePhoto, isSuperHost, fcmToken, identityRoleId, identityUserId);
 
             var ids = query.Select(x => x.UserProfile.Id);
             await DeleteManyAsync(ids, cancellationToken: GetCancellationToken(cancellationToken));
@@ -66,6 +68,7 @@ namespace AhlanFeekum.UserProfiles
             string? address = null,
             string? profilePhoto = null,
             bool? isSuperHost = null,
+            string? fcmToken = null,
             Guid? identityRoleId = null,
             Guid? identityUserId = null,
             string? sorting = null,
@@ -74,7 +77,7 @@ namespace AhlanFeekum.UserProfiles
             CancellationToken cancellationToken = default)
         {
             var query = await GetQueryForNavigationPropertiesAsync();
-            query = ApplyFilter(query, filterText, name, email, phoneNumber, latitude, longitude, address, profilePhoto, isSuperHost, identityRoleId, identityUserId);
+            query = ApplyFilter(query, filterText, name, email, phoneNumber, latitude, longitude, address, profilePhoto, isSuperHost, fcmToken, identityRoleId, identityUserId);
             query = query.OrderBy(string.IsNullOrWhiteSpace(sorting) ? UserProfileConsts.GetDefaultSorting(true) : sorting);
             return await query.PageBy(skipCount, maxResultCount).ToListAsync(cancellationToken);
         }
@@ -105,11 +108,12 @@ namespace AhlanFeekum.UserProfiles
             string? address = null,
             string? profilePhoto = null,
             bool? isSuperHost = null,
+            string? fcmToken = null,
             Guid? identityRoleId = null,
             Guid? identityUserId = null)
         {
             return query
-                .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.UserProfile.Name!.Contains(filterText!) || e.UserProfile.Email!.Contains(filterText!) || e.UserProfile.PhoneNumber!.Contains(filterText!) || e.UserProfile.Latitude!.Contains(filterText!) || e.UserProfile.Longitude!.Contains(filterText!) || e.UserProfile.Address!.Contains(filterText!) || e.UserProfile.ProfilePhoto!.Contains(filterText!))
+                .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.UserProfile.Name!.Contains(filterText!) || e.UserProfile.Email!.Contains(filterText!) || e.UserProfile.PhoneNumber!.Contains(filterText!) || e.UserProfile.Latitude!.Contains(filterText!) || e.UserProfile.Longitude!.Contains(filterText!) || e.UserProfile.Address!.Contains(filterText!) || e.UserProfile.ProfilePhoto!.Contains(filterText!) || e.UserProfile.FcmToken!.Contains(filterText!))
                     .WhereIf(!string.IsNullOrWhiteSpace(name), e => e.UserProfile.Name.Contains(name))
                     .WhereIf(!string.IsNullOrWhiteSpace(email), e => e.UserProfile.Email.Contains(email))
                     .WhereIf(!string.IsNullOrWhiteSpace(phoneNumber), e => e.UserProfile.PhoneNumber.Contains(phoneNumber))
@@ -118,6 +122,7 @@ namespace AhlanFeekum.UserProfiles
                     .WhereIf(!string.IsNullOrWhiteSpace(address), e => e.UserProfile.Address.Contains(address))
                     .WhereIf(!string.IsNullOrWhiteSpace(profilePhoto), e => e.UserProfile.ProfilePhoto.Contains(profilePhoto))
                     .WhereIf(isSuperHost.HasValue, e => e.UserProfile.IsSuperHost == isSuperHost)
+                    .WhereIf(!string.IsNullOrWhiteSpace(fcmToken), e => e.UserProfile.FcmToken.Contains(fcmToken))
                     .WhereIf(identityRoleId != null && identityRoleId != Guid.Empty, e => e.IdentityRole != null && e.IdentityRole.Id == identityRoleId)
                     .WhereIf(identityUserId != null && identityUserId != Guid.Empty, e => e.IdentityUser != null && e.IdentityUser.Id == identityUserId);
         }
@@ -132,12 +137,13 @@ namespace AhlanFeekum.UserProfiles
             string? address = null,
             string? profilePhoto = null,
             bool? isSuperHost = null,
+            string? fcmToken = null,
             string? sorting = null,
             int maxResultCount = int.MaxValue,
             int skipCount = 0,
             CancellationToken cancellationToken = default)
         {
-            var query = ApplyFilter((await GetQueryableAsync()), filterText, name, email, phoneNumber, latitude, longitude, address, profilePhoto, isSuperHost);
+            var query = ApplyFilter((await GetQueryableAsync()), filterText, name, email, phoneNumber, latitude, longitude, address, profilePhoto, isSuperHost, fcmToken);
             query = query.OrderBy(string.IsNullOrWhiteSpace(sorting) ? UserProfileConsts.GetDefaultSorting(false) : sorting);
             return await query.PageBy(skipCount, maxResultCount).ToListAsync(cancellationToken);
         }
@@ -152,12 +158,13 @@ namespace AhlanFeekum.UserProfiles
             string? address = null,
             string? profilePhoto = null,
             bool? isSuperHost = null,
+            string? fcmToken = null,
             Guid? identityRoleId = null,
             Guid? identityUserId = null,
             CancellationToken cancellationToken = default)
         {
             var query = await GetQueryForNavigationPropertiesAsync();
-            query = ApplyFilter(query, filterText, name, email, phoneNumber, latitude, longitude, address, profilePhoto, isSuperHost, identityRoleId, identityUserId);
+            query = ApplyFilter(query, filterText, name, email, phoneNumber, latitude, longitude, address, profilePhoto, isSuperHost, fcmToken, identityRoleId, identityUserId);
             return await query.LongCountAsync(GetCancellationToken(cancellationToken));
         }
 
@@ -171,10 +178,11 @@ namespace AhlanFeekum.UserProfiles
             string? longitude = null,
             string? address = null,
             string? profilePhoto = null,
-            bool? isSuperHost = null)
+            bool? isSuperHost = null,
+            string? fcmToken = null)
         {
             return query
-                    .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.Name!.Contains(filterText!) || e.Email!.Contains(filterText!) || e.PhoneNumber!.Contains(filterText!) || e.Latitude!.Contains(filterText!) || e.Longitude!.Contains(filterText!) || e.Address!.Contains(filterText!) || e.ProfilePhoto!.Contains(filterText!))
+                    .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.Name!.Contains(filterText!) || e.Email!.Contains(filterText!) || e.PhoneNumber!.Contains(filterText!) || e.Latitude!.Contains(filterText!) || e.Longitude!.Contains(filterText!) || e.Address!.Contains(filterText!) || e.ProfilePhoto!.Contains(filterText!) || e.FcmToken!.Contains(filterText!))
                     .WhereIf(!string.IsNullOrWhiteSpace(name), e => e.Name.Contains(name))
                     .WhereIf(!string.IsNullOrWhiteSpace(email), e => e.Email.Contains(email))
                     .WhereIf(!string.IsNullOrWhiteSpace(phoneNumber), e => e.PhoneNumber.Contains(phoneNumber))
@@ -182,7 +190,8 @@ namespace AhlanFeekum.UserProfiles
                     .WhereIf(!string.IsNullOrWhiteSpace(longitude), e => e.Longitude.Contains(longitude))
                     .WhereIf(!string.IsNullOrWhiteSpace(address), e => e.Address.Contains(address))
                     .WhereIf(!string.IsNullOrWhiteSpace(profilePhoto), e => e.ProfilePhoto.Contains(profilePhoto))
-                    .WhereIf(isSuperHost.HasValue, e => e.IsSuperHost == isSuperHost);
+                    .WhereIf(isSuperHost.HasValue, e => e.IsSuperHost == isSuperHost)
+                    .WhereIf(!string.IsNullOrWhiteSpace(fcmToken), e => e.FcmToken.Contains(fcmToken));
         }
     }
 }

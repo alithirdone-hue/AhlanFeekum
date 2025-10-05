@@ -1,4 +1,5 @@
-﻿using AhlanFeekum.FavoriteProperties;
+﻿using AhlanFeekum.AhlanfeekumTerms;
+using AhlanFeekum.FavoriteProperties;
 using AhlanFeekum.Governorates;
 using AhlanFeekum.OnlyForYouSections;
 using AhlanFeekum.PersonEvaluations;
@@ -11,9 +12,9 @@ using AhlanFeekum.Reservations;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SpecialAdvertisments;
 using AhlanFeekum.Statuses;
-using AhlanFeekum.UserProfiles;
-using AhlanFeekum.AhlanfeekumTerms;
 using AhlanFeekum.Tickets;
+using AhlanFeekum.UserProfiles;
+using AhlanFeekum.UserNotifications;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
@@ -87,6 +88,7 @@ public class AhlanFeekumEntityFrameworkCoreModule : AbpModule
             options.AddRepository<Ticket, Tickets.EfCoreTicketRepository>();
 
             options.AddRepository<AhlanfeekumTerm, AhlanfeekumTerms.EfCoreAhlanfeekumTermRepository>();
+            options.AddRepository<UserNotification, UserNotifications.EfCoreUserNotificationRepository>();
 
         });
 

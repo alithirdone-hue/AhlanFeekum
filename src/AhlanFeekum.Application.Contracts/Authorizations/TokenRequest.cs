@@ -10,5 +10,6 @@ namespace AhlanFeekum.Authorizations
     {
         public string PhoneOrEmail { get; set; } = null!;
         public string Password { get; set; } = null!;
+        public string? FcmToken { get; set; } = null;
     }
 }

@@ -130,6 +130,12 @@
                 </Column>
                 <Column ColumnSize="ColumnSize.Is3">
                     <Field>
+                        <FieldLabel>@L["FcmToken"]</FieldLabel>
+                        <TextEdit Text="@Filter.FcmToken" TextChanged="@OnFcmTokenChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
                         <FieldLabel>@L["IdentityRole"]</FieldLabel>
                         <Select TValue="Guid?"
 		SelectedValue="@Filter.IdentityRoleId"
@@ -332,6 +338,11 @@
 
 
               <DataGridColumn TItem="UserProfileWithNavigationPropertiesDto"
+                      Field="UserProfile.FcmToken"
+                      Caption="@L["FcmToken"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="UserProfileWithNavigationPropertiesDto"
                       Field="IdentityRole.Name"
                       Caption="@L["IdentityRole"]">
               </DataGridColumn>
@@ -452,6 +463,18 @@
                     <Field>
                         <Check TValue="bool" @bind-Checked="@NewUserProfile.IsSuperHost" >@L["IsSuperHost"]</Check>
                     </Field>
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["FcmToken"]</FieldLabel>
+                            <TextEdit @bind-Text="@NewUserProfile.FcmToken"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
 
                     <Field>
                         <FieldLabel>@L["IdentityRole"]</FieldLabel>
@@ -603,6 +626,18 @@
                     <Field>
                         <Check TValue="bool" @bind-Checked="@EditingUserProfile.IsSuperHost" >@L["IsSuperHost"]</Check>
                     </Field>
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["FcmToken"]</FieldLabel>
+                            <TextEdit @bind-Text="@EditingUserProfile.FcmToken"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
 
                     <Field>
                         <FieldLabel>@L["IdentityRole"]</FieldLabel>

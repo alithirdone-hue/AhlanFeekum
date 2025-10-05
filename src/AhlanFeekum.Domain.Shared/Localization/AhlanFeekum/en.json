@@ -276,6 +276,12 @@
     "Menu:AhlanfeekumTerms": "Ahlanfeekum Terms",
     "IsFixed": "Is Fixed",
     "TermsIconExtension": "Terms Icon Extension",
-    "WhoAreWeIconExtension": "Who Are We Icon Extension"
+    "WhoAreWeIconExtension": "Who Are We Icon Extension",
+    "FcmToken": "Fcm Token",
+    "Permission:UserNotifications": "User Notifications",
+    "Body": "Body",
+    "UserNotifications": "User Notifications",
+    "NewUserNotification": "New User Notification",
+    "Menu:UserNotifications": "User Notifications"
   }
 }

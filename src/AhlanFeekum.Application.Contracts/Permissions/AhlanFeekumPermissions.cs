@@ -139,4 +139,12 @@ public static class AhlanFeekumPermissions
         public const string Create = Default + ".Create";
         public const string Delete = Default + ".Delete";
     }
+
+    public static class UserNotifications
+    {
+        public const string Default = GroupName + ".UserNotifications";
+        public const string Edit = Default + ".Edit";
+        public const string Create = Default + ".Create";
+        public const string Delete = Default + ".Delete";
+    }
 }

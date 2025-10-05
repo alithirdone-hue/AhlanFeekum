@@ -239,5 +239,20 @@ namespace AhlanFeekum.UserProfiles
             }
         }
 
+        public virtual async Task<UserProfile> UpdateFcmTokenAsync(
+ Guid id,
+string? fcmToken = null
+)
+        {
+
+
+            var person = await _userProfileRepository.GetAsync(id);
+
+
+            person.FcmToken = fcmToken;
+
+            return await _userProfileRepository.UpdateAsync(person);
+        }
+
     }
 }

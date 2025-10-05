@@ -23,6 +23,7 @@ using FirebaseAdmin;
 using FirebaseAdmin.Auth;
 using Google.Apis.Auth.OAuth2;
 using System.Collections.Generic;
+using AhlanFeekum.UserProfiles;
 
 namespace AhlanFeekum.Authorizations
 {
@@ -32,6 +33,7 @@ namespace AhlanFeekum.Authorizations
     public class AuthorizationMobileAppService : ApplicationService, IAuthorizationMobileAppService
     {
         private readonly UserManager _userManager;
+        private readonly UserProfileManager _userProfileManager;
         private readonly ILogger<AuthorizationMobileAppService> _logger;
         private readonly IConfiguration _configuration;
         private readonly IIdentityUserRepository _identityUserRepository;
@@ -44,7 +46,8 @@ namespace AhlanFeekum.Authorizations
             Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor,
             ILogger<AuthorizationMobileAppService> logger,
             IConfiguration configuration,
-            IIdentityUserRepository identityUserRepository)
+            IIdentityUserRepository identityUserRepository,
+            UserProfileManager userProfileManager)
         {
             _userManager = userManager;
             _logger = logger;
@@ -52,6 +55,7 @@ namespace AhlanFeekum.Authorizations
             LocalizationResource = typeof(AhlanFeekumResource);
             _identityUserRepository = identityUserRepository;
             _httpClientFactory = httpClientFactory;
+            _userProfileManager = userProfileManager;
         }
 
 
@@ -164,7 +168,8 @@ namespace AhlanFeekum.Authorizations
                 }
             }
             // tokenResponse.refresh_token = data.RefreshToken;
-
+            if(!request.FcmToken.IsNullOrWhiteSpace())
+                await _userProfileManager.UpdateFcmTokenAsync(user.Id, request.FcmToken);
             mobileResponseDto.Code = 200;
             mobileResponseDto.Message = "SUCCESS";
             mobileResponseDto.Data = tokenResponse;

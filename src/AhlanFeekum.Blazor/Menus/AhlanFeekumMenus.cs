@@ -40,6 +40,8 @@ public class AhlanFeekumMenus
     public const string Tickets = Prefix + ".Tickets";
 
     public const string AhlanfeekumTerms = Prefix + ".AhlanfeekumTerms";
+    public const string UserNotifications = Prefix + ".UserNotifications";
+
 
 
 }
