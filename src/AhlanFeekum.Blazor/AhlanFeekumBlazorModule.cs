@@ -132,6 +132,33 @@ public class AhlanFeekumBlazorModule : AbpModule
         context.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
 
+        // Add CORS configuration
+        context.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowFlutterWeb", builder =>
+            {
+                builder
+                    .AllowAnyOrigin()  // For development - be more specific in production
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .SetIsOriginAllowed(origin => true); // Allow any origin for development
+            });
+            
+            // More restrictive policy for production
+            options.AddPolicy("AllowSpecificOrigins", builder =>
+            {
+                builder
+                    .WithOrigins(
+                        "https://localhost:3000",  // Flutter web dev server
+                        "http://srv954186.hstgr.cloud/",  // Your production Flutter web domain
+                        "http://localhost:3000"    // HTTP for development
+                    )
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials();
+            });
+        });
+
         ConfigureAuthentication(context);
         ConfigureUrls(configuration);
         ConfigureBundles();
@@ -330,6 +357,10 @@ options.CustomSchemaIds(type => type.FullName);
         app.UseHttpsRedirection();
         app.UseCorrelationId();
         app.MapAbpStaticAssets();
+        
+        // Add CORS middleware - IMPORTANT: Add this before UseRouting()
+        app.UseCors("AllowFlutterWeb"); // Use "AllowSpecificOrigins" for production
+        
         app.UseRouting();
         app.UseAuthentication();
         app.UseAbpOpenIddictValidation();
