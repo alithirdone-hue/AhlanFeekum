@@ -20,6 +20,7 @@ using Volo.Abp.Authorization;
 using Volo.Abp.Caching;
 using Microsoft.Extensions.Caching.Distributed;
 using AhlanFeekum.Shared;
+using AhlanFeekum.FireBase;
 
 namespace AhlanFeekum.UserNotifications
 {
@@ -34,13 +35,13 @@ namespace AhlanFeekum.UserNotifications
         protected IRepository<AhlanFeekum.UserProfiles.UserProfile, Guid> _userProfileRepository;
         protected IRepository<AhlanFeekum.SiteProperties.SiteProperty, Guid> _sitePropertyRepository;
 
+        
         public UserNotificationsAppServiceBase(IUserNotificationRepository userNotificationRepository, UserNotificationManager userNotificationManager, IDistributedCache<UserNotificationDownloadTokenCacheItem, string> downloadTokenCache, IRepository<AhlanFeekum.UserProfiles.UserProfile, Guid> userProfileRepository, IRepository<AhlanFeekum.SiteProperties.SiteProperty, Guid> sitePropertyRepository)
         {
             _downloadTokenCache = downloadTokenCache;
             _userNotificationRepository = userNotificationRepository;
             _userNotificationManager = userNotificationManager; _userProfileRepository = userProfileRepository;
             _sitePropertyRepository = sitePropertyRepository;
-
         }
 
         public virtual async Task<PagedResultDto<UserNotificationWithNavigationPropertiesDto>> GetListAsync(GetUserNotificationsInput input)
@@ -111,6 +112,7 @@ namespace AhlanFeekum.UserNotifications
             var userNotification = await _userNotificationManager.CreateAsync(
             input.UserProfileIds, input.SitePropertyIds, input.Title, input.Body
             );
+
 
             return ObjectMapper.Map<UserNotification, UserNotificationDto>(userNotification);
         }

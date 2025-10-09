@@ -226,6 +226,10 @@
                                           Clicked="async () => await OpenEditUserNotificationModalAsync(context)"
                                           Text="@L["Edit"]"></EntityAction>
                             <EntityAction TItem="UserNotificationWithNavigationPropertiesDto"
+                                          Visible="@CanEditUserNotification"
+                                          Clicked="async () => await SendAsync(context)"
+                                          Text="@L["Send"]"></EntityAction>
+                            <EntityAction TItem="UserNotificationWithNavigationPropertiesDto"
                                           Visible="@CanDeleteUserNotification"
                                           Clicked="() => DeleteUserNotificationAsync(context)"
                                           ConfirmationMessage="@(()=> L["DeleteConfirmationMessage"])"

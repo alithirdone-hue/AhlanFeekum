@@ -443,6 +443,17 @@ namespace AhlanFeekum.Blazor.Pages
             await GetUserNotificationsAsync();
         }
 
+        private async Task SendAsync(UserNotificationWithNavigationPropertiesDto input)
+        {
+            SelectedEditTab = "userNotification-edit-tab";
 
+
+            var userNotification = await UserNotificationsAppService.GetWithNavigationPropertiesAsync(input.UserNotification.Id);
+            if (userNotification != null)
+            {
+                await UserNotificationsAppService.SendAsync(userNotification);
+            }
+
+        }
+        }
     }
-}
