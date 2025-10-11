@@ -4,6 +4,7 @@ using AhlanFeekum.Blazor.Menus;
 using AhlanFeekum.EntityFrameworkCore;
 using AhlanFeekum.Localization;
 using AhlanFeekum.MultiTenancy;
+using System.Linq;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using Blazorise.RichTextEdit;
@@ -135,23 +136,32 @@ public class AhlanFeekumBlazorModule : AbpModule
         // Add CORS configuration
         context.Services.AddCors(options =>
         {
+            // Development policy - allows any origin for local development
             options.AddPolicy("AllowFlutterWeb", builder =>
             {
                 builder
-                    .AllowAnyOrigin()  // For development - be more specific in production
+                    .AllowAnyOrigin()
                     .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .SetIsOriginAllowed(origin => true); // Allow any origin for development
+                    .AllowAnyHeader();
             });
             
-            // More restrictive policy for production
+            // Production policy - specific origins only
+            options.AddPolicy("AllowWebApp", builder =>
+            {
+                builder
+                    .WithOrigins("http://srv954186.hstgr.cloud")  // Flutter web app (port 80)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+            
+            // Alternative policy for development with specific origins
             options.AddPolicy("AllowSpecificOrigins", builder =>
             {
                 builder
                     .WithOrigins(
-                        "https://localhost:3000",  // Flutter web dev server
-                        "http://srv954186.hstgr.cloud/",  // Your production Flutter web domain
-                        "http://localhost:3000"    // HTTP for development
+                        "http://srv954186.hstgr.cloud",  // Production Flutter web
+                        "https://localhost:3000",        // Flutter web dev server
+                        "http://localhost:3000"          // HTTP for development
                     )
                     .AllowAnyMethod()
                     .AllowAnyHeader()
@@ -356,10 +366,18 @@ options.CustomSchemaIds(type => type.FullName);
 
         app.UseHttpsRedirection();
         app.UseCorrelationId();
-        app.MapAbpStaticAssets();
         
-        // Add CORS middleware - IMPORTANT: Add this before UseRouting()
-        app.UseCors("AllowFlutterWeb"); // Use "AllowSpecificOrigins" for production
+        // Add CORS middleware for static files - IMPORTANT: Add this before static files
+        if (env.IsDevelopment())
+        {
+            app.UseCors("AllowFlutterWeb"); // Use permissive policy for development
+        }
+        else
+        {
+            app.UseCors("AllowWebApp"); // Use specific policy for production
+        }
+        
+        app.MapAbpStaticAssets();
         
         app.UseRouting();
         app.UseAuthentication();

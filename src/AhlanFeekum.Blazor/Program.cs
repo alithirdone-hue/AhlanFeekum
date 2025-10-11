@@ -42,6 +42,20 @@ public class Program
                     options.JsonSerializerOptions.Converters.Add(new TimeOnlyJsonConverter());
                 });
             var app = builder.Build();
+            
+            // Add CORS middleware before static files
+            app.Use(async (context, next) =>
+            {
+                if (context.Request.Path.StartsWithSegments("/ahlanfeekumassets"))
+                {
+                    // Allow any origin for both development and production
+                    context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+                    context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+                    context.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+                }
+                await next();
+            });
+            
             app.UseStaticFiles();
             await app.InitializeApplicationAsync();
             await app.RunAsync();
