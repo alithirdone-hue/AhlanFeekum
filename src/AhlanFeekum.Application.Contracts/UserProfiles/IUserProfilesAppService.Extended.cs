@@ -9,8 +9,10 @@ namespace AhlanFeekum.UserProfiles
     {
         //Write your custom code here...
         Task<MobileResponseDto> SendSecretKeyEmailAsync(string input);
-        Task<MobileResponseDto> SendSecretKeyPhoneAsync(string input);
         Task<MobileResponseDto> VerifyAsync(VerifyRequestDto input);
+
+        Task<MobileResponseDto> SendSecretKeyPhoneAsync(string input);
+        Task<MobileResponseDto> VerifyPhoneAsync(VerifyRequestDto input);
 
         Task<MobileResponseDto> RegisterAsync(RegisterCreateMobileDto input);
         Task<MobileResponseDto> UpdateMyProfileAsync(UserProfileUpdateMobileDto input);

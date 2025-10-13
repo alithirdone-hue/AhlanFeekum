@@ -361,61 +361,100 @@ namespace AhlanFeekum.UserProfiles
                 Random random = new Random();
                 int securityNum = random.Next(1000, 10000);
 
-                var smtpSection = _configuration.GetSection("Email:Smtp");
-                var emailSection = _configuration.GetSection("Email");
-                using (var client = new SmtpClient(smtpSection["Host"], smtpSection["Port"] != null ? int.Parse(smtpSection["Port"]) : 587))
+                // Send security code via WhatsApp API
+                var whatsappSection = _configuration.GetSection("WhatsApp");
+                var apiKey = whatsappSection["ApiKey"];
+                var apiUrl = whatsappSection["ApiUrl"]; ;
+                var fromNumber = whatsappSection["DefaultPhoneNumber"];
+
+                // Prepare WhatsApp message
+                var whatsappMessage = new
                 {
-                    client.EnableSsl = true;
-                    client.UseDefaultCredentials = false;
-                    client.Credentials = new NetworkCredential(smtpSection["UserName"], smtpSection["Password"]);
+                    messageType = "text",
+                    requestType = "POST",
+                    token = apiKey,
+                    from = fromNumber,
+                    to = input,
+                    text = $" is: {securityNum}"
+                };
 
-                    var mailMessage = new MailMessage
+                // Cache the security code
+                var cacheKey = $"phone_verify_{input}";
+                var cacheItem = await _downloadTokenCache.GetAsync(cacheKey);
+
+                if (cacheItem != null)
+                    await _downloadTokenCache.RemoveAsync(cacheKey);
+
+                await _downloadTokenCache.SetAsync(
+                    cacheKey,
+                    new UserProfileDownloadTokenCacheItem { SecurityCode = securityNum.ToString() },
+                    new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5) }
+                );
+
+                // Send WhatsApp message
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+                    
+                    var json = System.Text.Json.JsonSerializer.Serialize(whatsappMessage);
+                    var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+                    
+                    var response = await httpClient.PostAsync(apiUrl, content);
+                    
+                    if (response.IsSuccessStatusCode)
                     {
-                        From = new MailAddress(emailSection["DefaultFromAddress"], emailSection["DefaultFromDisplayName"]),
-                        Subject = "Security Code",
-                        Body = $"<h1>{securityNum.ToString()}</h1>",
-                        IsBodyHtml = true
-                    };
-
-                    mailMessage.To.Add(input);
-
-                    var cacheKey = $"email_verify_{input}";
-                    var cacheItem = await _downloadTokenCache.GetAsync(cacheKey);
-
-                    if (cacheItem != null)
-                        await _downloadTokenCache.RemoveAsync(cacheKey);
-
-
-                    await _downloadTokenCache.SetAsync(
-                        cacheKey,
-                        new UserProfileDownloadTokenCacheItem { SecurityCode = securityNum.ToString() },
-                        new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5) }
-                    );
-
-                    await client.SendMailAsync(mailMessage);
-                    mobileResponse.Code = 200;
-                    mobileResponse.Message = "Success";
-                    mobileResponse.Data = "Success";
-                    return mobileResponse;
+                        mobileResponse.Code = 200;
+                        mobileResponse.Message = "Success";
+                        mobileResponse.Data = "Security code sent via WhatsApp";
+                        return mobileResponse;
+                    }
+                    else
+                    {
+                        var errorContent = await response.Content.ReadAsStringAsync();
+                        throw new Exception($"WhatsApp API error: {response.StatusCode} - {errorContent}");
+                    }
                 }
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
                 mobileResponse.Code = 501;
-                mobileResponse.Message = "Failed to send Email message.";
+                mobileResponse.Message = "Failed to send WhatsApp message.";
                 mobileResponse.Data = null;
                 return mobileResponse;
             }
 
 
             mobileResponse.Code = 501;
-            mobileResponse.Message = "Failed to send Email message.";
+            mobileResponse.Message = "Failed to send WhatsApp message.";
             mobileResponse.Data = null;
             return mobileResponse;
 
         }
 
+
+        [AllowAnonymous]
+        public virtual async Task<MobileResponseDto> VerifyPhoneAsync(VerifyRequestDto input)
+        {
+            MobileResponseDto mobileResponse = new MobileResponseDto()
+            {
+                Code = 200,
+                Data = true,
+                Message = "SUCCESS"
+            };
+            var cacheKey = $"phone_verify_{input.EmailOrPhone}";
+            var cacheItem = await _downloadTokenCache.GetAsync(cacheKey);
+
+            if (cacheItem == null || cacheItem.SecurityCode != input.SecurityCode)
+            {
+                throw new UserFriendlyException("Invalid or expired security code.");
+            }
+            else
+            {
+                await _downloadTokenCache.RemoveAsync(cacheKey);
+                return mobileResponse;
+            }
+        }
 
         [AllowAnonymous]
         public virtual async Task<HomePageDto> GetHomePageAsync()

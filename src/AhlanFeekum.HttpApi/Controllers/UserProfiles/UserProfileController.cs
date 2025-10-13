@@ -65,7 +65,12 @@ namespace AhlanFeekum.Controllers.UserProfiles
         {
             return _userProfilesAppService.SendSecretKeyEmailAsync(email);
         }
-
+        [AllowAnonymous]
+        [HttpPost("verify")]
+        public virtual Task<MobileResponseDto> VerifyAsync(VerifyRequestDto input)
+        {
+            return _userProfilesAppService.VerifyAsync(input);
+        }
         [HttpPost("send-secret-key-phone")]
         public virtual Task<MobileResponseDto> SendSecretKeyPhone(string email)
         {
@@ -73,11 +78,12 @@ namespace AhlanFeekum.Controllers.UserProfiles
         }
 
         [AllowAnonymous]
-        [HttpPost("verify")]
-        public virtual Task<MobileResponseDto> VerifyAsync(VerifyRequestDto input)
+        [HttpPost("verify-phone")]
+        public virtual Task<MobileResponseDto> VerifyPhoneAsync(VerifyRequestDto input)
         {
-            return _userProfilesAppService.VerifyAsync(input);
+            return _userProfilesAppService.VerifyPhoneAsync(input);
         }
+
         [HttpGet("home")]
         public virtual Task<HomePageDto> GetHomePageAsync()
         {
