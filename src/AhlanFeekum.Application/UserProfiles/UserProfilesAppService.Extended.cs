@@ -349,57 +349,69 @@ namespace AhlanFeekum.UserProfiles
         public async Task<MobileResponseDto> SendSecretKeyPhoneAsync(string input)
         {
             MobileResponseDto mobileResponse = new MobileResponseDto();
-
-            if (input.IsNullOrWhiteSpace())
+            try
             {
-                mobileResponse.Code = 400;
-                mobileResponse.Message = "Email is required";
-                mobileResponse.Data = null;
-                return mobileResponse;
-            }
-            Random random = new Random();
-            int securityNum = random.Next(1000, 10000);
-
-            var smtpSection = _configuration.GetSection("Email:Smtp");
-            var emailSection = _configuration.GetSection("Email");
-            using (var client = new SmtpClient(smtpSection["Host"], smtpSection["Port"] != null ? int.Parse(smtpSection["Port"]) : 587))
-            {
-                client.EnableSsl = true;
-                client.UseDefaultCredentials = false;
-                client.Credentials = new NetworkCredential(smtpSection["UserName"], smtpSection["Password"]);
-
-                var mailMessage = new MailMessage
+                if (input.IsNullOrWhiteSpace())
                 {
-                    From = new MailAddress(emailSection["DefaultFromAddress"], emailSection["DefaultFromDisplayName"]),
-                    Subject = "Security Code",
-                    Body = $"<h1>{securityNum.ToString()}</h1>",
-                    IsBodyHtml = true
-                };
+                    mobileResponse.Code = 400;
+                    mobileResponse.Message = "Phone is required";
+                    mobileResponse.Data = null;
+                    return mobileResponse;
+                }
+                Random random = new Random();
+                int securityNum = random.Next(1000, 10000);
 
-                mailMessage.To.Add(input);
+                var smtpSection = _configuration.GetSection("Email:Smtp");
+                var emailSection = _configuration.GetSection("Email");
+                using (var client = new SmtpClient(smtpSection["Host"], smtpSection["Port"] != null ? int.Parse(smtpSection["Port"]) : 587))
+                {
+                    client.EnableSsl = true;
+                    client.UseDefaultCredentials = false;
+                    client.Credentials = new NetworkCredential(smtpSection["UserName"], smtpSection["Password"]);
 
-                await client.SendMailAsync(mailMessage);
+                    var mailMessage = new MailMessage
+                    {
+                        From = new MailAddress(emailSection["DefaultFromAddress"], emailSection["DefaultFromDisplayName"]),
+                        Subject = "Security Code",
+                        Body = $"<h1>{securityNum.ToString()}</h1>",
+                        IsBodyHtml = true
+                    };
+
+                    mailMessage.To.Add(input);
+
+                    var cacheKey = $"email_verify_{input}";
+                    var cacheItem = await _downloadTokenCache.GetAsync(cacheKey);
+
+                    if (cacheItem != null)
+                        await _downloadTokenCache.RemoveAsync(cacheKey);
+
+
+                    await _downloadTokenCache.SetAsync(
+                        cacheKey,
+                        new UserProfileDownloadTokenCacheItem { SecurityCode = securityNum.ToString() },
+                        new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5) }
+                    );
+
+                    await client.SendMailAsync(mailMessage);
+                    mobileResponse.Code = 200;
+                    mobileResponse.Message = "Success";
+                    mobileResponse.Data = "Success";
+                    return mobileResponse;
+                }
             }
-
-
-            //  await _emailSender.SendAsync(input, "Security Code", securityNum.ToString(), false);
-            var apiKey = _configuration["CallMeBot:ApiKey"];
-            var url = $"https://api.callmebot.com/whatsapp.php?phone={input}&text={Uri.EscapeDataString(securityNum.ToString())}&apikey={apiKey}";
-
-            var response = await _httpClient.GetAsync(url);
-
-            if (!response.IsSuccessStatusCode)
+            catch (Exception ex)
             {
-                throw new Exception("Failed to send WhatsApp message.");
+                throw new Exception(ex.Message);
                 mobileResponse.Code = 501;
-                mobileResponse.Message = "Failed to send WhatsApp message.";
+                mobileResponse.Message = "Failed to send Email message.";
                 mobileResponse.Data = null;
                 return mobileResponse;
             }
 
-            mobileResponse.Code = 200;
-            mobileResponse.Message = "Success";
-            mobileResponse.Data = securityNum.ToString();
+
+            mobileResponse.Code = 501;
+            mobileResponse.Message = "Failed to send Email message.";
+            mobileResponse.Data = null;
             return mobileResponse;
 
         }

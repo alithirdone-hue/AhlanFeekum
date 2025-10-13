@@ -7,7 +7,7 @@ using Volo.Abp.Application.Services;
 
 namespace AhlanFeekum.FireBase
 {
-    public interface IFcmNotificationAppService: IApplicationService
+    public interface IFcmNotificationsAppService: IApplicationService
     {
         Task<string> SendNotification(UserNotificationWithNavigationPropertiesDto notificationModel);
       //  Task<string> FireBaseDynamicLink(Guid grantId);

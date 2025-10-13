@@ -127,6 +127,7 @@ namespace AhlanFeekum.UserProfiles
                                                  PropertyFeatures = (from sitePropertyPropertyFeature in siteProperty.PropertyFeatures
                                                                      join _propertyFeature in dbContext.Set<PropertyFeature>() on sitePropertyPropertyFeature.PropertyFeatureId equals _propertyFeature.Id
                                                                      select _propertyFeature).ToList(),
+                                                 MainImage = dbContext.PropertyMedias.Where(pm => pm.SitePropertyId == siteProperty.Id).OrderBy(pm => pm.Order).FirstOrDefault(),
                                                  Medias = dbContext.PropertyMedias.Where(pm => pm.SitePropertyId == siteProperty.Id).OrderBy(pm => pm.Order).ToList(),
                                                  IsFavorite = userId == null ? false : dbContext.FavoriteProperties.Any(p => p.SitePropertyId == siteProperty.Id && p.UserProfileId == userId),
                                              }).ToList(),
@@ -147,6 +148,7 @@ namespace AhlanFeekum.UserProfiles
                                                  PropertyFeatures = (from sitePropertyPropertyFeature in siteProperty.PropertyFeatures
                                                                      join _propertyFeature in dbContext.Set<PropertyFeature>() on sitePropertyPropertyFeature.PropertyFeatureId equals _propertyFeature.Id
                                                                      select _propertyFeature).ToList(),
+                                                 MainImage = dbContext.PropertyMedias.Where(pm => pm.SitePropertyId == siteProperty.Id).OrderBy(pm => pm.Order).FirstOrDefault(),
                                                  Medias = dbContext.PropertyMedias.Where(pm => pm.SitePropertyId == siteProperty.Id).OrderBy(pm => pm.Order).ToList(),
                                                  IsFavorite = userId == null ? false : dbContext.FavoriteProperties.Any(p => p.SitePropertyId == siteProperty.Id && p.UserProfileId == userId),
                                              }).ToList(),

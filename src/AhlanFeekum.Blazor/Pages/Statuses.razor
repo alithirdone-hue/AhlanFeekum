@@ -159,9 +159,9 @@
                         }
                     }
                     
-                    <Button Color="Color.Danger" Class="mx-1" Size="Size.Medium" Clicked="DeleteSelectedStatusesAsync">
+                  @*   <Button Color="Color.Danger" Class="mx-1" Size="Size.Medium" Clicked="DeleteSelectedStatusesAsync">
                         <Icon Name="@IconName.Delete" /> @L["Delete"]
-                    </Button>
+                    </Button> *@
                 </div>
             </div>
             
@@ -207,10 +207,10 @@
                 <DataGridEntityActionsColumn TItem="StatusDto" @ref="@EntityActionsColumn">
                     <DisplayTemplate>
                         <EntityActions TItem="StatusDto" EntityActionsColumn="@EntityActionsColumn">
-                            <EntityAction TItem="StatusDto"
+                       @*      <EntityAction TItem="StatusDto"
                                           Visible="@CanEditStatus"
                                           Clicked="async () => await OpenEditStatusModalAsync(context)"
-                                          Text="@L["Edit"]"></EntityAction>
+                                          Text="@L["Edit"]"></EntityAction> *@
                             <EntityAction TItem="StatusDto"
                                           Visible="@CanDeleteStatus"
                                           Clicked="() => DeleteStatusAsync(context)"

@@ -11,6 +11,7 @@ using System.Runtime;
 using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Services;
@@ -23,200 +24,285 @@ namespace AhlanFeekum.WhatsApp
 
     public class WhatsAppService : ApplicationService, IWhatsAppAppService
     {
-        private readonly ILogger<FcmNotificationService> _logger;
+        private readonly ILogger<WhatsAppService> _logger;
         private readonly IConfiguration _configuration;
 
-        public WhatsAppService(ILogger<FcmNotificationService> logger, IConfiguration configuration)
+        public WhatsAppService(ILogger<WhatsAppService> logger, IConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;
         }
 
+        [RemoteService(false)]
         public async Task<bool> SendMessage(string message)
         {
             var defaultPhoneNumber = _configuration["WhatsApp:DefaultPhoneNumber"] ?? "+963931846622";
             return await SendMessage(message, defaultPhoneNumber);
         }
 
+        //   [RemoteService(false)]
+
+
+        //public async Task<bool> Handle(CancellationToken cancellationToken)
+        //{
+        //    var apiUrl = "https://whatsapp.adooar.com/api/qr/rest/send_message";
+        //    var tokenk = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiJPNFZEWnRKSlhMa2NHSGp2amdhemtJcjdyWVpPSnlVMSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzU3Nzc4MDk4fQ.ghX0wRUv-q8sHJjq-sZi1EUb_OJeNhHL1yNNHm4GjGM";
+
+
+        //    var vfd = "963931846622";
+
+        //    var payload = new
+        //    {
+        //        token = tokenk,
+        //        requestType = "POST",
+        //        messageType = "text",
+        //        from = "963989712051",
+        //        to = vfd,
+        //        text = request.MSG
+        //    };
+
+        //    using (var client = new HttpClient())
+        //    {
+        //        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenk);
+
+        //        var json = System.Text.Json.JsonSerializer.Serialize(payload);
+        //        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        //        try
+        //        {
+        //            var response = await client.PostAsync(apiUrl, content);
+        //            var responseBody = await response.Content.ReadAsStringAsync();
+
+
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Console.WriteLine("Error sending message:");
+        //            Console.WriteLine(ex.Message);
+        //        }
+        //    }
+        //    }
         public async Task<bool> SendMessage(string message, string phoneNumber)
         {
-            // Get configuration from appsettings.json
-            var apiKey = _configuration["WhatsApp:ApiKey"];
-            var username = _configuration["WhatsApp:Username"];
-            var password = _configuration["WhatsApp:Password"];
-            var apiUrl = _configuration["WhatsApp:ApiUrl"] ?? "https://wha.cyberv.it.com/api/v1/send-message";
-            
-            if (string.IsNullOrEmpty(apiKey))
-            {
-                _logger.LogError("WhatsApp API key is not configured in appsettings.json");
-                return false;
-            }
+            var tokenk = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiJpeGIwZzVHa1dGTTNvd3JjR05LZG15MHYwV0tsWkVSVyIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzYwMjc1NjAyfQ.DF7jmrjpYxbTiZyUvZ8E2d8mqyLzPmeyS-YrQje0psQ";
 
-            var fullApiUrl = $"{apiUrl}?token={apiKey}";
+            var apiUrl = $"http://wha.cyberv.it.com/api/v1/send-message?token={tokenk}";
 
-            // Construct the message payload
-            //var payload = new
-            //{
-            //    messageObject = new
-            //    {
-            //        to = "00963931846622",
-            //        type = "text",
-            //        text = new
-            //        {
-            //            preview_url = false,
-            //            body = message
-            //        }
-            //    }
-            //};
-            // Create payload - try different approaches based on authentication method
-            object payload;
-            
-            if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
-            {
-                // Option 1: Include credentials in payload
-                payload = new
-                {
-                    username = username,
-                    password = password,
-                    messageObject = new
-                    {
-                        to = phoneNumber,
-                        type = "text",
-                        text = new
-                        {
-                            preview_url = false,
-                            body = message
-                        }
-                    }
-                };
-            }
-            else
-            {
-                // Option 2: Standard payload with token
-                payload = new
-                {
-                    messageObject = new
-                    {
-                        to = phoneNumber,
-                        type = "text",
-                        text = new
-                        {
-                            preview_url = false,
-                            body = message
-                        }
-                    }
-                };
-            }
 
-            using (var httpClient = new HttpClient())
+            var vfd = "+963931846622";
+
+            var payload = new
             {
-                // Add basic authentication if username and password are provided
-                if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
-                {
-                    var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                    _logger.LogInformation("Using Basic Authentication for Ultra Message WhatsApp API");
-                }
-                else
-                {
-                    _logger.LogInformation("Using Token Authentication for Ultra Message WhatsApp API");
-                }
-                
-                var json = JsonSerializer.Serialize(payload);
+                messageObject = "OK",
+                token = tokenk,
+                requestType = "POST",
+                messageType = "text",
+                from = "963942385589",
+                to = vfd,
+                text = "hi"
+            };
+
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenk);
+
+                var json = System.Text.Json.JsonSerializer.Serialize(payload);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 try
                 {
-                    _logger.LogInformation("Sending WhatsApp message to {PhoneNumber} via Ultra Message API", phoneNumber);
-                    var response = await httpClient.PostAsync(fullApiUrl, content);
+                    var response = await client.PostAsync(apiUrl, content);
                     var responseBody = await response.Content.ReadAsStringAsync();
-                    
-                    _logger.LogInformation("WhatsApp API Response - Status: {StatusCode}, Response: {Response}", response.StatusCode, responseBody);
-                    
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        _logger.LogError("Failed to send WhatsApp message. Status: {StatusCode}, Response: {Response}", response.StatusCode, responseBody);
-                        return false;
-                    }
-                    
-                    // Parse the response to check if the message was actually sent
-                    try
-                    {
-                        var responseJson = JsonSerializer.Deserialize<JsonElement>(responseBody);
-                        
-                        // Check if the response indicates success
-                        if (responseJson.TryGetProperty("success", out var successElement) && successElement.GetBoolean())
-                        {
-                            _logger.LogInformation("WhatsApp message sent successfully. Response: {Response}", responseBody);
-                            return true;
-                        }
-                        else if (responseJson.TryGetProperty("success", out var successElement2) && !successElement2.GetBoolean())
-                        {
-                            // Handle explicit success: false responses
-                            if (responseJson.TryGetProperty("message", out var messageElement))
-                            {
-                                var errorMessage = messageElement.GetString();
-                                _logger.LogError("WhatsApp API returned failure: {Message}", errorMessage);
-                                
-                                // Check for specific error messages
-                                if (errorMessage.Contains("META API keys"))
-                                {
-                                    _logger.LogError("WhatsApp API configuration issue: META API keys not properly configured in profile section");
-                                }
-                                else if (errorMessage.Contains("token"))
-                                {
-                                    _logger.LogError("WhatsApp API token issue: Token may be invalid or expired");
-                                }
-                            }
-                            return false;
-                        }
-                        else if (responseJson.TryGetProperty("error", out var errorElement))
-                        {
-                            _logger.LogError("WhatsApp API returned error: {Error}", errorElement.GetString());
-                            return false;
-                        }
-                        else if (responseJson.TryGetProperty("status", out var statusElement))
-                        {
-                            var status = statusElement.GetString();
-                            if (status == "sent" || status == "delivered")
-                            {
-                                _logger.LogInformation("WhatsApp message status: {Status}. Response: {Response}", status, responseBody);
-                                return true;
-                            }
-                            else
-                            {
-                                _logger.LogWarning("WhatsApp message status: {Status}. Response: {Response}", status, responseBody);
-                                return false;
-                            }
-                        }
-                        else
-                        {
-                            // If we can't determine the status, log the response and return false to be safe
-                            _logger.LogWarning("Unable to determine WhatsApp message status. Response: {Response}", responseBody);
-                            return false;
-                        }
-                    }
-                    catch (JsonException jsonEx)
-                    {
-                        _logger.LogError(jsonEx, "Failed to parse WhatsApp API response: {Response}", responseBody);
-                        return false;
-                    }
+
+
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Exception occurred while sending WhatsApp message.");
-                    return false;
+                    Console.WriteLine("Error sending message:");
+                    Console.WriteLine(ex.Message);
                 }
+
+
+
+                return true;
+
+            //    // Get configuration from appsettings.json
+            //    var apiKey = _configuration["WhatsApp:ApiKey"];
+            //var username = _configuration["WhatsApp:Username"];
+            //var password = _configuration["WhatsApp:Password"];
+            //var apiUrl = _configuration["WhatsApp:ApiUrl"] ?? "https://wha.cyberv.it.com/api/v1/send-message";
+            
+            //if (string.IsNullOrEmpty(apiKey))
+            //{
+            //    _logger.LogError("WhatsApp API key is not configured in appsettings.json");
+            //    return false;
+            //}
+
+            //var fullApiUrl = $"{apiUrl}?token={apiKey}";
+
+            //// Construct the message payload
+            ////var payload = new
+            ////{
+            ////    messageObject = new
+            ////    {
+            ////        to = "00963931846622",
+            ////        type = "text",
+            ////        text = new
+            ////        {
+            ////            preview_url = false,
+            ////            body = message
+            ////        }
+            ////    }
+            ////};
+            //// Create payload - try different approaches based on authentication method
+            //object payload;
+            
+            //if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
+            //{
+            //    // Option 1: Include credentials in payload
+            //    payload = new
+            //    {
+            //        username = username,
+            //        password = password,
+            //        messageObject = new
+            //        {
+            //            to = phoneNumber,
+            //            type = "text",
+            //            text = new
+            //            {
+            //                preview_url = false,
+            //                body = message
+            //            }
+            //        }
+            //    };
+            //}
+            //else
+            //{
+            //    // Option 2: Standard payload with token
+            //    payload = new
+            //    {
+            //        messageObject = new
+            //        {
+            //            to = phoneNumber,
+            //            type = "text",
+            //            text = new
+            //            {
+            //                preview_url = false,
+            //                body = message
+            //            }
+            //        }
+            //    };
+            //}
+
+            //using (var httpClient = new HttpClient())
+            //{
+            //    // Add basic authentication if username and password are provided
+            //    if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
+            //    {
+            //        var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+            //        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+            //        _logger.LogInformation("Using Basic Authentication for Ultra Message WhatsApp API");
+            //    }
+            //    else
+            //    {
+            //        _logger.LogInformation("Using Token Authentication for Ultra Message WhatsApp API");
+            //    }
+                
+            //    var json = JsonSerializer.Serialize(payload);
+            //    var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            //    try
+            //    {
+            //        _logger.LogInformation("Sending WhatsApp message to {PhoneNumber} via Ultra Message API", phoneNumber);
+            //        var response = await httpClient.PostAsync(fullApiUrl, content);
+            //        var responseBody = await response.Content.ReadAsStringAsync();
+                    
+            //        _logger.LogInformation("WhatsApp API Response - Status: {StatusCode}, Response: {Response}", response.StatusCode, responseBody);
+                    
+            //        if (!response.IsSuccessStatusCode)
+            //        {
+            //            _logger.LogError("Failed to send WhatsApp message. Status: {StatusCode}, Response: {Response}", response.StatusCode, responseBody);
+            //            return false;
+            //        }
+                    
+            //        // Parse the response to check if the message was actually sent
+            //        try
+            //        {
+            //            var responseJson = JsonSerializer.Deserialize<JsonElement>(responseBody);
+                        
+            //            // Check if the response indicates success
+            //            if (responseJson.TryGetProperty("success", out var successElement) && successElement.GetBoolean())
+            //            {
+            //                _logger.LogInformation("WhatsApp message sent successfully. Response: {Response}", responseBody);
+            //                return true;
+            //            }
+            //            else if (responseJson.TryGetProperty("success", out var successElement2) && !successElement2.GetBoolean())
+            //            {
+            //                // Handle explicit success: false responses
+            //                if (responseJson.TryGetProperty("message", out var messageElement))
+            //                {
+            //                    var errorMessage = messageElement.GetString();
+            //                    _logger.LogError("WhatsApp API returned failure: {Message}", errorMessage);
+                                
+            //                    // Check for specific error messages
+            //                    if (errorMessage.Contains("META API keys"))
+            //                    {
+            //                        _logger.LogError("WhatsApp API configuration issue: META API keys not properly configured in profile section");
+            //                    }
+            //                    else if (errorMessage.Contains("token"))
+            //                    {
+            //                        _logger.LogError("WhatsApp API token issue: Token may be invalid or expired");
+            //                    }
+            //                }
+            //                return false;
+            //            }
+            //            else if (responseJson.TryGetProperty("error", out var errorElement))
+            //            {
+            //                _logger.LogError("WhatsApp API returned error: {Error}", errorElement.GetString());
+            //                return false;
+            //            }
+            //            else if (responseJson.TryGetProperty("status", out var statusElement))
+            //            {
+            //                var status = statusElement.GetString();
+            //                if (status == "sent" || status == "delivered")
+            //                {
+            //                    _logger.LogInformation("WhatsApp message status: {Status}. Response: {Response}", status, responseBody);
+            //                    return true;
+            //                }
+            //                else
+            //                {
+            //                    _logger.LogWarning("WhatsApp message status: {Status}. Response: {Response}", status, responseBody);
+            //                    return false;
+            //                }
+            //            }
+            //            else
+            //            {
+            //                // If we can't determine the status, log the response and return false to be safe
+            //                _logger.LogWarning("Unable to determine WhatsApp message status. Response: {Response}", responseBody);
+            //                return false;
+            //            }
+            //        }
+            //        catch (JsonException jsonEx)
+            //        {
+            //            _logger.LogError(jsonEx, "Failed to parse WhatsApp API response: {Response}", responseBody);
+            //            return false;
+            //        }
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        _logger.LogError(ex, "Exception occurred while sending WhatsApp message.");
+            //        return false;
+            //    }
             }
            
         }
-
+        [RemoteService(false)]
         public async Task<bool> SendTemplateMessage(string sendTo, string templateName, string[] exampleArr, string mediaUri = null)
         {
             var apiKey = _configuration["WhatsApp:ApiKey"];
             return await SendTemplateMessage(sendTo, templateName, exampleArr, apiKey, mediaUri);
         }
-
+        [RemoteService(false)]
         public async Task<bool> SendTemplateMessage(string sendTo, string templateName, string[] exampleArr, string token, string mediaUri = null)
         {
             // Get configuration from appsettings.json

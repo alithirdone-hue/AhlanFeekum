@@ -55,12 +55,12 @@ namespace AhlanFeekum.Controllers.Authorizations
             return _authorizeMobileAppService.GetAbpLogInAsync(request);
         }
 
-        //[HttpPost]
-        //[Route("google-auth")]
-        //public Task<MobileResponseDto> GoogleAuthAsync(GoogleAuthRequest request)
-        //{
-        //    return _authorizeMobileAppService.GoogleAuthAsync(request);
-        //}
+        [HttpPost]
+        [Route("google-auth")]
+        public Task<MobileResponseDto> GoogleAuthAsync(GoogleAuthRequest request)
+        {
+            return _authorizeMobileAppService.GoogleAuthAsync(request);
+        }
 
         [HttpPost]
         [Route("firebase-auth")]
