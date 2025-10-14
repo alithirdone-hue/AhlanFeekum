@@ -2,10 +2,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AhlanFeekum.UserProfiles
 {
-    public class PhoneVerifyRequestDto
+    public class VerifyRequestDto
     {
         [Required]
-        public string Phone { get; set; } = null!;
+        [EmailAddress]
+        public string EmailOrPhone { get; set; } = null!;
 
         [Required]
         public string SecurityCode { get; set; } = null!;

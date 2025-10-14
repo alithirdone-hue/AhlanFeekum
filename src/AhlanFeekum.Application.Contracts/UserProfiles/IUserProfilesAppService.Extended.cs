@@ -12,7 +12,7 @@ namespace AhlanFeekum.UserProfiles
         Task<MobileResponseDto> VerifyAsync(VerifyRequestDto input);
 
         Task<MobileResponseDto> SendSecretKeyPhoneAsync(string input);
-        Task<MobileResponseDto> VerifyPhoneAsync(VerifyRequestDto input);
+        Task<MobileResponseDto> VerifyPhoneAsync(PhoneVerifyRequestDto input);
 
         Task<MobileResponseDto> RegisterAsync(RegisterCreateMobileDto input);
         Task<MobileResponseDto> UpdateMyProfileAsync(UserProfileUpdateMobileDto input);

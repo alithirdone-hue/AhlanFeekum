@@ -79,7 +79,7 @@ namespace AhlanFeekum.Controllers.UserProfiles
 
         [AllowAnonymous]
         [HttpPost("verify-phone")]
-        public virtual Task<MobileResponseDto> VerifyPhoneAsync(VerifyRequestDto input)
+        public virtual Task<MobileResponseDto> VerifyPhoneAsync(PhoneVerifyRequestDto input)
         {
             return _userProfilesAppService.VerifyPhoneAsync(input);
         }

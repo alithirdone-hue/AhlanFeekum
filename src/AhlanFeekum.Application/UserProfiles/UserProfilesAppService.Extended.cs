@@ -434,7 +434,7 @@ namespace AhlanFeekum.UserProfiles
 
 
         [AllowAnonymous]
-        public virtual async Task<MobileResponseDto> VerifyPhoneAsync(VerifyRequestDto input)
+        public virtual async Task<MobileResponseDto> VerifyPhoneAsync(PhoneVerifyRequestDto input)
         {
             MobileResponseDto mobileResponse = new MobileResponseDto()
             {
@@ -442,7 +442,7 @@ namespace AhlanFeekum.UserProfiles
                 Data = true,
                 Message = "SUCCESS"
             };
-            var cacheKey = $"phone_verify_{input.EmailOrPhone}";
+            var cacheKey = $"phone_verify_{input.Phone}";
             var cacheItem = await _downloadTokenCache.GetAsync(cacheKey);
 
             if (cacheItem == null || cacheItem.SecurityCode != input.SecurityCode)
