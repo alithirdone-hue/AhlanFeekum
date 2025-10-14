@@ -149,7 +149,11 @@ public class AhlanFeekumBlazorModule : AbpModule
             options.AddPolicy("AllowWebApp", builder =>
             {
                 builder
-                    .WithOrigins("http://srv954186.hstgr.cloud")  // Flutter web app (port 80)
+                    .WithOrigins(
+                        "http://srv954186.hstgr.cloud",  // Flutter web app (port 80)
+                        "http://ahlanfeekum.com",        // Production domain
+                        "https://ahlanfeekum.com"        // Production domain with HTTPS
+                    )
                     .AllowAnyHeader()
                     .AllowAnyMethod();
             });
@@ -160,6 +164,8 @@ public class AhlanFeekumBlazorModule : AbpModule
                 builder
                     .WithOrigins(
                         "http://srv954186.hstgr.cloud",  // Production Flutter web
+                        "http://ahlanfeekum.com",        // Production domain
+                        "https://ahlanfeekum.com",       // Production domain with HTTPS
                         "https://localhost:3000",        // Flutter web dev server
                         "http://localhost:3000"          // HTTP for development
                     )
