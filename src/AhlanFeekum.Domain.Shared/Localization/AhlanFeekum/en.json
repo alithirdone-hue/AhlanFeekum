@@ -282,6 +282,7 @@
     "Body": "Body",
     "UserNotifications": "User Notifications",
     "NewUserNotification": "New User Notification",
-    "Menu:UserNotifications": "User Notifications"
+    "Menu:UserNotifications": "User Notifications",
+    "PropertyMedia": "Property Media "
   }
 }

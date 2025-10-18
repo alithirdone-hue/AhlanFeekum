@@ -579,6 +579,12 @@ StatusId = StatusesCollection.Select(i=>i.Id).FirstOrDefault(),
             await GetSitePropertiesAsync();
         }
 
+        protected Task LinkMedias(SitePropertyWithNavigationPropertiesDto input)
+        {
+            NavigationManager.NavigateTo($"/site-properties/medias/{input.SiteProperty.Id}");
+            return Task.CompletedTask;
+        }
+
 
     }
 }

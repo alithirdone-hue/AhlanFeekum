@@ -361,7 +361,7 @@
 
 @* ************************* CREATE MODAL ************************* *@
 <Modal @ref="CreateUserProfileModal" Closing="@CreateUserProfileModal.CancelClosingModalWhenFocusLost">
-    <ModalContent Centered="true">
+    <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
 @*//<suite-custom-code-block-5>*@
 @*//</suite-custom-code-block-5>*@
         <Form id="CreateUserProfileForm">
@@ -448,18 +448,21 @@
                     </Validation>
 
 
-                    <Validation MessageLocalizer="@LH.Localize">
-                        <Field>
-                            <FieldLabel>@L["ProfilePhoto"]</FieldLabel>
-                            <TextEdit @bind-Text="@NewUserProfile.ProfilePhoto"  >
-                                <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                            </TextEdit>
-                        </Field>
-                    </Validation>
-
-
+                    <Field>
+                                    <FieldLabel>@L["ProfilePhoto"]</FieldLabel>
+                                    <Row>
+                                        <Column ColumnSize="ColumnSize.Is11">
+                                            <FilePicker Multiple Changed="ProfilePhotoImageChanged" Upload="OnProfilePhotoImageUpload" ShowMode="FilePickerShowMode.List" />
+                                        </Column>
+                                        <Column ColumnSize="ColumnSize.Is1">
+                                            <Button Color="Color.Primary" Clicked="async()=> await RemoveMedia()">@L["Reset"]</Button>
+                                        </Column>
+                                    </Row>
+                                    @if (!ProfilePhotoImage.IsNullOrEmpty() && !ProfilePhotoImageContent.IsNullOrEmpty())
+                                    {
+                                        <div style="width:256px;height:256px;background-size:100% 100%; background-repeat:no-repeat; background-image:url(@($"data:{MimeTypes.MimeTypeMap.GetMimeType(ProfilePhotoImage)};base64,{Convert.ToBase64String(ProfilePhotoImageContent)}"))"></div>
+                                    }
+                                </Field>
                     <Field>
                         <Check TValue="bool" @bind-Checked="@NewUserProfile.IsSuperHost" >@L["IsSuperHost"]</Check>
                     </Field>
@@ -524,7 +527,7 @@
 
 @* ************************* EDIT MODAL ************************* *@
 <Modal @ref="EditUserProfileModal" Closing="@EditUserProfileModal.CancelClosingModalWhenFocusLost">
-    <ModalContent Centered="true">
+    <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
 @*//<suite-custom-code-block-8>*@
 @*//</suite-custom-code-block-8>*@
         <Form id="EditUserProfileForm">
@@ -611,16 +614,28 @@
                     </Validation>
 
 
-                    <Validation MessageLocalizer="@LH.Localize">
-                        <Field>
-                            <FieldLabel>@L["ProfilePhoto"]</FieldLabel>
-                            <TextEdit @bind-Text="@EditingUserProfile.ProfilePhoto"  >
-                                <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                            </TextEdit>
-                        </Field>
-                    </Validation>
+                                                    <Field>
+                                    <FieldLabel>@L["ProfilePhoto"]</FieldLabel>
+                                    <Row>
+                                        <Column ColumnSize="ColumnSize.Is11">
+                                            <FilePicker Multiple Changed="ProfilePhotoImageChanged" Upload="OnProfilePhotoImageUpload" ShowMode="FilePickerShowMode.List" />
+                                        </Column>
+                                        <Column ColumnSize="ColumnSize.Is1">
+                                            <Button Color="Color.Primary" Clicked="async()=> await RemoveMedia()">@L["Reset"]</Button>
+                                        </Column>
+                                    </Row>
+                                    @if (ProfilePhotoImageNewUpload && !ProfilePhotoImage.IsNullOrEmpty() && !ProfilePhotoImageContent.IsNullOrEmpty())
+                                    {
+                                        <div style="width:256px;height:256px;background-size:100% 100%; background-repeat:no-repeat; background-image:url(@($"data:{MimeTypes.MimeTypeMap.GetMimeType(ProfilePhotoImage)};base64,{Convert.ToBase64String(ProfilePhotoImageContent)}"))"></div>
+                                    }
+                                    else
+                                    {
+                                        if (!ProfilePhotoImage.IsNullOrEmpty())
+                                        {
+                                            <div style="width:256px;height:256px;background-size:100% 100%; background-repeat:no-repeat; background-image:url(@($"{MimeTypes.MimeTypeMap.GetAttachmentPath()}/UserProfileImages/{ProfilePhotoImage}"))"></div>
+                                        }
+                                    }
+                                </Field>
 
 
                     <Field>

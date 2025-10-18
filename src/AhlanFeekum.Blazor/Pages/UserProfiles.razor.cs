@@ -1,24 +1,25 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Globalization;
-using System.IO;
-using System.Web;
-using Blazorise;
-using Blazorise.DataGrid;
-using Volo.Abp.BlazoriseUI.Components;
-using Microsoft.AspNetCore.Authorization;
-using Volo.Abp.Application.Dtos;
-using Volo.Abp.AspNetCore.Components.Web.Theming.PageToolbars;
-using AhlanFeekum.UserProfiles;
 using AhlanFeekum.Permissions;
 using AhlanFeekum.Shared;
-using Microsoft.AspNetCore.Components.Forms;
+using AhlanFeekum.UserProfiles;
+using Blazorise;
+using Blazorise.DataGrid;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web;
 using Volo.Abp;
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.AspNetCore.Components.Web.Theming.PageToolbars;
+using Volo.Abp.BlazoriseUI.Components;
 using Volo.Abp.Content;
+using Volo.Abp.Guids;
 
 
 
@@ -63,7 +64,12 @@ private IReadOnlyList<LookupDto<Guid>> IdentityUsersCollection { get; set; } = n
         
         private List<UserProfileWithNavigationPropertiesDto> SelectedUserProfiles { get; set; } = new();
         private bool AllUserProfilesSelected { get; set; }
-        
+
+        [Inject]
+        protected IGuidGenerator GuidGenerator { get; set; }
+        public string ProfilePhotoImage { get; set; } = "";
+        public byte[] ProfilePhotoImageContent { get; set; }
+        public bool ProfilePhotoImageNewUpload { get; set; } = false;
         public UserProfiles()
         {
             NewUserProfile = new UserProfileCreateDto();
@@ -400,6 +406,46 @@ private IReadOnlyList<LookupDto<Guid>> IdentityUsersCollection { get; set; } = n
             AllUserProfilesSelected = false;
 
             await GetUserProfilesAsync();
+        }
+
+
+        public async Task OnProfilePhotoImageUpload(FileUploadEventArgs e)
+        {
+            try
+            {
+                using (MemoryStream result = new MemoryStream())
+                {
+                    await e.File.OpenReadStream(long.MaxValue).CopyToAsync(result);
+                    ProfilePhotoImageContent = await result.GetAllBytesAsync();
+                    ProfilePhotoImage = $"{GuidGenerator.Create().ToString("N")}{Path.GetExtension(e.File.Name)}";
+
+                    ProfilePhotoImageNewUpload = true;
+                }
+            }
+            catch (UserFriendlyException ex)
+            {
+                await HandleErrorAsync(ex);
+            }
+        }
+        public async Task ProfilePhotoImageChanged(FileChangedEventArgs e)
+        {
+            try
+            {
+                if (e.Files.Count() == 0)
+                {
+                    ProfilePhotoImage = null;
+                }
+
+            }
+            catch (UserFriendlyException ex)
+            {
+                await HandleErrorAsync(ex);
+            }
+        }
+
+        private async Task RemoveMedia()
+        {
+                ProfilePhotoImage = null;
         }
 
 

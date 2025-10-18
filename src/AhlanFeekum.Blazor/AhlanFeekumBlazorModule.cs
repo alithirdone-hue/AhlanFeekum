@@ -151,6 +151,7 @@ public class AhlanFeekumBlazorModule : AbpModule
                 builder
                     .WithOrigins(
                         "http://srv954186.hstgr.cloud",  // Flutter web app (port 80)
+                        "https://admin.srv954186.hstgr.cloud",  // Admin API
                         "http://ahlanfeekum.com",        // Production domain
                         "https://ahlanfeekum.com"        // Production domain with HTTPS
                     )
@@ -164,6 +165,7 @@ public class AhlanFeekumBlazorModule : AbpModule
                 builder
                     .WithOrigins(
                         "http://srv954186.hstgr.cloud",  // Production Flutter web
+                        "https://admin.srv954186.hstgr.cloud",  // Admin API
                         "http://ahlanfeekum.com",        // Production domain
                         "https://ahlanfeekum.com",       // Production domain with HTTPS
                         "https://localhost:3000",        // Flutter web dev server

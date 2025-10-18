@@ -473,6 +473,10 @@
                                           Clicked="async () => await OpenEditSitePropertyModalAsync(context)"
                                           Text="@L["Edit"]"></EntityAction>
                             <EntityAction TItem="SitePropertyWithNavigationPropertiesDto"
+                                          Visible="@CanEditSiteProperty"
+                                          Clicked="async () => await LinkMedias(context)"
+                                          Text="@L["LinkMedia"]"></EntityAction>
+                            <EntityAction TItem="SitePropertyWithNavigationPropertiesDto"
                                           Visible="@CanDeleteSiteProperty"
                                           Clicked="() => DeleteSitePropertyAsync(context)"
                                           ConfirmationMessage="@(()=> L["DeleteConfirmationMessage"])"

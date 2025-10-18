@@ -69,14 +69,14 @@
 
                                             @foreach (var (item, index) in MediaDtos.WithIndex())
                                                 {
-                                                <Tab Name="@((index+1).ToString())">@item.Order</Tab>
+                                                    <Tab Name="@($"{L["PropertyMedia"]}{(item.Order)}")">@($"{L["PropertyMedia"]}{(item.Order)}")</Tab>
                                                 }
                                         </Items>
                                         <Content>
                                             @foreach (var (item, index) in MediaDtos.WithIndex())
                                             {
-                                                <TabPanel Name="@((index+1).ToString())">
-                                                    <CustomMedia Media="item" MediaDeleted="MediaDeleted"></CustomMedia>
+                                                <TabPanel Name="@($"{L["PropertyMedia"]}{(index+1)}")">
+                                                    <CustomPropertyMedia PropertyMedia="item" PropertyMediaDeleted="MediaDeleted"></CustomPropertyMedia>
                                                 </TabPanel>
                                             }
                                         </Content>

@@ -26,7 +26,7 @@ namespace AhlanFeekum.UserProfiles
             Check.NotNullOrWhiteSpace(name, nameof(name));
 
             var userProfile = new UserProfile(
-             GuidGenerator.Create(),
+             identityUserId,
              identityRoleId, identityUserId, name, isSuperHost, email, phoneNumber, latitude, longitude, address, profilePhoto, fcmToken
              );
 

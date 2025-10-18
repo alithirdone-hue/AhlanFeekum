@@ -73,7 +73,7 @@ namespace AhlanFeekum.Blazor.Pages.SiteProperties
                     if (pagedResultDto != null && pagedResultDto.TotalCount > 0)
                     {
                         MediaDtos = pagedResultDto.Items.Select(m => m.PropertyMedia).ToList();
-                        SelectedTab = "1";
+                        SelectedTab = $"{L["PropertyMedia"]}{(MediaDtos[0].Order)}";
                     }
 
                     // await SetNewAsync();
@@ -93,9 +93,9 @@ namespace AhlanFeekum.Blazor.Pages.SiteProperties
         protected virtual ValueTask SetBreadcrumbItemsAsync()
         {
             BreadcrumbItems.Add(new Volo.Abp.BlazoriseUI.BreadcrumbItem(L["Menu:SiteProperties"],
-                url: $"{String.Join("/", NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Split('/'), 0, 2) ?? ""}"));
+                url: $"{String.Join("/", NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Split('/'), 0, 1) ?? ""}"));
 
-            BreadcrumbItems.Add(new Volo.Abp.BlazoriseUI.BreadcrumbItem(L["LinkCategories"]));
+            BreadcrumbItems.Add(new Volo.Abp.BlazoriseUI.BreadcrumbItem(L["LinkMedias"]));
             return ValueTask.CompletedTask;
         }
         private async Task SetPermissionsAsync()
@@ -119,7 +119,7 @@ namespace AhlanFeekum.Blazor.Pages.SiteProperties
                 MediaDtos = new List<PropertyMediaDto>();
             data.Order = MediaDtos.Count + 1;
 
-            SelectedTab = (MediaDtos.Count + 1).ToString();
+            SelectedTab = $"{L["PropertyMedia"]}{(data.Order)}";
             MediaDtos.Add(data);
         }
         protected void MediaDeleted(PropertyMediaDto input)
@@ -143,7 +143,7 @@ namespace AhlanFeekum.Blazor.Pages.SiteProperties
 
                 await MediasAppService.UpdateSitePropertyMediasAsync(EditingId, MediaDtos);
                 await uiMessageService.Success(L["Message:SuccessfullyUpdated"]);
-                NavigationManager.NavigateTo($"{String.Join("/", NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Split('/'), 0, 2) ?? ""}");
+                NavigationManager.NavigateTo($"{String.Join("/", NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Split('/'), 0, 1) ?? ""}");
             }
             catch (Exception ex)
             {
@@ -169,7 +169,7 @@ namespace AhlanFeekum.Blazor.Pages.SiteProperties
 
             if (confirm)
             {
-                NavigationManager.NavigateTo($"{String.Join("/", NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Split('/'), 0, 2) ?? ""}");
+                NavigationManager.NavigateTo($"{String.Join("/", NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Split('/'), 0, 1) ?? ""}");
             }
         }
 
