@@ -12,6 +12,7 @@ namespace AhlanFeekum.SiteProperties
         Task<SitePropertyDto> CreateAsync(SitePropertyCreateMobileDto input);
         Task<SitePropertyDto> UpdateAsync(SitePropertyUpdateStepTwoDto input);
         Task<MobileResponseDto> SetPricePerNightAsync(SitePropertySetPriceDto input);
+        Task<MobileResponseDto> SetActiveAsync(SitePropertyActiveDeActiveRequest input);
         Task<PagedResultDto<SitePropertyListingMobileDto>> GetListMobileAsync(GetSitePropertiesMobileInput input);
         Task<MobileResponseDto> AddToFavoriteAsync(Guid id);
         Task<MobileResponseDto> RemoveFromFavoriteAsync(Guid id);

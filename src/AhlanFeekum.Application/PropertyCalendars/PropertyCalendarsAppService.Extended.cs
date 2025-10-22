@@ -57,6 +57,68 @@ namespace AhlanFeekum.PropertyCalendars
             return mobileResponseDto;
         }
 
+        [Authorize(AhlanFeekumPermissions.PropertyCalendars.Edit)]
+        public virtual async Task<MobileResponseDto> UpdateManyAsync(List<PropertyCalendarItemDto> input)
+        {
+            MobileResponseDto mobileResponseDto = new MobileResponseDto();
+            mobileResponseDto.Code = 200;
+            mobileResponseDto.Message = "SUCCESS";
+           
+            if (!input.IsNullOrEmpty())
+            {
+                // Get all existing calendar entries for the property
+                var propertyId = input[0].PropertyId;
+                var existingCalendars = await _propertyCalendarRepository.GetListWithNavigationPropertiesAsync(
+                    filterText: null,
+                    dateMin: null,
+                    dateMax: null,
+                    isAvailable: null,
+                    priceMin: null,
+                    priceMax: null,
+                    note: null,
+                    sitePropertyId: propertyId,
+                    sorting: null,
+                    maxResultCount: int.MaxValue,
+                    skipCount: 0
+                );
+
+                // Filter by property ID
+
+                foreach (var item in input)
+                {
+                    // Check if a calendar entry exists for this date
+                    var existingEntry = existingCalendars.FirstOrDefault(x => x.PropertyCalendar.Date == item.Date);
+
+                    if (existingEntry != null)
+                    {
+                        // Update existing entry
+                        await _propertyCalendarManager.UpdateAsync(
+                            existingEntry.PropertyCalendar.Id,
+                            item.PropertyId,
+                            item.Date,
+                            item.IsAvailable,
+                            item.Price,
+                            item.Note,
+                            existingEntry.PropertyCalendar.ConcurrencyStamp
+                        );
+                    }
+                    else
+                    {
+                        // Create new entry
+                        await _propertyCalendarManager.CreateAsync(
+                            item.PropertyId,
+                            item.Date,
+                            item.IsAvailable,
+                            item.Price,
+                            item.Note
+                        );
+                    }
+                }
+            }
+            mobileResponseDto.Data = true;
+            return mobileResponseDto;
+        }
+
         [AllowAnonymous]
         public virtual async Task<PagedResultDto<PropertyCalendarMobileDto>> GetListMobileAsync(GetPropertyCalendarsInput input)
         {
@@ -68,6 +130,20 @@ namespace AhlanFeekum.PropertyCalendars
                 TotalCount = totalCount,
                 Items = ObjectMapper.Map<List<PropertyCalendarWithNavigationProperties>, List<PropertyCalendarMobileDto>>(items)
             };
+        }
+
+        [AllowAnonymous]
+        public virtual async Task<PagedResultDto<PropertyCalendarStatus>> GetListCalendarStatusAsync(GetPropertyCalendarsInput input)
+        {
+            return null;
+            //var totalCount = await _propertyCalendarRepository.GetCountAsync(input.FilterText, input.DateMin, input.DateMax, input.IsAvailable, input.PriceMin, input.PriceMax, input.Note, input.SitePropertyId);
+            //var items = await _propertyCalendarRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.DateMin, input.DateMax, input.IsAvailable, input.PriceMin, input.PriceMax, input.Note, input.SitePropertyId, input.Sorting, input.MaxResultCount, input.SkipCount);
+
+            //return new PagedResultDto<PropertyCalendarMobileDto>
+            //{
+            //    TotalCount = totalCount,
+            //    Items = ObjectMapper.Map<List<PropertyCalendarWithNavigationProperties>, List<PropertyCalendarMobileDto>>(items)
+            //};
         }
     }
 }

@@ -52,6 +52,12 @@ namespace AhlanFeekum.Controllers.SiteProperties
             return _propertyCalendarsAppService.CreateManyAsync(input);
         }
 
+        [HttpPost("update-availability")]
+        public virtual Task<MobileResponseDto> UpdateManyPropertyCalendarAsync(List<PropertyCalendarItemDto> input)
+        {
+            return _propertyCalendarsAppService.UpdateManyAsync(input);
+        }
+
         [HttpPost("property-rating")]
         public virtual Task<PropertyEvaluationMobileDto> RatePropertyAsync(PropertyEvaluationCreateMobileDto input)
         {
@@ -83,6 +89,11 @@ namespace AhlanFeekum.Controllers.SiteProperties
             return _sitePropertiesAppService.SetPricePerNightAsync(input);
         }
 
+        [HttpPost("activate-deactivate")]
+        public virtual Task<MobileResponseDto> ActiveDeactiveSitePropertyAsync(SitePropertyActiveDeActiveRequest input)
+        {
+            return _sitePropertiesAppService.SetActiveAsync(input);
+        }
         [HttpGet]
         [Route("search-property")]
         public virtual Task<PagedResultDto<SitePropertyListingMobileDto>> GetListAsync( GetSitePropertiesMobileInput input)
@@ -125,6 +136,12 @@ namespace AhlanFeekum.Controllers.SiteProperties
             return _propertyCalendarsAppService.GetListMobileAsync(input);
         }
 
+        [HttpGet]
+        [Route("property-calendar-statuses")]
+        public virtual Task<PagedResultDto<PropertyCalendarStatus>> GetSitePropertyCalendarStatusesAsync(GetPropertyCalendarsInput input)
+        {
+            return _propertyCalendarsAppService.GetListCalendarStatusAsync(input);
+        }
 
     }
 }

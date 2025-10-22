@@ -115,6 +115,20 @@ namespace AhlanFeekum.SiteProperties
             return mobileResponseDto;
         }
 
+        public virtual async Task<MobileResponseDto> SetActiveAsync(SitePropertyActiveDeActiveRequest input)
+        {
+            MobileResponseDto mobileResponseDto = new MobileResponseDto();
+            mobileResponseDto.Code = 200;
+            mobileResponseDto.Message = "SUCCESS";
+            SiteProperty siteProperty = await _sitePropertyRepository.FirstOrDefaultAsync(s => s.Id == input.PropertyId);
+            if (siteProperty == null)
+                throw new UserFriendlyException(L["ProperrtyNotFound"]);
+            siteProperty.IsActive = input.isActive;
+            await _sitePropertyRepository.UpdateAsync(siteProperty);
+            mobileResponseDto.Data = true;
+            return mobileResponseDto;
+        }
+
         [AllowAnonymous]
         public virtual async Task<PagedResultDto<SitePropertyListingMobileDto>> GetListMobileAsync(GetSitePropertiesMobileInput input)
         {
