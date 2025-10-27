@@ -63,4 +63,11 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="ahlanfeekum-3b824-firebase-adminsdk-fbsvc-fee901ea51.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -8,6 +8,8 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 using System;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AhlanFeekum.Blazor;
@@ -66,6 +68,61 @@ public class Program
         try
         {
             Log.Information("Starting web host.");
+            
+            // Initialize Firebase with better error handling
+            try
+            {
+                var baseDir = AppContext.BaseDirectory;
+                var currentDir = Directory.GetCurrentDirectory();
+                var firebaseCredPath = Path.Combine(baseDir, "ahlanfeekum-3b824-firebase-adminsdk-fbsvc-fee901ea51.json");
+                
+                Log.Information("AppContext.BaseDirectory: {BaseDir}", baseDir);
+                Log.Information("Current Directory: {CurrentDir}", currentDir);
+                Log.Information("Looking for Firebase credentials at: {Path}", firebaseCredPath);
+                
+                if (File.Exists(firebaseCredPath))
+                {
+                    Log.Information("Firebase credentials file found. Initializing...");
+                    //FirebaseApp.Create(new AppOptions()
+                    //{
+                    //    Credential = GoogleCredential.FromFile(firebaseCredPath),
+                    //});
+                    Log.Information("Firebase initialized successfully.");
+                }
+                else
+                {
+                    Log.Warning("Firebase credentials file NOT found at: {Path}", firebaseCredPath);
+                    
+                    // Check if file exists in current directory
+                    var altPath = Path.Combine(currentDir, "ahlanfeekum-3b824-firebase-adminsdk-fbsvc-fee901ea51.json");
+                    if (File.Exists(altPath))
+                    {
+                        Log.Information("Found Firebase credentials in current directory, using: {Path}", altPath);
+                        //FirebaseApp.Create(new AppOptions()
+                        //{
+                        //    Credential = GoogleCredential.FromFile(altPath),
+                        //});
+                        Log.Information("Firebase initialized successfully from current directory.");
+                    }
+                    else
+                    {
+                        Log.Warning("Firebase credentials not found in current directory either: {Path}", altPath);
+                        
+                        // List files to help debug
+                        try
+                        {
+                            var filesInBase = Directory.GetFiles(baseDir).Take(20).Select(Path.GetFileName);
+                            Log.Information("Files in base directory (first 20): {Files}", string.Join(", ", filesInBase));
+                        }
+                        catch { }
+                    }
+                }
+            }
+            catch (Exception firebaseEx)
+            {
+                Log.Error(firebaseEx, "Failed to initialize Firebase. Application will continue without Firebase.");
+            }
+            
             var builder = WebApplication.CreateBuilder(args);
             builder.Host.AddAppSettingsSecretsJson()
                 .UseAutofac()
