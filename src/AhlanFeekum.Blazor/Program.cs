@@ -155,37 +155,37 @@ public class Program
             //var universeDomain = "googleapis.com";
 
 
-            var firebaseType = "service_account";
-            var projectId = "ahlanfeekum-de666";
-            var privateKeyId = "9c58fa73ee676706cb36279b9e178e56c16f5d34";
-            var privateKey = "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCldrr3Y03Ya+DJ\nJjMbV/sqXqi8G0uBKkXxrgFsRREa6fajHO7jmatM534gXOAoP5d75qoaBu+ASRps\n923G2wxzfW2ex/PcbyPWM/910FqQeQdNI9qDpUDqmDSun+pxD7C9rhKEZTOwwNZN\nacVIcEdZC0pfnAKQp+Mle5vLArtgwr+G9gJ//khwjlNIe1sXhS4Z1XBBIvDLKcY3\n/6vrBVclkxi4hKpJ6+qMT87Jgl4JnIc6RIh2w1RH24LyqTmcDwhtxjbvglRDfF4B\nmVrGl73xBTsvXzy8Tb99S5kHqs1OOQ+hPdFV9ZIPSiNlX/8V0nM2Ps/LbCrDQe2T\nZ+ZsQCHxAgMBAAECggEACTFMd9wLgh+UMHiv1DASIyt5ImI90qI/moq5R4OazKz8\n59j+qKRr8OzXhALE7VeDGf4ZqzKBcdYd4rnoXmjjCzOHuI+RS8jc69Sdt7Tooygm\nMLHyPOgccCwemSkHRFrDzfXyz2oz8fj0rv5WWIzsWdUXv7ISLmk1ZGq2oBO5x0lT\njVOdiTAL0EifEcF2KxqrQDYU0JH58+az3aayidl/RXFm6ing0nRD8ubKQ8bGXilq\nvu3FMC9L3rMY1qCMFLMgeVHrwQF9gqHU7i/zQ5uFYma5p32HXjSo0bqKO/84Z+KJ\n14sbv51qtWV5z6RQ70DejbHWlTtUUSjGF3cOcb7y8QKBgQDk2MRLh5vVAjkHzGCc\ny5dcQLxoZgNF+DlEF0AuvyUwUlFG7vu1TPyZtaLbd4407dxAzWdR/Q6yvCzbBUQN\nR3AacJpO3KMxtuysbb49SppT8ZAebpRh22rnJXbui0CAYZqhh90Q7MlyuL4Hsp0U\nb+8sSA09FipSKWRY7dVOtGt9LQKBgQC5GLPebZ8O7y51bv1J5KeOAci8A/0brkL/\nrWZAdIDxZMCQW92KlciL4zWNQo2RUBO9b7XmrSOBsgDzmcTi1sAsmqORzt1FRhYW\nZrmdnvMCOaqvVcRlepUmgDviWFBl4IeHMbV0fr76XjK6qWay/hIeClxNYIoWKJbU\nrsXa8t0aVQKBgQCiElrC2yGj89UMDtSFdzKVJUvJ7CV5UljMPmM4OCtQU5w4Tlx5\nhDKJcbgLElrmZWbNhiscR8o3D0n9O3d8qBFeyEygeWYieViYrYhDxCgUN0pIIyx3\nOXw2g7P9MSXXRkjLCXuo1um8k9YRgY/5v2R1yfmGP8JtOd9Vk+qzuNc/aQKBgH/f\njQPxf511qAcBMoNGMGtu2BrsNoRVE3xHcwi8dAhQrqgMjzUa3X2m7mw0ulDVnY2W\nC3jdzFXhf77LULXV3tXxz2cAHuWo0cGQHlPCZ+f1pvGSsyfYVApRNQ3eLUz0nSzN\nLqrYlV+qjClgts6ZsDKIvdPHCh7c07cDNzVX62AxAoGAa29zGXTJTfG4Tbm3g/bz\nUR1c94Jil4467Wj5nesf7VF0Hk5nWzUhi1ZrauX9q3KFVV7pn56JEQwSc7lrwne1\n1rmA96fQqZI037BYIXmhzMasSqqUIUxGKPbAYLsaCk/mq4AGCDb/yQh3JW7YOIsn\nzsiM4VVO0fdeqCQN8ZKTWL8=\n-----END PRIVATE KEY-----\n";
-            var clientEmail = "firebase-adminsdk-fbsvc@ahlanfeekum-de666.iam.gserviceaccount.com";
-            var clientId = "110527382662515187673";
-            var authUri = "https://accounts.google.com/o/oauth2/auth";
-            var tokenUri = "https://oauth2.googleapis.com/token";
-            var authProviderX509CertUrl = "https://www.googleapis.com/oauth2/v1/certs";
-            var clientX509CertUrl = "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40ahlanfeekum-de666.iam.gserviceaccount.com";
-            var universeDomain = "googleapis.com";
+            //var firebaseType = "service_account";
+            //var projectId = "ahlanfeekum-de666";
+            //var privateKeyId = "9c58fa73ee676706cb36279b9e178e56c16f5d34";
+            //var privateKey = "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCldrr3Y03Ya+DJ\nJjMbV/sqXqi8G0uBKkXxrgFsRREa6fajHO7jmatM534gXOAoP5d75qoaBu+ASRps\n923G2wxzfW2ex/PcbyPWM/910FqQeQdNI9qDpUDqmDSun+pxD7C9rhKEZTOwwNZN\nacVIcEdZC0pfnAKQp+Mle5vLArtgwr+G9gJ//khwjlNIe1sXhS4Z1XBBIvDLKcY3\n/6vrBVclkxi4hKpJ6+qMT87Jgl4JnIc6RIh2w1RH24LyqTmcDwhtxjbvglRDfF4B\nmVrGl73xBTsvXzy8Tb99S5kHqs1OOQ+hPdFV9ZIPSiNlX/8V0nM2Ps/LbCrDQe2T\nZ+ZsQCHxAgMBAAECggEACTFMd9wLgh+UMHiv1DASIyt5ImI90qI/moq5R4OazKz8\n59j+qKRr8OzXhALE7VeDGf4ZqzKBcdYd4rnoXmjjCzOHuI+RS8jc69Sdt7Tooygm\nMLHyPOgccCwemSkHRFrDzfXyz2oz8fj0rv5WWIzsWdUXv7ISLmk1ZGq2oBO5x0lT\njVOdiTAL0EifEcF2KxqrQDYU0JH58+az3aayidl/RXFm6ing0nRD8ubKQ8bGXilq\nvu3FMC9L3rMY1qCMFLMgeVHrwQF9gqHU7i/zQ5uFYma5p32HXjSo0bqKO/84Z+KJ\n14sbv51qtWV5z6RQ70DejbHWlTtUUSjGF3cOcb7y8QKBgQDk2MRLh5vVAjkHzGCc\ny5dcQLxoZgNF+DlEF0AuvyUwUlFG7vu1TPyZtaLbd4407dxAzWdR/Q6yvCzbBUQN\nR3AacJpO3KMxtuysbb49SppT8ZAebpRh22rnJXbui0CAYZqhh90Q7MlyuL4Hsp0U\nb+8sSA09FipSKWRY7dVOtGt9LQKBgQC5GLPebZ8O7y51bv1J5KeOAci8A/0brkL/\nrWZAdIDxZMCQW92KlciL4zWNQo2RUBO9b7XmrSOBsgDzmcTi1sAsmqORzt1FRhYW\nZrmdnvMCOaqvVcRlepUmgDviWFBl4IeHMbV0fr76XjK6qWay/hIeClxNYIoWKJbU\nrsXa8t0aVQKBgQCiElrC2yGj89UMDtSFdzKVJUvJ7CV5UljMPmM4OCtQU5w4Tlx5\nhDKJcbgLElrmZWbNhiscR8o3D0n9O3d8qBFeyEygeWYieViYrYhDxCgUN0pIIyx3\nOXw2g7P9MSXXRkjLCXuo1um8k9YRgY/5v2R1yfmGP8JtOd9Vk+qzuNc/aQKBgH/f\njQPxf511qAcBMoNGMGtu2BrsNoRVE3xHcwi8dAhQrqgMjzUa3X2m7mw0ulDVnY2W\nC3jdzFXhf77LULXV3tXxz2cAHuWo0cGQHlPCZ+f1pvGSsyfYVApRNQ3eLUz0nSzN\nLqrYlV+qjClgts6ZsDKIvdPHCh7c07cDNzVX62AxAoGAa29zGXTJTfG4Tbm3g/bz\nUR1c94Jil4467Wj5nesf7VF0Hk5nWzUhi1ZrauX9q3KFVV7pn56JEQwSc7lrwne1\n1rmA96fQqZI037BYIXmhzMasSqqUIUxGKPbAYLsaCk/mq4AGCDb/yQh3JW7YOIsn\nzsiM4VVO0fdeqCQN8ZKTWL8=\n-----END PRIVATE KEY-----\n";
+            //var clientEmail = "firebase-adminsdk-fbsvc@ahlanfeekum-de666.iam.gserviceaccount.com";
+            //var clientId = "110527382662515187673";
+            //var authUri = "https://accounts.google.com/o/oauth2/auth";
+            //var tokenUri = "https://oauth2.googleapis.com/token";
+            //var authProviderX509CertUrl = "https://www.googleapis.com/oauth2/v1/certs";
+            //var clientX509CertUrl = "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40ahlanfeekum-de666.iam.gserviceaccount.com";
+            //var universeDomain = "googleapis.com";
 
-            // Create JSON string from variables
-            var firebaseJson = $@"{{
-                ""type"": ""{firebaseType}"",
-                ""project_id"": ""{projectId}"",
-                ""private_key_id"": ""{privateKeyId}"",
-                ""private_key"": ""{privateKey}"",
-                ""client_email"": ""{clientEmail}"",
-                ""client_id"": ""{clientId}"",
-                ""auth_uri"": ""{authUri}"",
-                ""token_uri"": ""{tokenUri}"",
-                ""auth_provider_x509_cert_url"": ""{authProviderX509CertUrl}"",
-                ""client_x509_cert_url"": ""{clientX509CertUrl}"",
-                ""universe_domain"": ""{universeDomain}""
-            }}";
+            //// Create JSON string from variables
+            //var firebaseJson = $@"{{
+            //    ""type"": ""{firebaseType}"",
+            //    ""project_id"": ""{projectId}"",
+            //    ""private_key_id"": ""{privateKeyId}"",
+            //    ""private_key"": ""{privateKey}"",
+            //    ""client_email"": ""{clientEmail}"",
+            //    ""client_id"": ""{clientId}"",
+            //    ""auth_uri"": ""{authUri}"",
+            //    ""token_uri"": ""{tokenUri}"",
+            //    ""auth_provider_x509_cert_url"": ""{authProviderX509CertUrl}"",
+            //    ""client_x509_cert_url"": ""{clientX509CertUrl}"",
+            //    ""universe_domain"": ""{universeDomain}""
+            //}}";
 
-            FirebaseApp.Create(new AppOptions()
-            {
-                Credential = GoogleCredential.FromJson(firebaseJson),
-            });
+            //FirebaseApp.Create(new AppOptions()
+            //{
+            //    Credential = GoogleCredential.FromJson(firebaseJson),
+            //});
 
 
             // Add CORS middleware before static files

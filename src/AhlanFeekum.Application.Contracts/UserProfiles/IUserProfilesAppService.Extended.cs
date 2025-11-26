@@ -23,5 +23,11 @@ namespace AhlanFeekum.UserProfiles
         Task<HomePageDto> GetHomePageAsync();
         Task<UserProfileWithDetailsMobileDto> GetWithDetailsAsync(Guid? id);
 
+        // Stripe Payment Methods
+        Task<PaymentIntentResponseDto> CreatePaymentIntentAsync(CreatePaymentIntentDto input);
+        Task<PaymentIntentResponseDto> GetPaymentIntentAsync(string paymentIntentId);
+        Task<PaymentIntentResponseDto> ConfirmPaymentIntentAsync(ConfirmPaymentDto input);
+        Task<StripeWebhookEventDto> HandleStripeWebhookAsync(string json, string stripeSignature);
+
     }
 }
