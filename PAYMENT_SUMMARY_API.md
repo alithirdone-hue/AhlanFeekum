@@ -24,16 +24,16 @@ Content-Type: application/json
 ### Body (PaymentSummaryRequestDto)
 ```json
 {
-  "startDate": "2024-01-01T00:00:00Z",
-  "endDate": "2024-12-31T23:59:59Z"
+  "startDate": "2024-01-01",
+  "endDate": "2024-12-31"
 }
 ```
 
 #### Fields
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| startDate | DateTime | Yes | Start date of the date range (ISO 8601 format) |
-| endDate | DateTime | Yes | End date of the date range (ISO 8601 format) |
+| startDate | DateOnly | Yes | Start date of the date range (format: "YYYY-MM-DD") |
+| endDate | DateOnly | Yes | End date of the date range (format: "YYYY-MM-DD") |
 
 ## Response
 
@@ -131,8 +131,8 @@ curl -X POST "https://admin.srv954186.hstgr.cloud/api/mobile/payments/summary" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
   -H "Content-Type: application/json" \
   -d '{
-    "startDate": "2024-01-01T00:00:00Z",
-    "endDate": "2024-12-31T23:59:59Z"
+    "startDate": "2024-01-01",
+    "endDate": "2024-12-31"
   }'
 ```
 
@@ -160,7 +160,7 @@ const getPaymentSummary = async (startDate, endDate) => {
 };
 
 // Usage
-getPaymentSummary('2024-01-01T00:00:00Z', '2024-12-31T23:59:59Z')
+getPaymentSummary('2024-01-01', '2024-12-31')
   .then(summary => {
     console.log('Monthly Payments:', summary.monthlyPayments);
     console.log('Total Payment:', summary.totalPayment);
@@ -209,8 +209,8 @@ Future<PaymentSummaryResponse> getPaymentSummary(
       'Content-Type': 'application/json',
     },
     body: jsonEncode({
-      'startDate': startDate.toIso8601String(),
-      'endDate': endDate.toIso8601String(),
+      'startDate': '${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}',
+      'endDate': '${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}',
     }),
   );
 
@@ -309,10 +309,11 @@ Track recurring payments month by month.
 ## Notes
 
 ### Date Range Best Practices
-- Use UTC timestamps to avoid timezone issues
-- For a full year: `startDate: "2024-01-01T00:00:00Z"`, `endDate: "2024-12-31T23:59:59Z"`
-- For a single month: `startDate: "2024-03-01T00:00:00Z"`, `endDate: "2024-03-31T23:59:59Z"`
+- Use date-only format (no time component needed): "YYYY-MM-DD"
+- For a full year: `startDate: "2024-01-01"`, `endDate: "2024-12-31"`
+- For a single month: `startDate: "2024-03-01"`, `endDate: "2024-03-31"`
 - For last 30 days: Calculate dynamically in your client application
+- The API automatically includes the entire day (00:00:00 to 23:59:59) for each date
 
 ### Performance Considerations
 - Large date ranges may take longer to process

@@ -18,8 +18,8 @@ curl -X POST "https://admin.srv954186.hstgr.cloud/api/mobile/payments/summary" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "startDate": "2024-01-01T00:00:00Z",
-    "endDate": "2024-12-31T23:59:59Z"
+    "startDate": "2024-01-01",
+    "endDate": "2024-12-31"
   }'
 ```
 
@@ -83,8 +83,8 @@ curl -X POST "https://admin.srv954186.hstgr.cloud/api/mobile/payments/summary" \
 - Automatic conversion: `amount / 100`
 
 ### Date Format
-- Use **ISO 8601** format: `"2024-01-01T00:00:00Z"`
-- Always use **UTC** timezone (Z suffix)
+- Use **date-only** format: `"YYYY-MM-DD"` (e.g., `"2024-01-01"`)
+- No time component needed - API automatically includes full day (00:00:00 to 23:59:59)
 - Inclusive range (includes both start and end dates)
 
 ### Monthly Keys

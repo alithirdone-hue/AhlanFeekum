@@ -860,6 +860,10 @@ namespace AhlanFeekum.UserProfiles
                 if (input.EndDate < input.StartDate)
                     throw new UserFriendlyException("End date must be greater than or equal to start date");
 
+                // Convert DateOnly to DateTime for querying (start of day for StartDate, end of day for EndDate)
+                var startDateTime = input.StartDate.ToDateTime(TimeOnly.MinValue);
+                var endDateTime = input.EndDate.ToDateTime(TimeOnly.MaxValue);
+
                 // Get all successful payments for the current user within the date range
                 var queryable = await _userPaymentRepository.GetQueryableAsync();
                 
@@ -867,7 +871,7 @@ namespace AhlanFeekum.UserProfiles
                     queryable
                         .Where(p => p.UserProfileId == _currentUser.Id.Value)
                         .Where(p => p.Status == UserPaymentStatus.succeeded)
-                        .Where(p => p.CreationTime >= input.StartDate && p.CreationTime <= input.EndDate)
+                        .Where(p => p.CreationTime >= startDateTime && p.CreationTime <= endDateTime)
                         .OrderBy(p => p.CreationTime)
                 );
 
