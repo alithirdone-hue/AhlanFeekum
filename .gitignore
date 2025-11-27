@@ -265,3 +265,4 @@ src/AhlanFeekum.Blazor.Tiered/Logs/*
 **/wwwroot/libs/*
 /src/AhlanFeekum.Blazor/wwwroot/ahlanfeekumassets/host/onlyforyousection-file
 /src/AhlanFeekum.Blazor/wwwroot/ahlanfeekumassets/host/propertyMedias
+/src/AhlanFeekum.Blazor/appsettings.Development.json
