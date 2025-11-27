@@ -1384,6 +1384,111 @@ namespace AhlanFeekum.Migrations
                 b.ToTable("AppUserNotificationUserProfile", (string)null);
             });
 
+            modelBuilder.Entity("AhlanFeekum.UserPayments.UserPayment", b =>
+            {
+                b.Property<Guid>("Id")
+                    .HasColumnType("uniqueidentifier");
+
+                b.Property<long>("Amount")
+                    .HasColumnType("bigint")
+                    .HasColumnName("Amount");
+
+                b.Property<long>("AmountCapturable")
+                    .HasColumnType("bigint")
+                    .HasColumnName("AmountCapturable");
+
+                b.Property<long>("AmountReceived")
+                    .HasColumnType("bigint")
+                    .HasColumnName("AmountReceived");
+
+                b.Property<string>("ConcurrencyStamp")
+                    .IsConcurrencyToken()
+                    .IsRequired()
+                    .HasMaxLength(40)
+                    .HasColumnType("nvarchar(40)")
+                    .HasColumnName("ConcurrencyStamp");
+
+                b.Property<string>("ConfirmationMethod")
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("ConfirmationMethod");
+
+                b.Property<DateTime>("CreationTime")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("CreationTime");
+
+                b.Property<Guid?>("CreatorId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("CreatorId");
+
+                b.Property<string>("Currency")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("Currency");
+
+                b.Property<Guid?>("DeleterId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("DeleterId");
+
+                b.Property<DateTime?>("DeletionTime")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("DeletionTime");
+
+                b.Property<string>("Description")
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("Description");
+
+                b.Property<string>("ExtraProperties")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("ExtraProperties");
+
+                b.Property<bool>("IsDeleted")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("bit")
+                    .HasDefaultValue(false)
+                    .HasColumnName("IsDeleted");
+
+                b.Property<DateTime?>("LastModificationTime")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("LastModificationTime");
+
+                b.Property<Guid?>("LastModifierId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("LastModifierId");
+
+                b.Property<string>("ReceiptEmail")
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("ReceiptEmail");
+
+                b.Property<Guid>("ReservationId")
+                    .HasColumnType("uniqueidentifier");
+
+                b.Property<int>("Status")
+                    .HasColumnType("int")
+                    .HasColumnName("Status");
+
+                b.Property<string>("StripClientSecret")
+        .IsRequired()
+        .HasColumnType("nvarchar(max)")
+        .HasColumnName("StripClientSecret");
+
+                b.Property<string>("StripPaymentId")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("StripPaymentId");
+
+                b.Property<Guid>("UserProfileId")
+                    .HasColumnType("uniqueidentifier");
+
+                b.HasKey("Id");
+
+                b.HasIndex("ReservationId");
+
+                b.HasIndex("UserProfileId");
+
+                b.ToTable("AppUserPayments", (string)null);
+            });
+
 
             modelBuilder.Entity("AhlanFeekum.UserProfiles.UserProfile", b =>
             {
@@ -3402,6 +3507,21 @@ namespace AhlanFeekum.Migrations
                     .IsRequired();
             });
 
+
+            modelBuilder.Entity("AhlanFeekum.UserPayments.UserPayment", b =>
+            {
+                b.HasOne("AhlanFeekum.Reservations.Reservation", null)
+                    .WithMany()
+                    .HasForeignKey("ReservationId")
+                    .OnDelete(DeleteBehavior.NoAction)
+                    .IsRequired();
+
+                b.HasOne("AhlanFeekum.UserProfiles.UserProfile", null)
+                    .WithMany()
+                    .HasForeignKey("UserProfileId")
+                    .OnDelete(DeleteBehavior.NoAction)
+                    .IsRequired();
+            });
 
             modelBuilder.Entity("AhlanFeekum.UserProfiles.UserProfile", b =>
             {

@@ -283,6 +283,27 @@
     "UserNotifications": "User Notifications",
     "NewUserNotification": "New User Notification",
     "Menu:UserNotifications": "User Notifications",
-    "PropertyMedia": "Property Media "
+    "PropertyMedia": "Property Media ",
+    "Enum:UserPaymentStatus.1": "Pending",
+    "Enum:UserPaymentStatus.2": "succeeded",
+    "Reservation": "Reservation",
+    "Permission:UserPayments": "User Payments",
+    "Amount": "Amount",
+    "Currency": "Currency",
+    "ReceiptEmail": "Receipt Email",
+    "AmountCapturable": "Amount Capturable",
+    "AmountReceived": "Amount Received",
+    "ConfirmationMethod": "Confirmation Method",
+    "UserPayments": "User Payments",
+    "MinAmount": "Min Amount",
+    "MinAmountCapturable": "Min Amount Capturable",
+    "MinAmountReceived": "Min Amount Received",
+    "MaxAmount": "Max Amount",
+    "MaxAmountCapturable": "Max Amount Capturable",
+    "MaxAmountReceived": "Max Amount Received",
+    "NewUserPayment": "New User Payment",
+    "Menu:UserPayments": "User Payments",
+    "StripPaymentId": "Strip Payment Id",
+    "StripClientSecret": "Strip Client Secret"
   }
 }

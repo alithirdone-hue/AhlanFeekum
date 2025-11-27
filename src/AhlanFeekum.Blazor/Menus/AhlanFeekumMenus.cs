@@ -41,6 +41,7 @@ public class AhlanFeekumMenus
 
     public const string AhlanfeekumTerms = Prefix + ".AhlanfeekumTerms";
     public const string UserNotifications = Prefix + ".UserNotifications";
+    public const string UserPayments = Prefix + ".UserPayments";
 
 
 

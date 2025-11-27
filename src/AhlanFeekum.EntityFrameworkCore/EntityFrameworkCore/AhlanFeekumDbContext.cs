@@ -19,9 +19,11 @@ using AhlanFeekum.SpecialAdvertisments;
 using AhlanFeekum.SpecialAdvertisments;
 using AhlanFeekum.Statuses;
 using AhlanFeekum.Tickets;
-using AhlanFeekum.UserProfiles;
-using AhlanFeekum.UserProfiles;
 using AhlanFeekum.UserNotifications;
+using AhlanFeekum.UserPayments;
+using AhlanFeekum.UserProfiles;
+using AhlanFeekum.UserProfiles;
+using AhlanFeekum.UserPayments;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -49,7 +51,7 @@ public class AhlanFeekumDbContext :
     ITenantManagementDbContext
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
-
+    public DbSet<UserPayment> UserPayments { get; set; } = null!;
     public DbSet<UserNotification> UserNotifications { get; set; } = null!;
     public DbSet<AhlanfeekumTerm> AhlanfeekumTerms { get; set; } = null!;
     public DbSet<Ticket> Tickets { get; set; } = null!;
@@ -513,7 +515,37 @@ public class AhlanFeekumDbContext :
             });
         }
 
+        if (builder.IsHostDatabase())
+        {
+
         }
+        if (builder.IsHostDatabase())
+        {
+
+        }
+        if (builder.IsHostDatabase())
+        {
+            builder.Entity<UserPayment>(b =>
+            {
+                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "UserPayments", AhlanFeekumConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.Property(x => x.Amount).HasColumnName(nameof(UserPayment.Amount));
+                b.Property(x => x.Currency).HasColumnName(nameof(UserPayment.Currency)).IsRequired();
+                b.Property(x => x.Description).HasColumnName(nameof(UserPayment.Description));
+                b.Property(x => x.ReceiptEmail).HasColumnName(nameof(UserPayment.ReceiptEmail));
+                b.Property(x => x.AmountCapturable).HasColumnName(nameof(UserPayment.AmountCapturable));
+                b.Property(x => x.AmountReceived).HasColumnName(nameof(UserPayment.AmountReceived));
+                b.Property(x => x.ConfirmationMethod).HasColumnName(nameof(UserPayment.ConfirmationMethod));
+                b.Property(x => x.Status).HasColumnName(nameof(UserPayment.Status));
+                b.Property(x => x.StripPaymentId).HasColumnName(nameof(UserPayment.StripPaymentId)).IsRequired();
+                b.Property(x => x.StripClientSecret).HasColumnName(nameof(UserPayment.StripClientSecret)).IsRequired();
+                b.HasOne<UserProfile>().WithMany().IsRequired().HasForeignKey(x => x.UserProfileId).OnDelete(DeleteBehavior.NoAction);
+                b.HasOne<Reservation>().WithMany().IsRequired().HasForeignKey(x => x.ReservationId).OnDelete(DeleteBehavior.NoAction);
+            });
+
+        }
+
+    }
 
 
 }

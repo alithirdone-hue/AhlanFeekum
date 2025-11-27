@@ -1,0 +1,768 @@
+
+
+@page "/user-payments"
+
+@attribute [Authorize(AhlanFeekumPermissions.UserPayments.Default)]
+@using AhlanFeekum.UserPayments
+@using AhlanFeekum.Localization
+@using AhlanFeekum.Shared
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Components.Web
+@using Blazorise
+@using Blazorise.Components
+@using Blazorise.DataGrid
+@using Volo.Abp.BlazoriseUI
+@using Volo.Abp.BlazoriseUI.Components
+@using Volo.Abp.ObjectMapping
+@using Volo.Abp.AspNetCore.Components.Messages
+@using Volo.Abp.AspNetCore.Components.Web.Theming.Layout
+
+@using AhlanFeekum.Permissions
+@using Volo.Abp.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components
+@using Volo.Abp.Http.Client
+@inherits AhlanFeekumComponentBase
+@inject IUserPaymentsAppService UserPaymentsAppService
+
+@inject IUiMessageService UiMessageService
+@inject AbpBlazorMessageLocalizerHelper<AhlanFeekumResource> LH
+@inject IRemoteServiceConfigurationProvider RemoteServiceConfigurationProvider
+@inject NavigationManager NavigationManager
+@using AhlanFeekum.UserPayments
+
+
+@* ************************* PAGE HEADER ************************* *@
+<PageHeader Title="@L["UserPayments"]" BreadcrumbItems="BreadcrumbItems" Toolbar="Toolbar">
+
+</PageHeader>
+
+@* ************************* SEARCH ************************* *@
+<Card>
+    <CardBody>
+@*//<suite-custom-code-block-1>*@
+@*//</suite-custom-code-block-1>*@
+        <Row>
+            <div class="col-md-8 col-lg-10">
+                <div class="mb-3">
+                    <Form id="UserPaymentSearchForm">
+                        <Addons>
+                            <Addon AddonType="AddonType.Body">
+                                <TextEdit @bind-Text="@Filter.FilterText"
+                                        Autofocus="true"
+                                        Placeholder="@L["Search"]">
+                                </TextEdit>
+                            </Addon>
+                            <Addon AddonType="AddonType.End">
+                                <SubmitButton Form="UserPaymentSearchForm" Clicked="GetUserPaymentsAsync">
+                                    <Icon Name="IconName.Search" Class="me-1"></Icon>@L["Search"]
+                                </SubmitButton>
+                            </Addon>
+                        </Addons>
+                    </Form>
+                </div>
+            </div>
+                
+                   <div class="col-md-4 col-lg-2">
+            <div class="mb-3">
+               <Button Color="Color.Primary" Outline Style="width:100%" id="AdvancedFilterSectionToggler"
+                         Clicked="@(() => ShowAdvancedFilters = !ShowAdvancedFilters)">@L["Filters"]
+                         <i aria-hidden="true" class="fa ms-1 @(!ShowAdvancedFilters ? "fa-angle-down" : "fa-angle-up")"></i>
+               </Button>
+            </div>
+       </div>
+        
+        <div style="display: @(!ShowAdvancedFilters ? "none" : "block")"  class="mt-3">
+            <Row>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MinAmount"]</FieldLabel>
+                        <NumericEdit TValue="long?" 
+             Value="@Filter.AmountMin"
+             ValueChanged="@OnAmountMinChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MaxAmount"]</FieldLabel>
+                        <NumericEdit TValue="long?" 
+             Value="@Filter.AmountMax"
+             ValueChanged="@OnAmountMaxChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["Currency"]</FieldLabel>
+                        <TextEdit Text="@Filter.Currency" TextChanged="@OnCurrencyChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["Description"]</FieldLabel>
+                        <TextEdit Text="@Filter.Description" TextChanged="@OnDescriptionChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["ReceiptEmail"]</FieldLabel>
+                        <TextEdit Text="@Filter.ReceiptEmail" TextChanged="@OnReceiptEmailChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MinAmountCapturable"]</FieldLabel>
+                        <NumericEdit TValue="long?" 
+             Value="@Filter.AmountCapturableMin"
+             ValueChanged="@OnAmountCapturableMinChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MaxAmountCapturable"]</FieldLabel>
+                        <NumericEdit TValue="long?" 
+             Value="@Filter.AmountCapturableMax"
+             ValueChanged="@OnAmountCapturableMaxChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MinAmountReceived"]</FieldLabel>
+                        <NumericEdit TValue="long?" 
+             Value="@Filter.AmountReceivedMin"
+             ValueChanged="@OnAmountReceivedMinChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MaxAmountReceived"]</FieldLabel>
+                        <NumericEdit TValue="long?" 
+             Value="@Filter.AmountReceivedMax"
+             ValueChanged="@OnAmountReceivedMaxChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["ConfirmationMethod"]</FieldLabel>
+                        <TextEdit Text="@Filter.ConfirmationMethod" TextChanged="@OnConfirmationMethodChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["Status"]</FieldLabel>
+                        <Select TValue="UserPaymentStatus?"
+		SelectedValue="@Filter.Status"
+		SelectedValueChanged="@OnStatusChangedAsync">
+
+<SelectItem></SelectItem>
+
+@foreach(UserPaymentStatus value in Enum.GetValues(typeof(UserPaymentStatus)))
+{
+	<SelectItem Value="value">
+		@value
+	</SelectItem>
+}
+
+</Select>                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["StripPaymentId"]</FieldLabel>
+                        <TextEdit Text="@Filter.StripPaymentId" TextChanged="@OnStripPaymentIdChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["StripClientSecret"]</FieldLabel>
+                        <TextEdit Text="@Filter.StripClientSecret" TextChanged="@OnStripClientSecretChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["UserProfile"]</FieldLabel>
+                        <Select TValue="Guid?"
+		SelectedValue="@Filter.UserProfileId"
+		SelectedValueChanged="@OnUserProfileIdChangedAsync">
+
+<SelectItem></SelectItem>
+
+@foreach(var item in UserProfilesCollection)
+{
+	<SelectItem TValue="Guid" Value="@item.Id">
+		@item.DisplayName
+	</SelectItem>
+}
+
+</Select>                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["Reservation"]</FieldLabel>
+                        <Select TValue="Guid?"
+		SelectedValue="@Filter.ReservationId"
+		SelectedValueChanged="@OnReservationIdChangedAsync">
+
+<SelectItem></SelectItem>
+
+@foreach(var item in ReservationsCollection)
+{
+	<SelectItem TValue="Guid" Value="@item.Id">
+		@item.DisplayName
+	</SelectItem>
+}
+
+</Select>                       
+                    </Field>
+                </Column>
+            </Row>
+@*//<suite-custom-code-block-2>*@
+@*//</suite-custom-code-block-2>*@
+        </div>
+
+        </Row>
+
+@*//<suite-custom-code-block-3>*@
+@*//</suite-custom-code-block-3>*@
+    </CardBody>
+</Card>
+
+@* ************************* DATA GRID ************************* *@
+<Card>
+    <CardBody>        
+        @if (SelectedUserPayments.Any())
+        {
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                @if (AllUserPaymentsSelected)
+                {
+                    <p class="lead mb-0">
+                        @L["AllItemsAreSelected", TotalCount]
+                    </p>
+                }
+                else
+                {
+                    <p class="lead mb-0">
+                        @if (SelectedUserPayments.Count > 1)
+                        {
+                            @L["NumberOfItemsOnThisPageAreSelected", SelectedUserPayments.Count]
+                        }
+                        else
+                        {
+                            @L["OneItemOnThisPageIsSelected"]
+                        }
+                    </p>
+                }
+                    
+                <div>
+                    @if ((SelectedUserPayments.Count == PageSize || SelectedUserPayments.Count == UserPaymentList.Count) && TotalCount > SelectedUserPayments.Count)
+                    {
+                        if (!AllUserPaymentsSelected)
+                        {
+                            <Button Clicked="SelectAllItems" Class="mx-1 btn-outline-secondary">@L["SelectAllItems", TotalCount]</Button>
+                        }
+                        else
+                        {
+                            <Button Clicked="ClearSelection" Class="mx-1 btn-outline-secondary">@L["ClearSelection"]</Button>
+                        }
+                    }
+                    
+                    <Button Color="Color.Danger" Class="mx-1" Size="Size.Medium" Clicked="DeleteSelectedUserPaymentsAsync">
+                        <Icon Name="@IconName.Delete" /> @L["Delete"]
+                    </Button>
+                </div>
+            </div>
+            
+            <hr class="my-1 mx-0"/>
+        }
+        <DataGrid TItem="UserPaymentWithNavigationPropertiesDto"
+                  Data="UserPaymentList"
+                  
+                  SelectionMode="DataGridSelectionMode.Multiple"
+                  SelectedRows="SelectedUserPayments"
+                  RowSelectable="@((args) => CanDeleteUserPayment)"
+                  SelectedRowsChanged="SelectedUserPaymentRowsChanged"
+                  
+                  
+                  
+                  ReadData="OnDataGridReadAsync"
+                  TotalItems="TotalCount"
+                  ShowPager="true"
+                  Responsive="true"
+                  PageSize="PageSize"
+                  Class="datagrid-detail">
+            <LoadingTemplate>
+                <Row Class="w-100 align-items-center" Style="height: 150px;">
+                    <Column>
+                       <RadarSpinner />
+                    </Column>
+                </Row>
+            </LoadingTemplate>
+            <EmptyTemplate>
+                <Row Class="w-100 align-items-center" Style="height: 150px;">
+                    <Column>
+                        <Heading Size="HeadingSize.Is4" TextAlignment="TextAlignment.Center">@L["NoDataAvailable"]</Heading>
+                    </Column>
+                </Row>
+            </EmptyTemplate>   
+            <DataGridColumns>
+                
+                @if (CanDeleteUserPayment && UserPaymentList.Any())
+                {
+                    <DataGridMultiSelectColumn TItem="UserPaymentWithNavigationPropertiesDto" DisplayOrder="-1" Width="30px"></DataGridMultiSelectColumn>
+                }
+                
+                <DataGridEntityActionsColumn TItem="UserPaymentWithNavigationPropertiesDto" @ref="@EntityActionsColumn">
+                    <DisplayTemplate>
+                        <EntityActions TItem="UserPaymentWithNavigationPropertiesDto" EntityActionsColumn="@EntityActionsColumn">
+                            <EntityAction TItem="UserPaymentWithNavigationPropertiesDto"
+                                          Visible="@CanEditUserPayment"
+                                          Clicked="async () => await OpenEditUserPaymentModalAsync(context)"
+                                          Text="@L["Edit"]"></EntityAction>
+                            <EntityAction TItem="UserPaymentWithNavigationPropertiesDto"
+                                          Visible="@CanDeleteUserPayment"
+                                          Clicked="() => DeleteUserPaymentAsync(context)"
+                                          ConfirmationMessage="@(()=> L["DeleteConfirmationMessage"])"
+                                          Text="@L["Delete"]"></EntityAction>
+@*//<suite-custom-code-block-4>*@
+@*//</suite-custom-code-block-4>*@
+                        </EntityActions>
+                    </DisplayTemplate>
+                </DataGridEntityActionsColumn>
+               
+              <DataGridColumn TItem="UserPaymentWithNavigationPropertiesDto"
+                      Field="UserPayment.Amount"
+                      Caption="@L["Amount"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="UserPaymentWithNavigationPropertiesDto"
+                      Field="UserPayment.Currency"
+                      Caption="@L["Currency"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="UserPaymentWithNavigationPropertiesDto"
+                      Field="UserPayment.Description"
+                      Caption="@L["Description"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="UserPaymentWithNavigationPropertiesDto"
+                      Field="UserPayment.ReceiptEmail"
+                      Caption="@L["ReceiptEmail"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="UserPaymentWithNavigationPropertiesDto"
+                      Field="UserPayment.AmountCapturable"
+                      Caption="@L["AmountCapturable"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="UserPaymentWithNavigationPropertiesDto"
+                      Field="UserPayment.AmountReceived"
+                      Caption="@L["AmountReceived"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="UserPaymentWithNavigationPropertiesDto"
+                      Field="UserPayment.ConfirmationMethod"
+                      Caption="@L["ConfirmationMethod"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="UserPaymentWithNavigationPropertiesDto"
+                      Field="UserPayment.Status"
+                      Caption="@L["Status"]">
+                    <DisplayTemplate>
+                        @L[$"Enum:UserPaymentStatus.{(int)context.UserPayment.Status}"]
+                    </DisplayTemplate>
+              </DataGridColumn>
+
+
+              <DataGridColumn TItem="UserPaymentWithNavigationPropertiesDto"
+                      Field="UserPayment.StripPaymentId"
+                      Caption="@L["StripPaymentId"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="UserPaymentWithNavigationPropertiesDto"
+                      Field="UserPayment.StripClientSecret"
+                      Caption="@L["StripClientSecret"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="UserPaymentWithNavigationPropertiesDto"
+                      Field="UserProfile.Name"
+                      Caption="@L["UserProfile"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="UserPaymentWithNavigationPropertiesDto"
+                      Field="Reservation.Notes"
+                      Caption="@L["Reservation"]">
+              </DataGridColumn>
+
+            </DataGridColumns>
+            
+            
+        </DataGrid>
+    </CardBody>
+</Card>
+
+@* ************************* CREATE MODAL ************************* *@
+<Modal @ref="CreateUserPaymentModal" Closing="@CreateUserPaymentModal.CancelClosingModalWhenFocusLost">
+    <ModalContent Centered="true">
+@*//<suite-custom-code-block-5>*@
+@*//</suite-custom-code-block-5>*@
+        <Form id="CreateUserPaymentForm">
+            <ModalHeader>
+                <ModalTitle>@L["NewUserPayment"]</ModalTitle>
+                <CloseButton Clicked="CloseCreateUserPaymentModalAsync" />
+            </ModalHeader>
+            <ModalBody>
+                <Validations @ref="@NewUserPaymentValidations"
+                            Mode="ValidationMode.Auto"
+                            Model="@NewUserPayment"
+                            ValidateOnLoad="false">
+                    
+                    
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Amount"]</FieldLabel>
+                            <NumericPicker TValue="long" @bind-Value="@NewUserPayment.Amount"  Decimals="0" >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                             </NumericPicker>
+                        </Field>
+                     </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Currency"] *</FieldLabel>
+                            <TextEdit @bind-Text="@NewUserPayment.Currency"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Description"]</FieldLabel>
+                            <TextEdit @bind-Text="@NewUserPayment.Description"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["ReceiptEmail"]</FieldLabel>
+                            <TextEdit @bind-Text="@NewUserPayment.ReceiptEmail"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["AmountCapturable"]</FieldLabel>
+                            <NumericPicker TValue="long" @bind-Value="@NewUserPayment.AmountCapturable"  Decimals="0" >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                             </NumericPicker>
+                        </Field>
+                     </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["AmountReceived"]</FieldLabel>
+                            <NumericPicker TValue="long" @bind-Value="@NewUserPayment.AmountReceived"  Decimals="0" >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                             </NumericPicker>
+                        </Field>
+                     </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["ConfirmationMethod"]</FieldLabel>
+                            <TextEdit @bind-Text="@NewUserPayment.ConfirmationMethod"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Field>
+                        <FieldLabel>@L["Status"]</FieldLabel>
+                        <Select TValue="UserPaymentStatus" @bind-SelectedValue="@NewUserPayment.Status" >
+                            @foreach (var itemValue in Enum.GetValues(typeof(UserPaymentStatus)))
+                            {
+                                <SelectItem TValue="UserPaymentStatus" Value="@((UserPaymentStatus) itemValue)">
+                                    @L[$"Enum:UserPaymentStatus.{((UserPaymentStatus) itemValue).ToString("d")}"]
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["StripPaymentId"] *</FieldLabel>
+                            <TextEdit @bind-Text="@NewUserPayment.StripPaymentId"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["StripClientSecret"] *</FieldLabel>
+                            <TextEdit @bind-Text="@NewUserPayment.StripClientSecret"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Field>
+                        <FieldLabel>@L["UserProfile"]</FieldLabel>
+                        <Select TValue="Guid" @bind-SelectedValue="@NewUserPayment.UserProfileId">
+                            @foreach (var userProfile in UserProfilesCollection)
+                            {
+                                <SelectItem TValue="Guid" Value="@(userProfile.Id)">
+                                    @(userProfile.DisplayName)
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    <Field>
+                        <FieldLabel>@L["Reservation"]</FieldLabel>
+                        <Select TValue="Guid" @bind-SelectedValue="@NewUserPayment.ReservationId">
+                            @foreach (var reservation in ReservationsCollection)
+                            {
+                                <SelectItem TValue="Guid" Value="@(reservation.Id)">
+                                    @(reservation.DisplayName)
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    
+                    
+                </Validations>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary"
+                        Clicked="CloseCreateUserPaymentModalAsync">
+                    @L["Cancel"]
+                </Button>
+                <SubmitButton Form="CreateUserPaymentForm" Clicked="CreateUserPaymentAsync"/>
+@*//<suite-custom-code-block-6>*@
+@*//</suite-custom-code-block-6>*@
+            </ModalFooter>
+        </Form>
+@*//<suite-custom-code-block-7>*@
+@*//</suite-custom-code-block-7>*@
+    </ModalContent>
+</Modal>
+
+@* ************************* EDIT MODAL ************************* *@
+<Modal @ref="EditUserPaymentModal" Closing="@EditUserPaymentModal.CancelClosingModalWhenFocusLost">
+    <ModalContent Centered="true">
+@*//<suite-custom-code-block-8>*@
+@*//</suite-custom-code-block-8>*@
+        <Form id="EditUserPaymentForm">
+            <ModalHeader>
+                <ModalTitle>@L["Update"]</ModalTitle>
+                <CloseButton Clicked="CloseEditUserPaymentModalAsync" />
+            </ModalHeader>
+            <ModalBody>
+                <Validations @ref="@EditingUserPaymentValidations"
+                            Mode="ValidationMode.Auto"
+                            Model="@EditingUserPayment"
+                            ValidateOnLoad="false">
+                    
+                    
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Amount"]</FieldLabel>
+                            <NumericPicker TValue="long" @bind-Value="@EditingUserPayment.Amount"  Decimals="0" >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                             </NumericPicker>
+                        </Field>
+                     </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Currency"] *</FieldLabel>
+                            <TextEdit @bind-Text="@EditingUserPayment.Currency"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Description"]</FieldLabel>
+                            <TextEdit @bind-Text="@EditingUserPayment.Description"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["ReceiptEmail"]</FieldLabel>
+                            <TextEdit @bind-Text="@EditingUserPayment.ReceiptEmail"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["AmountCapturable"]</FieldLabel>
+                            <NumericPicker TValue="long" @bind-Value="@EditingUserPayment.AmountCapturable"  Decimals="0" >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                             </NumericPicker>
+                        </Field>
+                     </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["AmountReceived"]</FieldLabel>
+                            <NumericPicker TValue="long" @bind-Value="@EditingUserPayment.AmountReceived"  Decimals="0" >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                             </NumericPicker>
+                        </Field>
+                     </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["ConfirmationMethod"]</FieldLabel>
+                            <TextEdit @bind-Text="@EditingUserPayment.ConfirmationMethod"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Field>
+                        <FieldLabel>@L["Status"]</FieldLabel>
+                        <Select TValue="UserPaymentStatus" @bind-SelectedValue="@EditingUserPayment.Status" >
+                            @foreach (var itemValue in Enum.GetValues(typeof(UserPaymentStatus)))
+                            {
+                                <SelectItem TValue="UserPaymentStatus" Value="@((UserPaymentStatus) itemValue)">
+                                    @L[$"Enum:UserPaymentStatus.{((UserPaymentStatus) itemValue).ToString("d")}"]
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["StripPaymentId"] *</FieldLabel>
+                            <TextEdit @bind-Text="@EditingUserPayment.StripPaymentId"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["StripClientSecret"] *</FieldLabel>
+                            <TextEdit @bind-Text="@EditingUserPayment.StripClientSecret"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Field>
+                        <FieldLabel>@L["UserProfile"]</FieldLabel>
+                        <Select TValue="Guid" @bind-SelectedValue="@EditingUserPayment.UserProfileId">
+                            @foreach (var userProfile in UserProfilesCollection)
+                            {
+                                <SelectItem TValue="Guid" Value="@(userProfile.Id)">
+                                    @(userProfile.DisplayName)
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    <Field>
+                        <FieldLabel>@L["Reservation"]</FieldLabel>
+                        <Select TValue="Guid" @bind-SelectedValue="@EditingUserPayment.ReservationId">
+                            @foreach (var reservation in ReservationsCollection)
+                            {
+                                <SelectItem TValue="Guid" Value="@(reservation.Id)">
+                                    @(reservation.DisplayName)
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    
+                    
+                </Validations>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary"
+                        Clicked="CloseEditUserPaymentModalAsync">
+                    @L["Cancel"]
+                </Button>
+                <SubmitButton Form="EditUserPaymentForm" Clicked="UpdateUserPaymentAsync" />
+@*//<suite-custom-code-block-9>*@
+@*//</suite-custom-code-block-9>*@
+            </ModalFooter>
+        </Form>
+@*//<suite-custom-code-block-10>*@
+@*//</suite-custom-code-block-10>*@
+    </ModalContent>
+</Modal>
+

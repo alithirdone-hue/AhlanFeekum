@@ -15,8 +15,9 @@ using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SpecialAdvertisments;
 using AhlanFeekum.Statuses;
 using AhlanFeekum.Tickets;
-using AhlanFeekum.UserProfiles;
 using AhlanFeekum.UserNotifications;
+using AhlanFeekum.UserProfiles;
+using AhlanFeekum.UserPayments;
 using AutoMapper;
 using System;
 using Volo.Abp.AutoMapper;
@@ -211,5 +212,13 @@ public class AhlanFeekumApplicationAutoMapperProfile : Profile
         CreateMap<UserNotification, UserNotificationExcelDto>();
         CreateMap<UserNotificationWithNavigationProperties, UserNotificationWithNavigationPropertiesDto>();
         CreateMap<UserNotificationDto, UserNotificationUpdateDto>().Ignore(x => x.UserProfileIds).Ignore(x => x.SitePropertyIds);
+
+
+        CreateMap<UserPayment, UserPaymentDto>();
+        CreateMap<UserPayment, UserPaymentExcelDto>();
+        CreateMap<UserPaymentWithNavigationProperties, UserPaymentWithNavigationPropertiesDto>();
+        CreateMap<Reservation, LookupDto<Guid>>().ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.Notes));
+
+        CreateMap<UserPaymentDto, UserPaymentUpdateDto>();
     }
 }
