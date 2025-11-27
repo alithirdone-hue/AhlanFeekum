@@ -1,0 +1,255 @@
+{
+  "info": {
+    "name": "Payment Summary API - Complete Collection",
+    "description": "Complete Postman collection for testing the Payment Summary endpoint",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://admin.srv954186.hstgr.cloud",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "YOUR_JWT_TOKEN_HERE",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Payment Summary - Full Year 2024",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"startDate\": \"2024-01-01T00:00:00Z\",\n  \"endDate\": \"2024-12-31T23:59:59Z\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/mobile/payments/summary",
+          "host": ["{{base_url}}"],
+          "path": ["api", "mobile", "payments", "summary"]
+        },
+        "description": "Get payment summary for the entire year 2024"
+      },
+      "response": []
+    },
+    {
+      "name": "Payment Summary - Last 30 Days",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"startDate\": \"2024-10-28T00:00:00Z\",\n  \"endDate\": \"2024-11-27T23:59:59Z\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/mobile/payments/summary",
+          "host": ["{{base_url}}"],
+          "path": ["api", "mobile", "payments", "summary"]
+        },
+        "description": "Get payment summary for the last 30 days (adjust dates as needed)"
+      },
+      "response": []
+    },
+    {
+      "name": "Payment Summary - Single Month (November 2024)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"startDate\": \"2024-11-01T00:00:00Z\",\n  \"endDate\": \"2024-11-30T23:59:59Z\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/mobile/payments/summary",
+          "host": ["{{base_url}}"],
+          "path": ["api", "mobile", "payments", "summary"]
+        },
+        "description": "Get payment summary for November 2024 only"
+      },
+      "response": []
+    },
+    {
+      "name": "Payment Summary - Q4 2024 (Oct-Dec)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"startDate\": \"2024-10-01T00:00:00Z\",\n  \"endDate\": \"2024-12-31T23:59:59Z\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/mobile/payments/summary",
+          "host": ["{{base_url}}"],
+          "path": ["api", "mobile", "payments", "summary"]
+        },
+        "description": "Get payment summary for Q4 2024 (October to December)"
+      },
+      "response": []
+    },
+    {
+      "name": "Payment Summary - Custom Date Range",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"startDate\": \"2024-06-15T00:00:00Z\",\n  \"endDate\": \"2024-09-15T23:59:59Z\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/mobile/payments/summary",
+          "host": ["{{base_url}}"],
+          "path": ["api", "mobile", "payments", "summary"]
+        },
+        "description": "Get payment summary for a custom date range (mid-June to mid-September 2024)"
+      },
+      "response": []
+    },
+    {
+      "name": "Payment Summary - Invalid Date Range (Should Fail)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"startDate\": \"2024-12-31T23:59:59Z\",\n  \"endDate\": \"2024-01-01T00:00:00Z\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/mobile/payments/summary",
+          "host": ["{{base_url}}"],
+          "path": ["api", "mobile", "payments", "summary"]
+        },
+        "description": "Test error handling - end date is before start date (should return 400 error)"
+      },
+      "response": []
+    },
+    {
+      "name": "Payment Summary - Without Authentication (Should Fail)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"startDate\": \"2024-01-01T00:00:00Z\",\n  \"endDate\": \"2024-12-31T23:59:59Z\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/mobile/payments/summary",
+          "host": ["{{base_url}}"],
+          "path": ["api", "mobile", "payments", "summary"]
+        },
+        "description": "Test authentication requirement - no JWT token provided (should return 401 error)"
+      },
+      "response": []
+    }
+  ]
+}
+

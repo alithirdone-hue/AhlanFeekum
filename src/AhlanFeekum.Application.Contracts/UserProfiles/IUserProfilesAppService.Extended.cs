@@ -28,6 +28,7 @@ namespace AhlanFeekum.UserProfiles
         Task<PaymentIntentResponseDto> GetPaymentIntentAsync(string paymentIntentId);
         Task<PaymentIntentResponseDto> ConfirmPaymentIntentAsync(ConfirmPaymentDto input);
         Task<StripeWebhookEventDto> HandleStripeWebhookAsync(string json, string stripeSignature);
+        Task<PaymentSummaryResponseDto> GetPaymentSummaryAsync(PaymentSummaryRequestDto input);
 
     }
 }

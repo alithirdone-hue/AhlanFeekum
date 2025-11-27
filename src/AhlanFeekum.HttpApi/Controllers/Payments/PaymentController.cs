@@ -99,5 +99,16 @@ namespace AhlanFeekum.Controllers.Payments
                 return BadRequest(new { error = ex.Message });
             }
         }
+
+        /// <summary>
+        /// Gets payment summary for the current user grouped by month
+        /// </summary>
+        /// <param name="input">Date range for the payment summary</param>
+        /// <returns>Monthly payments dictionary and total payment amount</returns>
+        [HttpPost("summary")]
+        public virtual async Task<PaymentSummaryResponseDto> GetPaymentSummaryAsync([FromBody] PaymentSummaryRequestDto input)
+        {
+            return await _userProfilesAppService.GetPaymentSummaryAsync(input);
+        }
     }
 }
