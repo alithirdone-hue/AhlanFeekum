@@ -21,6 +21,8 @@ namespace AhlanFeekum.UserPayments
         public string StripPaymentId { get; set; } = null!;
         [Required]
         public string StripClientSecret { get; set; } = null!;
+        [Required]
+        public string Created { get; set; } = null!;
         public Guid UserProfileId { get; set; }
         public Guid ReservationId { get; set; }
 

@@ -164,7 +164,7 @@ private IReadOnlyList<LookupDto<Guid>> ReservationsCollection { get; set; } = ne
                 culture = "&culture=" + culture;
             }
             await RemoteServiceConfigurationProvider.GetConfigurationOrDefaultOrNullAsync("Default");
-            NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/user-payments/as-excel-file?DownloadToken={token}&FilterText={HttpUtility.UrlEncode(Filter.FilterText)}{culture}&AmountMin={Filter.AmountMin}&AmountMax={Filter.AmountMax}&Currency={HttpUtility.UrlEncode(Filter.Currency)}&Description={HttpUtility.UrlEncode(Filter.Description)}&ReceiptEmail={HttpUtility.UrlEncode(Filter.ReceiptEmail)}&AmountCapturableMin={Filter.AmountCapturableMin}&AmountCapturableMax={Filter.AmountCapturableMax}&AmountReceivedMin={Filter.AmountReceivedMin}&AmountReceivedMax={Filter.AmountReceivedMax}&ConfirmationMethod={HttpUtility.UrlEncode(Filter.ConfirmationMethod)}&Status={Filter.Status}&StripPaymentId={HttpUtility.UrlEncode(Filter.StripPaymentId)}&StripClientSecret={HttpUtility.UrlEncode(Filter.StripClientSecret)}&UserProfileId={Filter.UserProfileId}&ReservationId={Filter.ReservationId}", forceLoad: true);
+            NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/user-payments/as-excel-file?DownloadToken={token}&FilterText={HttpUtility.UrlEncode(Filter.FilterText)}{culture}&AmountMin={Filter.AmountMin}&AmountMax={Filter.AmountMax}&Currency={HttpUtility.UrlEncode(Filter.Currency)}&Description={HttpUtility.UrlEncode(Filter.Description)}&ReceiptEmail={HttpUtility.UrlEncode(Filter.ReceiptEmail)}&AmountCapturableMin={Filter.AmountCapturableMin}&AmountCapturableMax={Filter.AmountCapturableMax}&AmountReceivedMin={Filter.AmountReceivedMin}&AmountReceivedMax={Filter.AmountReceivedMax}&ConfirmationMethod={HttpUtility.UrlEncode(Filter.ConfirmationMethod)}&Status={Filter.Status}&StripPaymentId={HttpUtility.UrlEncode(Filter.StripPaymentId)}&StripClientSecret={HttpUtility.UrlEncode(Filter.StripClientSecret)}&Created={HttpUtility.UrlEncode(Filter.Created)}&UserProfileId={Filter.UserProfileId}&ReservationId={Filter.ReservationId}", forceLoad: true);
         }
 
         private async Task OnDataGridReadAsync(DataGridReadDataEventArgs<UserPaymentWithNavigationPropertiesDto> e)
@@ -349,6 +349,11 @@ ReservationId = ReservationsCollection.Select(i=>i.Id).FirstOrDefault(),
         protected virtual async Task OnStripClientSecretChangedAsync(string? stripClientSecret)
         {
             Filter.StripClientSecret = stripClientSecret;
+            await SearchAsync();
+        }
+        protected virtual async Task OnCreatedChangedAsync(string? created)
+        {
+            Filter.Created = created;
             await SearchAsync();
         }
         protected virtual async Task OnUserProfileIdChangedAsync(Guid? userProfileId)

@@ -179,6 +179,12 @@
                 </Column>
                 <Column ColumnSize="ColumnSize.Is3">
                     <Field>
+                        <FieldLabel>@L["Created"]</FieldLabel>
+                        <TextEdit Text="@Filter.Created" TextChanged="@OnCreatedChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
                         <FieldLabel>@L["UserProfile"]</FieldLabel>
                         <Select TValue="Guid?"
 		SelectedValue="@Filter.UserProfileId"
@@ -384,6 +390,11 @@
               </DataGridColumn>
 
               <DataGridColumn TItem="UserPaymentWithNavigationPropertiesDto"
+                      Field="UserPayment.Created"
+                      Caption="@L["Created"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="UserPaymentWithNavigationPropertiesDto"
                       Field="UserProfile.Name"
                       Caption="@L["UserProfile"]">
               </DataGridColumn>
@@ -530,6 +541,18 @@
                         <Field>
                             <FieldLabel>@L["StripClientSecret"] *</FieldLabel>
                             <TextEdit @bind-Text="@NewUserPayment.StripClientSecret"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Created"] *</FieldLabel>
+                            <TextEdit @bind-Text="@NewUserPayment.Created"  >
                                 <Feedback>
                                     <ValidationError />
                                 </Feedback>
@@ -713,6 +736,18 @@
                         <Field>
                             <FieldLabel>@L["StripClientSecret"] *</FieldLabel>
                             <TextEdit @bind-Text="@EditingUserPayment.StripClientSecret"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Created"] *</FieldLabel>
+                            <TextEdit @bind-Text="@EditingUserPayment.Created"  >
                                 <Feedback>
                                     <ValidationError />
                                 </Feedback>

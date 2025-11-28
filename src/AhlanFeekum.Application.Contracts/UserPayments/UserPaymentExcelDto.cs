@@ -15,5 +15,6 @@ namespace AhlanFeekum.UserPayments
         public UserPaymentStatus Status { get; set; }
         public string StripPaymentId { get; set; } = null!;
         public string StripClientSecret { get; set; } = null!;
+        public string Created { get; set; } = null!;
     }
 }

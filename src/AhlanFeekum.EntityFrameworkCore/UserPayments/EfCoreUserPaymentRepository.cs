@@ -37,13 +37,14 @@ namespace AhlanFeekum.UserPayments
             UserPaymentStatus? status = null,
             string? stripPaymentId = null,
             string? stripClientSecret = null,
+            string? created = null,
             Guid? userProfileId = null,
             Guid? reservationId = null,
             CancellationToken cancellationToken = default)
         {
             var query = await GetQueryForNavigationPropertiesAsync();
 
-            query = ApplyFilter(query, filterText, amountMin, amountMax, currency, description, receiptEmail, amountCapturableMin, amountCapturableMax, amountReceivedMin, amountReceivedMax, confirmationMethod, status, stripPaymentId, stripClientSecret, userProfileId, reservationId);
+            query = ApplyFilter(query, filterText, amountMin, amountMax, currency, description, receiptEmail, amountCapturableMin, amountCapturableMax, amountReceivedMin, amountReceivedMax, confirmationMethod, status, stripPaymentId, stripClientSecret, created, userProfileId, reservationId);
 
             var ids = query.Select(x => x.UserPayment.Id);
             await DeleteManyAsync(ids, cancellationToken: GetCancellationToken(cancellationToken));
@@ -77,6 +78,7 @@ namespace AhlanFeekum.UserPayments
             UserPaymentStatus? status = null,
             string? stripPaymentId = null,
             string? stripClientSecret = null,
+            string? created = null,
             Guid? userProfileId = null,
             Guid? reservationId = null,
             string? sorting = null,
@@ -85,7 +87,7 @@ namespace AhlanFeekum.UserPayments
             CancellationToken cancellationToken = default)
         {
             var query = await GetQueryForNavigationPropertiesAsync();
-            query = ApplyFilter(query, filterText, amountMin, amountMax, currency, description, receiptEmail, amountCapturableMin, amountCapturableMax, amountReceivedMin, amountReceivedMax, confirmationMethod, status, stripPaymentId, stripClientSecret, userProfileId, reservationId);
+            query = ApplyFilter(query, filterText, amountMin, amountMax, currency, description, receiptEmail, amountCapturableMin, amountCapturableMax, amountReceivedMin, amountReceivedMax, confirmationMethod, status, stripPaymentId, stripClientSecret, created, userProfileId, reservationId);
             query = query.OrderBy(string.IsNullOrWhiteSpace(sorting) ? UserPaymentConsts.GetDefaultSorting(true) : sorting);
             return await query.PageBy(skipCount, maxResultCount).ToListAsync(cancellationToken);
         }
@@ -121,11 +123,12 @@ namespace AhlanFeekum.UserPayments
             UserPaymentStatus? status = null,
             string? stripPaymentId = null,
             string? stripClientSecret = null,
+            string? created = null,
             Guid? userProfileId = null,
             Guid? reservationId = null)
         {
             return query
-                .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.UserPayment.Currency!.Contains(filterText!) || e.UserPayment.Description!.Contains(filterText!) || e.UserPayment.ReceiptEmail!.Contains(filterText!) || e.UserPayment.ConfirmationMethod!.Contains(filterText!) || e.UserPayment.StripPaymentId!.Contains(filterText!) || e.UserPayment.StripClientSecret!.Contains(filterText!))
+                .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.UserPayment.Currency!.Contains(filterText!) || e.UserPayment.Description!.Contains(filterText!) || e.UserPayment.ReceiptEmail!.Contains(filterText!) || e.UserPayment.ConfirmationMethod!.Contains(filterText!) || e.UserPayment.StripPaymentId!.Contains(filterText!) || e.UserPayment.StripClientSecret!.Contains(filterText!) || e.UserPayment.Created!.Contains(filterText!))
                     .WhereIf(amountMin.HasValue, e => e.UserPayment.Amount >= amountMin!.Value)
                     .WhereIf(amountMax.HasValue, e => e.UserPayment.Amount <= amountMax!.Value)
                     .WhereIf(!string.IsNullOrWhiteSpace(currency), e => e.UserPayment.Currency.Contains(currency))
@@ -139,6 +142,7 @@ namespace AhlanFeekum.UserPayments
                     .WhereIf(status.HasValue, e => e.UserPayment.Status == status)
                     .WhereIf(!string.IsNullOrWhiteSpace(stripPaymentId), e => e.UserPayment.StripPaymentId.Contains(stripPaymentId))
                     .WhereIf(!string.IsNullOrWhiteSpace(stripClientSecret), e => e.UserPayment.StripClientSecret.Contains(stripClientSecret))
+                    .WhereIf(!string.IsNullOrWhiteSpace(created), e => e.UserPayment.Created.Contains(created))
                     .WhereIf(userProfileId != null && userProfileId != Guid.Empty, e => e.UserProfile != null && e.UserProfile.Id == userProfileId)
                     .WhereIf(reservationId != null && reservationId != Guid.Empty, e => e.Reservation != null && e.Reservation.Id == reservationId);
         }
@@ -158,12 +162,13 @@ namespace AhlanFeekum.UserPayments
             UserPaymentStatus? status = null,
             string? stripPaymentId = null,
             string? stripClientSecret = null,
+            string? created = null,
             string? sorting = null,
             int maxResultCount = int.MaxValue,
             int skipCount = 0,
             CancellationToken cancellationToken = default)
         {
-            var query = ApplyFilter((await GetQueryableAsync()), filterText, amountMin, amountMax, currency, description, receiptEmail, amountCapturableMin, amountCapturableMax, amountReceivedMin, amountReceivedMax, confirmationMethod, status, stripPaymentId, stripClientSecret);
+            var query = ApplyFilter((await GetQueryableAsync()), filterText, amountMin, amountMax, currency, description, receiptEmail, amountCapturableMin, amountCapturableMax, amountReceivedMin, amountReceivedMax, confirmationMethod, status, stripPaymentId, stripClientSecret, created);
             query = query.OrderBy(string.IsNullOrWhiteSpace(sorting) ? UserPaymentConsts.GetDefaultSorting(false) : sorting);
             return await query.PageBy(skipCount, maxResultCount).ToListAsync(cancellationToken);
         }
@@ -183,12 +188,13 @@ namespace AhlanFeekum.UserPayments
             UserPaymentStatus? status = null,
             string? stripPaymentId = null,
             string? stripClientSecret = null,
+            string? created = null,
             Guid? userProfileId = null,
             Guid? reservationId = null,
             CancellationToken cancellationToken = default)
         {
             var query = await GetQueryForNavigationPropertiesAsync();
-            query = ApplyFilter(query, filterText, amountMin, amountMax, currency, description, receiptEmail, amountCapturableMin, amountCapturableMax, amountReceivedMin, amountReceivedMax, confirmationMethod, status, stripPaymentId, stripClientSecret, userProfileId, reservationId);
+            query = ApplyFilter(query, filterText, amountMin, amountMax, currency, description, receiptEmail, amountCapturableMin, amountCapturableMax, amountReceivedMin, amountReceivedMax, confirmationMethod, status, stripPaymentId, stripClientSecret, created, userProfileId, reservationId);
             return await query.LongCountAsync(GetCancellationToken(cancellationToken));
         }
 
@@ -207,10 +213,11 @@ namespace AhlanFeekum.UserPayments
             string? confirmationMethod = null,
             UserPaymentStatus? status = null,
             string? stripPaymentId = null,
-            string? stripClientSecret = null)
+            string? stripClientSecret = null,
+            string? created = null)
         {
             return query
-                    .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.Currency!.Contains(filterText!) || e.Description!.Contains(filterText!) || e.ReceiptEmail!.Contains(filterText!) || e.ConfirmationMethod!.Contains(filterText!) || e.StripPaymentId!.Contains(filterText!) || e.StripClientSecret!.Contains(filterText!))
+                    .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.Currency!.Contains(filterText!) || e.Description!.Contains(filterText!) || e.ReceiptEmail!.Contains(filterText!) || e.ConfirmationMethod!.Contains(filterText!) || e.StripPaymentId!.Contains(filterText!) || e.StripClientSecret!.Contains(filterText!) || e.Created!.Contains(filterText!))
                     .WhereIf(amountMin.HasValue, e => e.Amount >= amountMin!.Value)
                     .WhereIf(amountMax.HasValue, e => e.Amount <= amountMax!.Value)
                     .WhereIf(!string.IsNullOrWhiteSpace(currency), e => e.Currency.Contains(currency))
@@ -223,7 +230,8 @@ namespace AhlanFeekum.UserPayments
                     .WhereIf(!string.IsNullOrWhiteSpace(confirmationMethod), e => e.ConfirmationMethod.Contains(confirmationMethod))
                     .WhereIf(status.HasValue, e => e.Status == status)
                     .WhereIf(!string.IsNullOrWhiteSpace(stripPaymentId), e => e.StripPaymentId.Contains(stripPaymentId))
-                    .WhereIf(!string.IsNullOrWhiteSpace(stripClientSecret), e => e.StripClientSecret.Contains(stripClientSecret));
+                    .WhereIf(!string.IsNullOrWhiteSpace(stripClientSecret), e => e.StripClientSecret.Contains(stripClientSecret))
+                    .WhereIf(!string.IsNullOrWhiteSpace(created), e => e.Created.Contains(created));
         }
     }
 }

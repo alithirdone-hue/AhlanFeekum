@@ -555,6 +555,7 @@ namespace AhlanFeekum.UserProfiles
                     Status = UserPaymentStatus.Pending,
                     UserProfileId = _currentUser.Id.Value,
                     ReservationId = reservationId,
+                    Created = paymentIntent.Created.ToString(),
                 };
                 await _userPaymentsAppService.CreateAsync(userPaymentCreateDto);
                 return MapPaymentIntentToDto(paymentIntent);
@@ -923,6 +924,54 @@ namespace AhlanFeekum.UserProfiles
                 throw new UserFriendlyException($"Failed to retrieve payment summary: {ex.Message}");
             }
         }
+
+
+        [AllowAnonymous]
+        public async Task<MobileResponseDto> CheckUserExistEmailOrPhone(string input)
+        {
+            MobileResponseDto mobileResponse = new MobileResponseDto();
+            try
+            {
+                if (input.IsNullOrWhiteSpace())
+                {
+                    mobileResponse.Code = 400;
+                    mobileResponse.Message = "input is required";
+                    mobileResponse.Data = null;
+                    return mobileResponse;
+                }
+                if (await _userProfileRepository.AnyAsync(u => u.Email == input || u.PhoneNumber == input))
+                    return new MobileResponseDto()
+                    {
+                        Code = 200,
+                        Message = "Exist",
+                        Data = true
+                    };
+                else
+                    return new MobileResponseDto()
+                    {
+                        Code = 200,
+                        Message = "Not Exist",
+                        Data = false
+                    };
+              
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+                mobileResponse.Code = 501;
+                mobileResponse.Message = "Failed to Check";
+                mobileResponse.Data = null;
+                return mobileResponse;
+            }
+
+
+            mobileResponse.Code = 501;
+            mobileResponse.Message = "Failed to Check";
+            mobileResponse.Data = null;
+            return mobileResponse;
+
+        }
+
 
         #endregion
 

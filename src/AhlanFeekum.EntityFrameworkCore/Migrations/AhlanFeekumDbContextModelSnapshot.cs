@@ -1411,6 +1411,11 @@ namespace AhlanFeekum.Migrations
                 b.Property<string>("ConfirmationMethod")
                     .HasColumnType("nvarchar(max)")
                     .HasColumnName("ConfirmationMethod");
+                
+                b.Property<string>("Created")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("Created");
 
                 b.Property<DateTime>("CreationTime")
                     .HasColumnType("datetime2")

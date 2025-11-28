@@ -21,7 +21,7 @@ namespace AhlanFeekum.UserPayments
         }
 
         public virtual async Task<UserPayment> CreateAsync(
-        Guid userProfileId, Guid reservationId, long amount, string currency, long amountCapturable, long amountReceived, UserPaymentStatus status, string stripPaymentId, string stripClientSecret, string? description = null, string? receiptEmail = null, string? confirmationMethod = null)
+        Guid userProfileId, Guid reservationId, long amount, string currency, long amountCapturable, long amountReceived, UserPaymentStatus status, string stripPaymentId, string stripClientSecret, string created, string? description = null, string? receiptEmail = null, string? confirmationMethod = null)
         {
             Check.NotNull(userProfileId, nameof(userProfileId));
             Check.NotNull(reservationId, nameof(reservationId));
@@ -29,10 +29,11 @@ namespace AhlanFeekum.UserPayments
             Check.NotNull(status, nameof(status));
             Check.NotNullOrWhiteSpace(stripPaymentId, nameof(stripPaymentId));
             Check.NotNullOrWhiteSpace(stripClientSecret, nameof(stripClientSecret));
+            Check.NotNullOrWhiteSpace(created, nameof(created));
 
             var userPayment = new UserPayment(
              GuidGenerator.Create(),
-             userProfileId, reservationId, amount, currency, amountCapturable, amountReceived, status, stripPaymentId, stripClientSecret, description, receiptEmail, confirmationMethod
+             userProfileId, reservationId, amount, currency, amountCapturable, amountReceived, status, stripPaymentId, stripClientSecret, created, description, receiptEmail, confirmationMethod
              );
 
             return await _userPaymentRepository.InsertAsync(userPayment);
@@ -40,7 +41,7 @@ namespace AhlanFeekum.UserPayments
 
         public virtual async Task<UserPayment> UpdateAsync(
             Guid id,
-            Guid userProfileId, Guid reservationId, long amount, string currency, long amountCapturable, long amountReceived, UserPaymentStatus status, string stripPaymentId, string stripClientSecret, string? description = null, string? receiptEmail = null, string? confirmationMethod = null, [CanBeNull] string? concurrencyStamp = null
+            Guid userProfileId, Guid reservationId, long amount, string currency, long amountCapturable, long amountReceived, UserPaymentStatus status, string stripPaymentId, string stripClientSecret, string created, string? description = null, string? receiptEmail = null, string? confirmationMethod = null, [CanBeNull] string? concurrencyStamp = null
         )
         {
             Check.NotNull(userProfileId, nameof(userProfileId));
@@ -49,6 +50,7 @@ namespace AhlanFeekum.UserPayments
             Check.NotNull(status, nameof(status));
             Check.NotNullOrWhiteSpace(stripPaymentId, nameof(stripPaymentId));
             Check.NotNullOrWhiteSpace(stripClientSecret, nameof(stripClientSecret));
+            Check.NotNullOrWhiteSpace(created, nameof(created));
 
             var userPayment = await _userPaymentRepository.GetAsync(id);
 
@@ -61,6 +63,7 @@ namespace AhlanFeekum.UserPayments
             userPayment.Status = status;
             userPayment.StripPaymentId = stripPaymentId;
             userPayment.StripClientSecret = stripClientSecret;
+            userPayment.Created = created;
             userPayment.Description = description;
             userPayment.ReceiptEmail = receiptEmail;
             userPayment.ConfirmationMethod = confirmationMethod;

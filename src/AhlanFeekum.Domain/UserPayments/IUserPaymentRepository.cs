@@ -25,6 +25,7 @@ namespace AhlanFeekum.UserPayments
             UserPaymentStatus? status = null,
             string? stripPaymentId = null,
             string? stripClientSecret = null,
+            string? created = null,
             Guid? userProfileId = null,
             Guid? reservationId = null,
             CancellationToken cancellationToken = default);
@@ -48,6 +49,7 @@ namespace AhlanFeekum.UserPayments
             UserPaymentStatus? status = null,
             string? stripPaymentId = null,
             string? stripClientSecret = null,
+            string? created = null,
             Guid? userProfileId = null,
             Guid? reservationId = null,
             string? sorting = null,
@@ -71,6 +73,7 @@ namespace AhlanFeekum.UserPayments
                     UserPaymentStatus? status = null,
                     string? stripPaymentId = null,
                     string? stripClientSecret = null,
+                    string? created = null,
                     string? sorting = null,
                     int maxResultCount = int.MaxValue,
                     int skipCount = 0,
@@ -92,6 +95,7 @@ namespace AhlanFeekum.UserPayments
             UserPaymentStatus? status = null,
             string? stripPaymentId = null,
             string? stripClientSecret = null,
+            string? created = null,
             Guid? userProfileId = null,
             Guid? reservationId = null,
             CancellationToken cancellationToken = default);

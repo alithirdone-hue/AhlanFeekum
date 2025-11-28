@@ -72,9 +72,9 @@ namespace AhlanFeekum.Controllers.UserProfiles
             return _userProfilesAppService.VerifyAsync(input);
         }
         [HttpPost("send-secret-key-phone")]
-        public virtual Task<MobileResponseDto> SendSecretKeyPhone(string email)
+        public virtual Task<MobileResponseDto> SendSecretKeyPhone(string input)
         {
-            return _userProfilesAppService.SendSecretKeyPhoneAsync(email);
+            return _userProfilesAppService.SendSecretKeyPhoneAsync(input);
         }
 
         [AllowAnonymous]
@@ -103,6 +103,12 @@ namespace AhlanFeekum.Controllers.UserProfiles
         public virtual Task<TicketDto> CreateTicketAsync(TicketCreateMobileDto input)
         {
             return _ticketsAppService.CreateAsync(input);
+        }
+
+        [HttpPost("check-user-exist")]
+        public virtual Task<MobileResponseDto> CheckUserExistEmailOrPhone(string PhoneOrEmail)
+        {
+            return _userProfilesAppService.CheckUserExistEmailOrPhone(PhoneOrEmail);
         }
 
     }
