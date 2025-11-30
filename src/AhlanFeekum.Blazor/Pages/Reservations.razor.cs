@@ -266,9 +266,61 @@ SitePropertyId = SitePropertiesCollection.Select(i=>i.Id).FirstOrDefault(),
                     return;
                 }
 
+                // Get the current reservation to check if status changed
+                var currentReservation = await ReservationsAppService.GetAsync(EditingReservationId);
+                var oldStatus = currentReservation.ReservationStatus;
+                var newStatus = EditingReservation.ReservationStatus;
+
+                // Show confirmation dialog if status changed
+                if (oldStatus != newStatus)
+                {
+                    string confirmMessage = "";
+                    
+                    if (newStatus == ReservationStatus.Approved)
+                    {
+                        confirmMessage = L["ConfirmApproveReservation", 
+                            "Are you sure you want to approve this reservation? The payment will be captured and the customer will be charged."];
+                    }
+                    else if (newStatus == ReservationStatus.Rejected)
+                    {
+                        confirmMessage = L["ConfirmRejectReservation", 
+                            "Are you sure you want to reject this reservation? Any held payment will be canceled and the customer will not be charged."];
+                    }
+                    else if (newStatus == ReservationStatus.Canceled)
+                    {
+                        confirmMessage = L["ConfirmCancelReservation", 
+                            "Are you sure you want to cancel this reservation? Any held payment will be canceled."];
+                    }
+                    else
+                    {
+                        confirmMessage = L["ConfirmUpdateReservation", 
+                            "Are you sure you want to update the reservation status? This may affect any held payments."];
+                    }
+
+                    if (!await UiMessageService.Confirm(confirmMessage))
+                    {
+                        return;
+                    }
+                }
+
                 await ReservationsAppService.UpdateAsync(EditingReservationId, EditingReservation);
                 await GetReservationsAsync();
-                await EditReservationModal.Hide();                
+                await EditReservationModal.Hide();
+                
+                // Show success message with payment info
+                if (oldStatus != newStatus)
+                {
+                    if (newStatus == ReservationStatus.Approved)
+                    {
+                        await UiMessageService.Success(L["ReservationApprovedAndPaymentCaptured", 
+                            "Reservation approved successfully! Payment has been captured."]);
+                    }
+                    else if (newStatus == ReservationStatus.Rejected || newStatus == ReservationStatus.Canceled)
+                    {
+                        await UiMessageService.Success(L["ReservationUpdatedAndPaymentCanceled", 
+                            "Reservation updated successfully! Any held payment has been canceled."]);
+                    }
+                }
             }
             catch (Exception ex)
             {
