@@ -10,6 +10,7 @@ namespace AhlanFeekum.Reservations
     {
         Pending = 1,
         Approved = 2,
-        NotAvailable = 3
+        NotAvailable = 3,
+        Rejected = 4
     }
 }

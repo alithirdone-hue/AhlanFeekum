@@ -506,6 +506,7 @@ namespace AhlanFeekum.UserProfiles
         /// Creates a new Stripe PaymentIntent
         /// </summary>
         [Authorize(AhlanFeekumPermissions.UserPayments.Create)]
+        [RemoteService(false)]
         public virtual async Task<PaymentIntentResponseDto> CreatePaymentIntentAsync(CreatePaymentIntentDto input)
         {
             try
@@ -574,6 +575,7 @@ namespace AhlanFeekum.UserProfiles
         /// Retrieves an existing PaymentIntent
         /// </summary>
         [AllowAnonymous]
+        [RemoteService(false)]
         public virtual async Task<PaymentIntentResponseDto> GetPaymentIntentAsync(string paymentIntentId)
         {
             try
@@ -601,6 +603,7 @@ namespace AhlanFeekum.UserProfiles
         /// Confirms a PaymentIntent
         /// </summary>
         [Authorize(AhlanFeekumPermissions.UserPayments.Create)]
+        [RemoteService(false)]
         public virtual async Task<PaymentIntentResponseDto> ConfirmPaymentIntentAsync(ConfirmPaymentDto input)
         {
             try
@@ -618,7 +621,8 @@ namespace AhlanFeekum.UserProfiles
                 var service = new PaymentIntentService();
                 var paymentIntent = await service.ConfirmAsync(input.PaymentIntentId, options);
 
-                if(paymentIntent.Status != null && paymentIntent.Status.ToLower() == "succeeded")
+                // Handle different payment statuses
+                if(paymentIntent.Status != null)
                 {
                     GetUserPaymentsInput getUserPaymentsInput = new GetUserPaymentsInput()
                     {
@@ -632,14 +636,32 @@ namespace AhlanFeekum.UserProfiles
                     {
                         var payment = payments.Items.FirstOrDefault();
                         var updatePayment = ObjectMapper.Map<UserPaymentDto, UserPaymentUpdateDto>(payment.UserPayment);
-                        updatePayment.Status = UserPaymentStatus.succeeded;
-                        updatePayment.Description = paymentIntent.Description;
-                        updatePayment.AmountCapturable = paymentIntent.AmountCapturable;
-                        updatePayment.AmountReceived = paymentIntent.AmountReceived;
-                        await _userPaymentsAppService.UpdateAsync(payment.UserPayment.Id, updatePayment);
-                        Reservation reservation = await _reservationRepository.GetAsync(payment.Reservation.Id);
-                        reservation.ReservationStatus = ReservationStatus.Approved;
-                        await _reservationRepository.UpdateAsync(reservation, autoSave: true);
+                        
+                        // Update status based on Stripe payment intent status
+                        if (paymentIntent.Status.ToLower() == "succeeded")
+                        {
+                            // Automatic capture - payment completed
+                            updatePayment.Status = UserPaymentStatus.succeeded;
+                            updatePayment.Description = "Payment completed";
+                            updatePayment.AmountCapturable = paymentIntent.AmountCapturable;
+                            updatePayment.AmountReceived = paymentIntent.AmountReceived;
+                            await _userPaymentsAppService.UpdateAsync(payment.UserPayment.Id, updatePayment);
+                            
+                            Reservation reservation = await _reservationRepository.GetAsync(payment.Reservation.Id);
+                            reservation.ReservationStatus = ReservationStatus.Approved;
+                            await _reservationRepository.UpdateAsync(reservation, autoSave: true);
+                        }
+                        else if (paymentIntent.Status.ToLower() == "requires_capture")
+                        {
+                            // Manual capture - payment on hold
+                            updatePayment.Status = UserPaymentStatus.requires_capture;
+                            updatePayment.Description = "Payment authorized - awaiting capture";
+                            updatePayment.AmountCapturable = paymentIntent.AmountCapturable;
+                            updatePayment.AmountReceived = paymentIntent.AmountReceived;
+                            await _userPaymentsAppService.UpdateAsync(payment.UserPayment.Id, updatePayment);
+                            
+                            _logger.LogInformation("Payment {PaymentIntentId} confirmed and on hold for 24 hours", paymentIntent.Id);
+                        }
                     }
                 }
                 return MapPaymentIntentToDto(paymentIntent);
@@ -925,6 +947,268 @@ namespace AhlanFeekum.UserProfiles
             }
         }
 
+
+        #region Payment with Hold (Manual Capture)
+
+        /// <summary>
+        /// Creates a Payment Intent with manual capture (holds payment for 24 hours)
+        /// </summary>
+        [Authorize(AhlanFeekumPermissions.UserPayments.Create)]
+        public virtual async Task<PaymentIntentResponseDto> CreatePaymentIntentWithHoldAsync(CreatePaymentIntentDto input)
+        {
+            try
+            {
+                if (_currentUser == null)
+                    throw new UserFriendlyException("User not login");
+
+                if (input.Metadata == null || input.Metadata["bookingId"] == null)
+                    throw new UserFriendlyException("ReservationIsRequired");
+                Guid reservationId = Guid.Parse(input.Metadata["bookingId"]);
+
+                if (!(await _reservationRepository.AnyAsync(x => x.Id == reservationId)))
+                    throw new UserFriendlyException("ReservationNotFound");
+
+                // Set the Stripe API key from configuration
+                var stripeSection = _configuration.GetSection("Stripe");
+                StripeConfiguration.ApiKey = stripeSection["SecretKey"];
+
+                var options = new PaymentIntentCreateOptions
+                {
+                    Amount = input.Amount,
+                    Currency = input.Currency.ToLower(),
+                    CaptureMethod = "manual", // ⭐ Hold the payment instead of capturing immediately
+                    AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
+                    {
+                        Enabled = true,
+                    },
+                    Description = input.Description,
+                    ReceiptEmail = input.ReceiptEmail,
+                    Metadata = input.Metadata ?? new Dictionary<string, string>()
+                };
+
+                // Add user ID to metadata
+                if (input.UserId.HasValue)
+                {
+                    options.Metadata["user_id"] = input.UserId.Value.ToString();
+                }
+
+                // Add timestamp for 24-hour tracking
+                options.Metadata["hold_created_at"] = DateTime.UtcNow.ToString("o");
+
+                var service = new PaymentIntentService();
+                var paymentIntent = await service.CreateAsync(options);
+
+                // Save to database with Pending status (will become requires_capture after confirmation)
+                UserPaymentCreateDto userPaymentCreateDto = new UserPaymentCreateDto()
+                {
+                    Amount = paymentIntent.Amount,
+                    Currency = paymentIntent.Currency.ToLower(),
+                    StripClientSecret = paymentIntent.ClientSecret,
+                    StripPaymentId = paymentIntent.Id,
+                    ReceiptEmail = paymentIntent.ReceiptEmail,
+                    Status = UserPaymentStatus.Pending,
+                    UserProfileId = _currentUser.Id.Value,
+                    ReservationId = reservationId,
+                    Created = paymentIntent.Created.ToString(),
+                    Description = "Payment on hold - awaiting capture"
+                };
+                await _userPaymentsAppService.CreateAsync(userPaymentCreateDto);
+
+                _logger.LogInformation("Payment intent with hold created: {PaymentIntentId} for user {UserId}", 
+                    paymentIntent.Id, _currentUser.Id.Value);
+
+                return MapPaymentIntentToDto(paymentIntent);
+            }
+            catch (StripeException ex)
+            {
+                _logger.LogError(ex, "Stripe error creating payment with hold");
+                throw new UserFriendlyException($"Stripe error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating payment with hold");
+                throw new UserFriendlyException($"Payment creation failed: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Captures a held payment (completes the transaction)
+        /// </summary>
+        [Authorize(AhlanFeekumPermissions.UserPayments.Edit)]
+        public virtual async Task<PaymentIntentResponseDto> CapturePaymentAsync(string paymentIntentId)
+        {
+            try
+            {
+                // Set the Stripe API key from configuration
+                var stripeSection = _configuration.GetSection("Stripe");
+                StripeConfiguration.ApiKey = stripeSection["SecretKey"];
+
+                var service = new PaymentIntentService();
+                
+                // Capture the payment
+                var paymentIntent = await service.CaptureAsync(paymentIntentId);
+
+                // Update database status to succeeded
+                GetUserPaymentsInput getUserPaymentsInput = new GetUserPaymentsInput()
+                {
+                    StripPaymentId = paymentIntent.Id,
+                    SkipCount = 0,
+                    MaxResultCount = 1
+                };
+                var payments = await _userPaymentsAppService.GetListAsync(getUserPaymentsInput);
+                
+                if (payments.TotalCount > 0)
+                {
+                    var payment = payments.Items.FirstOrDefault();
+                    var updatePayment = ObjectMapper.Map<UserPaymentDto, UserPaymentUpdateDto>(payment.UserPayment);
+                    updatePayment.Status = UserPaymentStatus.succeeded;
+                    updatePayment.Description = "Payment captured successfully";
+                    updatePayment.AmountCapturable = paymentIntent.AmountCapturable;
+                    updatePayment.AmountReceived = paymentIntent.AmountReceived;
+                    await _userPaymentsAppService.UpdateAsync(payment.UserPayment.Id, updatePayment);
+
+                    // Update reservation status to Approved
+                    Reservation reservation = await _reservationRepository.GetAsync(payment.Reservation.Id);
+                    reservation.ReservationStatus = ReservationStatus.Approved;
+                    await _reservationRepository.UpdateAsync(reservation, autoSave: true);
+
+                    _logger.LogInformation("Payment captured: {PaymentIntentId} for reservation {ReservationId}", 
+                        paymentIntentId, reservation.Id);
+                }
+
+                return MapPaymentIntentToDto(paymentIntent);
+            }
+            catch (StripeException ex)
+            {
+                _logger.LogError(ex, "Stripe error capturing payment {PaymentIntentId}", paymentIntentId);
+                throw new UserFriendlyException($"Stripe error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error capturing payment {PaymentIntentId}", paymentIntentId);
+                throw new UserFriendlyException($"Payment capture failed: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Cancels a held payment (releases the authorization)
+        /// </summary>
+        [Authorize(AhlanFeekumPermissions.UserPayments.Edit)]
+        public virtual async Task<PaymentIntentResponseDto> CancelPaymentAsync(string paymentIntentId)
+        {
+            try
+            {
+                // Set the Stripe API key from configuration
+                var stripeSection = _configuration.GetSection("Stripe");
+                StripeConfiguration.ApiKey = stripeSection["SecretKey"];
+
+                var service = new PaymentIntentService();
+                
+                // Cancel the payment
+                var paymentIntent = await service.CancelAsync(paymentIntentId);
+
+                // Update database status to canceled
+                GetUserPaymentsInput getUserPaymentsInput = new GetUserPaymentsInput()
+                {
+                    StripPaymentId = paymentIntent.Id,
+                    SkipCount = 0,
+                    MaxResultCount = 1
+                };
+                var payments = await _userPaymentsAppService.GetListAsync(getUserPaymentsInput);
+                
+                if (payments.TotalCount > 0)
+                {
+                    var payment = payments.Items.FirstOrDefault();
+                    var updatePayment = ObjectMapper.Map<UserPaymentDto, UserPaymentUpdateDto>(payment.UserPayment);
+                    updatePayment.Status = UserPaymentStatus.canceled;
+                    updatePayment.Description = "Payment canceled";
+                    await _userPaymentsAppService.UpdateAsync(payment.UserPayment.Id, updatePayment);
+
+                    // Update reservation status to Rejected
+                    Reservation reservation = await _reservationRepository.GetAsync(payment.Reservation.Id);
+                    reservation.ReservationStatus = ReservationStatus.Rejected;
+                    await _reservationRepository.UpdateAsync(reservation, autoSave: true);
+
+                    _logger.LogInformation("Payment canceled: {PaymentIntentId} for reservation {ReservationId}", 
+                        paymentIntentId, reservation.Id);
+                }
+
+                return MapPaymentIntentToDto(paymentIntent);
+            }
+            catch (StripeException ex)
+            {
+                _logger.LogError(ex, "Stripe error canceling payment {PaymentIntentId}", paymentIntentId);
+                throw new UserFriendlyException($"Stripe error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error canceling payment {PaymentIntentId}", paymentIntentId);
+                throw new UserFriendlyException($"Payment cancellation failed: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Background job to process pending payments after 24 hours
+        /// Automatically captures or cancels payments based on reservation status
+        /// </summary>
+        [Authorize(AhlanFeekumPermissions.UserPayments.Edit)]
+        public virtual async Task ProcessPendingPaymentsAsync()
+        {
+            try
+            {
+                _logger.LogInformation("Starting to process pending payments older than 24 hours");
+
+                // Get all payments that are in requires_capture status and older than 24 hours
+                var cutoffTime = DateTime.UtcNow.AddHours(-24);
+                var queryable = await _userPaymentRepository.GetQueryableAsync();
+                
+                var pendingPayments = await AsyncExecuter.ToListAsync(
+                    queryable
+                        .Where(p => p.Status == UserPaymentStatus.requires_capture)
+                        .Where(p => p.CreationTime < cutoffTime)
+                );
+
+                _logger.LogInformation("Found {Count} pending payments to process", pendingPayments.Count);
+
+                foreach (var payment in pendingPayments)
+                {
+                    try
+                    {
+                        // Check if reservation is confirmed
+                        var reservation = await _reservationRepository.GetAsync(payment.ReservationId);
+                        
+                        if (reservation.ReservationStatus == ReservationStatus.Approved)
+                        {
+                            // Capture the payment
+                            _logger.LogInformation("Auto-capturing payment {PaymentId} for confirmed reservation {ReservationId}", 
+                                payment.Id, reservation.Id);
+                            await CapturePaymentAsync(payment.StripPaymentId);
+                        }
+                        else
+                        {
+                            // Cancel the payment
+                            _logger.LogInformation("Auto-canceling payment {PaymentId} for unconfirmed reservation {ReservationId}", 
+                                payment.Id, reservation.Id);
+                            await CancelPaymentAsync(payment.StripPaymentId);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error processing payment {PaymentId}", payment.Id);
+                        // Continue processing other payments even if one fails
+                    }
+                }
+
+                _logger.LogInformation("Completed processing pending payments");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in ProcessPendingPaymentsAsync");
+                throw new UserFriendlyException($"Failed to process pending payments: {ex.Message}");
+            }
+        }
+
+        #endregion
 
         [AllowAnonymous]
         public async Task<MobileResponseDto> CheckUserExistEmailOrPhone(string input)

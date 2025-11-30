@@ -30,6 +30,12 @@ namespace AhlanFeekum.UserProfiles
         Task<StripeWebhookEventDto> HandleStripeWebhookAsync(string json, string stripeSignature);
         Task<PaymentSummaryResponseDto> GetPaymentSummaryAsync(PaymentSummaryRequestDto input);
 
+        // Stripe Payment with Hold (Manual Capture)
+        Task<PaymentIntentResponseDto> CreatePaymentIntentWithHoldAsync(CreatePaymentIntentDto input);
+        Task<PaymentIntentResponseDto> CapturePaymentAsync(string paymentIntentId);
+        Task<PaymentIntentResponseDto> CancelPaymentAsync(string paymentIntentId);
+        Task ProcessPendingPaymentsAsync();
+
         Task<MobileResponseDto> CheckUserExistEmailOrPhone(string input);
 
     }

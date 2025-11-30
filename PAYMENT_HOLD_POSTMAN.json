@@ -1,0 +1,230 @@
+{
+  "info": {
+    "name": "Payment Hold System - Complete Collection",
+    "description": "Test collection for Payment Intent with Manual Capture (24-hour hold)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://admin.srv954186.hstgr.cloud",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "YOUR_JWT_TOKEN_HERE",
+      "type": "string"
+    },
+    {
+      "key": "payment_intent_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "booking_id",
+      "value": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Create Payment Intent with Hold",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Save payment intent ID for next requests",
+              "if (pm.response.code === 200) {",
+              "    var jsonData = pm.response.json();",
+              "    pm.collectionVariables.set('payment_intent_id', jsonData.id);",
+              "    console.log('Payment Intent ID saved:', jsonData.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": 10000,\n  \"currency\": \"usd\",\n  \"description\": \"Property booking - 3 nights\",\n  \"receiptEmail\": \"customer@example.com\",\n  \"metadata\": {\n    \"bookingId\": \"{{booking_id}}\",\n    \"propertyName\": \"Luxury Villa\",\n    \"nights\": \"3\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/mobile/payments/create-intent-with-hold",
+          "host": ["{{base_url}}"],
+          "path": ["api", "mobile", "payments", "create-intent-with-hold"]
+        },
+        "description": "Creates a payment intent with manual capture. Funds will be held for 24 hours."
+      },
+      "response": []
+    },
+    {
+      "name": "2. Get Payment Intent Status",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/mobile/payments/{{payment_intent_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["api", "mobile", "payments", "{{payment_intent_id}}"]
+        },
+        "description": "Check the current status of the payment intent"
+      },
+      "response": []
+    },
+    {
+      "name": "3. Confirm Payment (Hold Funds)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"paymentIntentId\": \"{{payment_intent_id}}\",\n  \"paymentMethodId\": \"pm_card_visa\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/mobile/payments/confirm",
+          "host": ["{{base_url}}"],
+          "path": ["api", "mobile", "payments", "confirm"]
+        },
+        "description": "Confirms the payment and holds the funds. Status will become 'requires_capture'.\n\nNote: In production, use a real payment method ID from Stripe.js or Flutter SDK."
+      },
+      "response": []
+    },
+    {
+      "name": "4. Capture Payment (Complete Transaction)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/mobile/payments/capture/{{payment_intent_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["api", "mobile", "payments", "capture", "{{payment_intent_id}}"]
+        },
+        "description": "Captures the held payment and transfers the money. Use this when the host approves the booking."
+      },
+      "response": []
+    },
+    {
+      "name": "5. Cancel Payment (Release Hold)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/mobile/payments/cancel/{{payment_intent_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["api", "mobile", "payments", "cancel", "{{payment_intent_id}}"]
+        },
+        "description": "Cancels the held payment and releases the authorization. Use this when the host rejects the booking."
+      },
+      "response": []
+    },
+    {
+      "name": "6. Process Pending Payments (Background Job)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/mobile/payments/process-pending",
+          "host": ["{{base_url}}"],
+          "path": ["api", "mobile", "payments", "process-pending"]
+        },
+        "description": "Manually trigger the background job to process all payments older than 24 hours. This should normally run automatically via cron job or Hangfire."
+      },
+      "response": []
+    },
+    {
+      "name": "Test: Create Multiple Payments",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": 5000,\n  \"currency\": \"usd\",\n  \"description\": \"Weekend getaway - 2 nights\",\n  \"receiptEmail\": \"test@example.com\",\n  \"metadata\": {\n    \"bookingId\": \"{{booking_id}}\",\n    \"propertyName\": \"Beach House\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/mobile/payments/create-intent-with-hold",
+          "host": ["{{base_url}}"],
+          "path": ["api", "mobile", "payments", "create-intent-with-hold"]
+        },
+        "description": "Create another payment for testing"
+      },
+      "response": []
+    }
+  ]
+}
+
