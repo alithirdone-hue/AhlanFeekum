@@ -21,7 +21,7 @@ namespace AhlanFeekum.Reservations
         }
 
         public virtual async Task<Reservation> CreateAsync(
-        Guid userProfileId, Guid sitePropertyId, DateOnly fromeDate, DateOnly toDate, double price, ReservationStatus reservationStatus, DateTime? checkInDate = null, DateTime? checkOutDate = null, int? numberOfGuest = null, double? discount = null, string? notes = null)
+        Guid userProfileId, Guid sitePropertyId, DateOnly fromeDate, DateOnly toDate, double price, ReservationStatus reservationStatus, bool isPaid, DateTime? checkInDate = null, DateTime? checkOutDate = null, int? numberOfGuest = null, double? discount = null, string? notes = null, ReservationPaymentMethod? reservationPaymentMethod = null, string? description = null)
         {
             Check.NotNull(userProfileId, nameof(userProfileId));
             Check.NotNull(sitePropertyId, nameof(sitePropertyId));
@@ -29,7 +29,7 @@ namespace AhlanFeekum.Reservations
 
             var reservation = new Reservation(
              GuidGenerator.Create(),
-             userProfileId, sitePropertyId, fromeDate, toDate, price, reservationStatus, checkInDate, checkOutDate, numberOfGuest, discount, notes
+             userProfileId, sitePropertyId, fromeDate, toDate, price, reservationStatus, isPaid, checkInDate, checkOutDate, numberOfGuest, discount, notes, reservationPaymentMethod, description
              );
 
             return await _reservationRepository.InsertAsync(reservation, autoSave: true);
@@ -37,7 +37,7 @@ namespace AhlanFeekum.Reservations
 
         public virtual async Task<Reservation> UpdateAsync(
             Guid id,
-            Guid userProfileId, Guid sitePropertyId, DateOnly fromeDate, DateOnly toDate, double price, ReservationStatus reservationStatus, DateTime? checkInDate = null, DateTime? checkOutDate = null, int? numberOfGuest = null, double? discount = null, string? notes = null, [CanBeNull] string? concurrencyStamp = null
+            Guid userProfileId, Guid sitePropertyId, DateOnly fromeDate, DateOnly toDate, double price, ReservationStatus reservationStatus, bool isPaid, DateTime? checkInDate = null, DateTime? checkOutDate = null, int? numberOfGuest = null, double? discount = null, string? notes = null, ReservationPaymentMethod? reservationPaymentMethod = null, string? description = null, [CanBeNull] string? concurrencyStamp = null
         )
         {
             Check.NotNull(userProfileId, nameof(userProfileId));
@@ -52,11 +52,14 @@ namespace AhlanFeekum.Reservations
             reservation.ToDate = toDate;
             reservation.Price = price;
             reservation.ReservationStatus = reservationStatus;
+            reservation.IsPaid = isPaid;
             reservation.CheckInDate = checkInDate;
             reservation.CheckOutDate = checkOutDate;
             reservation.NumberOfGuest = numberOfGuest;
             reservation.Discount = discount;
             reservation.Notes = notes;
+            reservation.ReservationPaymentMethod = reservationPaymentMethod;
+            reservation.Description = description;
 
             reservation.SetConcurrencyStampIfNotNull(concurrencyStamp);
             return await _reservationRepository.UpdateAsync(reservation);

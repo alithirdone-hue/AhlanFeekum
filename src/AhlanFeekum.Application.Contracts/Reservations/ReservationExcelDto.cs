@@ -14,5 +14,8 @@ namespace AhlanFeekum.Reservations
         public double? Discount { get; set; }
         public ReservationStatus ReservationStatus { get; set; }
         public string? Notes { get; set; }
+        public ReservationPaymentMethod? ReservationPaymentMethod { get; set; }
+        public bool IsPaid { get; set; }
+        public string? Description { get; set; }
     }
 }

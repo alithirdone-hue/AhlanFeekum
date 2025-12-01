@@ -310,6 +310,10 @@
     "Enum:PaymentMethod.3": "Bank transfer",
     "PaymentMethod": "Payment Method",
     "MinCreated": "Min Created",
-    "MaxCreated": "Max Created"
+    "MaxCreated": "Max Created",
+    "Enum:ReservationPaymentMethod.1": "Card",
+    "Enum:ReservationPaymentMethod.2": "Cash",
+    "ReservationPaymentMethod": "Reservation Payment Method",
+    "IsPaid": "Is Paid"
   }
 }

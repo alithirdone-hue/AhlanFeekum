@@ -25,6 +25,9 @@ namespace AhlanFeekum.Reservations
         public double? DiscountMax { get; set; }
         public ReservationStatus? ReservationStatus { get; set; }
         public string? Notes { get; set; }
+        public ReservationPaymentMethod? ReservationPaymentMethod { get; set; }
+        public bool? IsPaid { get; set; }
+        public string? Description { get; set; }
         public Guid? UserProfileId { get; set; }
         public Guid? SitePropertyId { get; set; }
 

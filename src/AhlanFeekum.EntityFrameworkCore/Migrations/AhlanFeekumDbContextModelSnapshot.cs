@@ -849,6 +849,10 @@ namespace AhlanFeekum.Migrations
                     .HasColumnType("datetime2")
                     .HasColumnName("DeletionTime");
 
+                b.Property<string>("Description")
+               .HasColumnType("nvarchar(max)")
+               .HasColumnName("Description");
+
                 b.Property<double?>("Discount")
                     .HasColumnType("float")
                     .HasColumnName("Discount");
@@ -867,6 +871,11 @@ namespace AhlanFeekum.Migrations
                     .HasColumnType("bit")
                     .HasDefaultValue(false)
                     .HasColumnName("IsDeleted");
+
+                b.Property<bool>("IsPaid")
+                  .HasColumnType("bit")
+                  .HasColumnName("IsPaid");
+
 
                 b.Property<DateTime?>("LastModificationTime")
                     .HasColumnType("datetime2")
@@ -887,6 +896,11 @@ namespace AhlanFeekum.Migrations
                 b.Property<double>("Price")
                     .HasColumnType("float")
                     .HasColumnName("Price");
+
+                b.Property<int?>("ReservationPaymentMethod")
+                      .HasColumnType("int")
+                      .HasColumnName("ReservationPaymentMethod");
+
 
                 b.Property<int>("ReservationStatus")
                     .HasColumnType("int")

@@ -1,25 +1,28 @@
+using AhlanFeekum.Reservations;
+using AhlanFeekum.Shared;
+using AhlanFeekum.Permissions;
+using AhlanFeekum.Reservations;
+using AhlanFeekum.Shared;
 using AhlanFeekum.Shared;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.UserProfiles;
+using AutoMapper.Internal.Mappers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Caching.Distributed;
+using MiniExcelLibs;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq.Dynamic.Core;
-using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
-using Volo.Abp.Domain.Repositories;
-using AhlanFeekum.Permissions;
-using AhlanFeekum.Reservations;
-using MiniExcelLibs;
-using Volo.Abp.Content;
 using Volo.Abp.Authorization;
 using Volo.Abp.Caching;
-using Microsoft.Extensions.Caching.Distributed;
-using AhlanFeekum.Shared;
+using Volo.Abp.Content;
+using Volo.Abp.Domain.Repositories;
 
 namespace AhlanFeekum.Reservations
 {
@@ -45,8 +48,8 @@ namespace AhlanFeekum.Reservations
 
         public virtual async Task<PagedResultDto<ReservationWithNavigationPropertiesDto>> GetListAsync(GetReservationsInput input)
         {
-            var totalCount = await _reservationRepository.GetCountAsync(input.FilterText, input.FromeDateMin, input.FromeDateMax, input.ToDateMin, input.ToDateMax, input.CheckInDateMin, input.CheckInDateMax, input.CheckOutDateMin, input.CheckOutDateMax, input.NumberOfGuestMin, input.NumberOfGuestMax, input.PriceMin, input.PriceMax, input.DiscountMin, input.DiscountMax, input.ReservationStatus, input.Notes, input.UserProfileId, input.SitePropertyId);
-            var items = await _reservationRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.FromeDateMin, input.FromeDateMax, input.ToDateMin, input.ToDateMax, input.CheckInDateMin, input.CheckInDateMax, input.CheckOutDateMin, input.CheckOutDateMax, input.NumberOfGuestMin, input.NumberOfGuestMax, input.PriceMin, input.PriceMax, input.DiscountMin, input.DiscountMax, input.ReservationStatus, input.Notes, input.UserProfileId, input.SitePropertyId, input.Sorting, input.MaxResultCount, input.SkipCount);
+            var totalCount = await _reservationRepository.GetCountAsync(input.FilterText, input.FromeDateMin, input.FromeDateMax, input.ToDateMin, input.ToDateMax, input.CheckInDateMin, input.CheckInDateMax, input.CheckOutDateMin, input.CheckOutDateMax, input.NumberOfGuestMin, input.NumberOfGuestMax, input.PriceMin, input.PriceMax, input.DiscountMin, input.DiscountMax, input.ReservationStatus, input.Notes, input.ReservationPaymentMethod, input.IsPaid, input.Description, input.UserProfileId, input.SitePropertyId);
+            var items = await _reservationRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.FromeDateMin, input.FromeDateMax, input.ToDateMin, input.ToDateMax, input.CheckInDateMin, input.CheckInDateMax, input.CheckOutDateMin, input.CheckOutDateMax, input.NumberOfGuestMin, input.NumberOfGuestMax, input.PriceMin, input.PriceMax, input.DiscountMin, input.DiscountMax, input.ReservationStatus, input.Notes, input.ReservationPaymentMethod, input.IsPaid, input.Description, input.UserProfileId, input.SitePropertyId, input.Sorting, input.MaxResultCount, input.SkipCount);
 
             return new PagedResultDto<ReservationWithNavigationPropertiesDto>
             {
@@ -117,7 +120,7 @@ namespace AhlanFeekum.Reservations
             }
 
             var reservation = await _reservationManager.CreateAsync(
-            input.UserProfileId, input.SitePropertyId, input.FromeDate, input.ToDate, input.Price, input.ReservationStatus, input.CheckInDate, input.CheckOutDate, input.NumberOfGuest, input.Discount, input.Notes
+            input.UserProfileId, input.SitePropertyId, input.FromeDate, input.ToDate, input.Price, input.ReservationStatus, input.IsPaid, input.CheckInDate, input.CheckOutDate, input.NumberOfGuest, input.Discount, input.Notes, input.ReservationPaymentMethod, input.Description
             );
 
             return ObjectMapper.Map<Reservation, ReservationDto>(reservation);
@@ -137,7 +140,7 @@ namespace AhlanFeekum.Reservations
 
             var reservation = await _reservationManager.UpdateAsync(
             id,
-            input.UserProfileId, input.SitePropertyId, input.FromeDate, input.ToDate, input.Price, input.ReservationStatus, input.CheckInDate, input.CheckOutDate, input.NumberOfGuest, input.Discount, input.Notes, input.ConcurrencyStamp
+            input.UserProfileId, input.SitePropertyId, input.FromeDate, input.ToDate, input.Price, input.ReservationStatus, input.IsPaid, input.CheckInDate, input.CheckOutDate, input.NumberOfGuest, input.Discount, input.Notes, input.ReservationPaymentMethod, input.Description, input.ConcurrencyStamp
             );
 
             return ObjectMapper.Map<Reservation, ReservationDto>(reservation);
@@ -152,7 +155,7 @@ namespace AhlanFeekum.Reservations
                 throw new AbpAuthorizationException("Invalid download token: " + input.DownloadToken);
             }
 
-            var reservations = await _reservationRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.FromeDateMin, input.FromeDateMax, input.ToDateMin, input.ToDateMax, input.CheckInDateMin, input.CheckInDateMax, input.CheckOutDateMin, input.CheckOutDateMax, input.NumberOfGuestMin, input.NumberOfGuestMax, input.PriceMin, input.PriceMax, input.DiscountMin, input.DiscountMax, input.ReservationStatus, input.Notes, input.UserProfileId, input.SitePropertyId);
+            var reservations = await _reservationRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.FromeDateMin, input.FromeDateMax, input.ToDateMin, input.ToDateMax, input.CheckInDateMin, input.CheckInDateMax, input.CheckOutDateMin, input.CheckOutDateMax, input.NumberOfGuestMin, input.NumberOfGuestMax, input.PriceMin, input.PriceMax, input.DiscountMin, input.DiscountMax, input.ReservationStatus, input.Notes, input.ReservationPaymentMethod, input.IsPaid, input.Description, input.UserProfileId, input.SitePropertyId);
             var items = reservations.Select(item => new
             {
                 FromeDate = item.Reservation.FromeDate,
@@ -164,6 +167,9 @@ namespace AhlanFeekum.Reservations
                 Discount = item.Reservation.Discount,
                 ReservationStatus = item.Reservation.ReservationStatus,
                 Notes = item.Reservation.Notes,
+                ReservationPaymentMethod = item.Reservation.ReservationPaymentMethod,
+                IsPaid = item.Reservation.IsPaid,
+                Description = item.Reservation.Description,
 
                 UserProfile = item.UserProfile?.Name,
                 SiteProperty = item.SiteProperty?.PropertyTitle,
@@ -186,7 +192,7 @@ namespace AhlanFeekum.Reservations
         [Authorize(AhlanFeekumPermissions.Reservations.Delete)]
         public virtual async Task DeleteAllAsync(GetReservationsInput input)
         {
-            await _reservationRepository.DeleteAllAsync(input.FilterText, input.FromeDateMin, input.FromeDateMax, input.ToDateMin, input.ToDateMax, input.CheckInDateMin, input.CheckInDateMax, input.CheckOutDateMin, input.CheckOutDateMax, input.NumberOfGuestMin, input.NumberOfGuestMax, input.PriceMin, input.PriceMax, input.DiscountMin, input.DiscountMax, input.ReservationStatus, input.Notes, input.UserProfileId, input.SitePropertyId);
+            await _reservationRepository.DeleteAllAsync(input.FilterText, input.FromeDateMin, input.FromeDateMax, input.ToDateMin, input.ToDateMax, input.CheckInDateMin, input.CheckInDateMax, input.CheckOutDateMin, input.CheckOutDateMax, input.NumberOfGuestMin, input.NumberOfGuestMax, input.PriceMin, input.PriceMax, input.DiscountMin, input.DiscountMax, input.ReservationStatus, input.Notes, input.ReservationPaymentMethod, input.IsPaid, input.Description, input.UserProfileId, input.SitePropertyId);
         }
         public virtual async Task<AhlanFeekum.Shared.DownloadTokenResultDto> GetDownloadTokenAsync()
         {

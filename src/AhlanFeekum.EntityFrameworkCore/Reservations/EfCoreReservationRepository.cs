@@ -41,13 +41,16 @@ namespace AhlanFeekum.Reservations
             double? discountMax = null,
             ReservationStatus? reservationStatus = null,
             string? notes = null,
+            ReservationPaymentMethod? reservationPaymentMethod = null,
+            bool? isPaid = null,
+            string? description = null,
             Guid? userProfileId = null,
             Guid? sitePropertyId = null,
             CancellationToken cancellationToken = default)
         {
             var query = await GetQueryForNavigationPropertiesAsync();
 
-            query = ApplyFilter(query, filterText, fromeDateMin, fromeDateMax, toDateMin, toDateMax, checkInDateMin, checkInDateMax, checkOutDateMin, checkOutDateMax, numberOfGuestMin, numberOfGuestMax, priceMin, priceMax, discountMin, discountMax, reservationStatus, notes, userProfileId, sitePropertyId);
+            query = ApplyFilter(query, filterText, fromeDateMin, fromeDateMax, toDateMin, toDateMax, checkInDateMin, checkInDateMax, checkOutDateMin, checkOutDateMax, numberOfGuestMin, numberOfGuestMax, priceMin, priceMax, discountMin, discountMax, reservationStatus, notes, reservationPaymentMethod, isPaid, description, userProfileId, sitePropertyId);
 
             var ids = query.Select(x => x.Reservation.Id);
             await DeleteManyAsync(ids, cancellationToken: GetCancellationToken(cancellationToken));
@@ -93,6 +96,9 @@ namespace AhlanFeekum.Reservations
             double? discountMax = null,
             ReservationStatus? reservationStatus = null,
             string? notes = null,
+            ReservationPaymentMethod? reservationPaymentMethod = null,
+            bool? isPaid = null,
+            string? description = null,
             Guid? userProfileId = null,
             Guid? sitePropertyId = null,
             string? sorting = null,
@@ -101,7 +107,7 @@ namespace AhlanFeekum.Reservations
             CancellationToken cancellationToken = default)
         {
             var query = await GetQueryForNavigationPropertiesAsync();
-            query = ApplyFilter(query, filterText, fromeDateMin, fromeDateMax, toDateMin, toDateMax, checkInDateMin, checkInDateMax, checkOutDateMin, checkOutDateMax, numberOfGuestMin, numberOfGuestMax, priceMin, priceMax, discountMin, discountMax, reservationStatus, notes, userProfileId, sitePropertyId);
+            query = ApplyFilter(query, filterText, fromeDateMin, fromeDateMax, toDateMin, toDateMax, checkInDateMin, checkInDateMax, checkOutDateMin, checkOutDateMax, numberOfGuestMin, numberOfGuestMax, priceMin, priceMax, discountMin, discountMax, reservationStatus, notes, reservationPaymentMethod, isPaid, description, userProfileId, sitePropertyId);
             query = query.OrderBy(string.IsNullOrWhiteSpace(sorting) ? ReservationConsts.GetDefaultSorting(true) : sorting);
             return await query.PageBy(skipCount, maxResultCount).ToListAsync(cancellationToken);
         }
@@ -148,11 +154,14 @@ namespace AhlanFeekum.Reservations
             double? discountMax = null,
             ReservationStatus? reservationStatus = null,
             string? notes = null,
+            ReservationPaymentMethod? reservationPaymentMethod = null,
+            bool? isPaid = null,
+            string? description = null,
             Guid? userProfileId = null,
             Guid? sitePropertyId = null)
         {
             return query
-                .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.Reservation.Notes!.Contains(filterText!))
+                .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.Reservation.Notes!.Contains(filterText!) || e.Reservation.Description!.Contains(filterText!))
                     .WhereIf(fromeDateMin.HasValue, e => e.Reservation.FromeDate >= fromeDateMin!.Value)
                     .WhereIf(fromeDateMax.HasValue, e => e.Reservation.FromeDate <= fromeDateMax!.Value)
                     .WhereIf(toDateMin.HasValue, e => e.Reservation.ToDate >= toDateMin!.Value)
@@ -169,6 +178,9 @@ namespace AhlanFeekum.Reservations
                     .WhereIf(discountMax.HasValue, e => e.Reservation.Discount <= discountMax!.Value)
                     .WhereIf(reservationStatus.HasValue, e => e.Reservation.ReservationStatus == reservationStatus)
                     .WhereIf(!string.IsNullOrWhiteSpace(notes), e => e.Reservation.Notes.Contains(notes))
+                    .WhereIf(reservationPaymentMethod.HasValue, e => e.Reservation.ReservationPaymentMethod == reservationPaymentMethod)
+                    .WhereIf(isPaid.HasValue, e => e.Reservation.IsPaid == isPaid)
+                    .WhereIf(!string.IsNullOrWhiteSpace(description), e => e.Reservation.Description.Contains(description))
                     .WhereIf(userProfileId != null && userProfileId != Guid.Empty, e => e.UserProfile != null && e.UserProfile.Id == userProfileId)
                     .WhereIf(sitePropertyId != null && sitePropertyId != Guid.Empty, e => e.SiteProperty != null && e.SiteProperty.Id == sitePropertyId);
         }
@@ -191,12 +203,15 @@ namespace AhlanFeekum.Reservations
             double? discountMax = null,
             ReservationStatus? reservationStatus = null,
             string? notes = null,
+            ReservationPaymentMethod? reservationPaymentMethod = null,
+            bool? isPaid = null,
+            string? description = null,
             string? sorting = null,
             int maxResultCount = int.MaxValue,
             int skipCount = 0,
             CancellationToken cancellationToken = default)
         {
-            var query = ApplyFilter((await GetQueryableAsync()), filterText, fromeDateMin, fromeDateMax, toDateMin, toDateMax, checkInDateMin, checkInDateMax, checkOutDateMin, checkOutDateMax, numberOfGuestMin, numberOfGuestMax, priceMin, priceMax, discountMin, discountMax, reservationStatus, notes);
+            var query = ApplyFilter((await GetQueryableAsync()), filterText, fromeDateMin, fromeDateMax, toDateMin, toDateMax, checkInDateMin, checkInDateMax, checkOutDateMin, checkOutDateMax, numberOfGuestMin, numberOfGuestMax, priceMin, priceMax, discountMin, discountMax, reservationStatus, notes, reservationPaymentMethod, isPaid, description);
             query = query.OrderBy(string.IsNullOrWhiteSpace(sorting) ? ReservationConsts.GetDefaultSorting(false) : sorting);
             return await query.PageBy(skipCount, maxResultCount).ToListAsync(cancellationToken);
         }
@@ -219,12 +234,15 @@ namespace AhlanFeekum.Reservations
             double? discountMax = null,
             ReservationStatus? reservationStatus = null,
             string? notes = null,
+            ReservationPaymentMethod? reservationPaymentMethod = null,
+            bool? isPaid = null,
+            string? description = null,
             Guid? userProfileId = null,
             Guid? sitePropertyId = null,
             CancellationToken cancellationToken = default)
         {
             var query = await GetQueryForNavigationPropertiesAsync();
-            query = ApplyFilter(query, filterText, fromeDateMin, fromeDateMax, toDateMin, toDateMax, checkInDateMin, checkInDateMax, checkOutDateMin, checkOutDateMax, numberOfGuestMin, numberOfGuestMax, priceMin, priceMax, discountMin, discountMax, reservationStatus, notes, userProfileId, sitePropertyId);
+            query = ApplyFilter(query, filterText, fromeDateMin, fromeDateMax, toDateMin, toDateMax, checkInDateMin, checkInDateMax, checkOutDateMin, checkOutDateMax, numberOfGuestMin, numberOfGuestMax, priceMin, priceMax, discountMin, discountMax, reservationStatus, notes, reservationPaymentMethod, isPaid, description, userProfileId, sitePropertyId);
             return await query.LongCountAsync(GetCancellationToken(cancellationToken));
         }
 
@@ -246,10 +264,13 @@ namespace AhlanFeekum.Reservations
             double? discountMin = null,
             double? discountMax = null,
             ReservationStatus? reservationStatus = null,
-            string? notes = null)
+            string? notes = null,
+            ReservationPaymentMethod? reservationPaymentMethod = null,
+            bool? isPaid = null,
+            string? description = null)
         {
             return query
-                    .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.Notes!.Contains(filterText!))
+                    .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.Notes!.Contains(filterText!) || e.Description!.Contains(filterText!))
                     .WhereIf(fromeDateMin.HasValue, e => e.FromeDate >= fromeDateMin!.Value)
                     .WhereIf(fromeDateMax.HasValue, e => e.FromeDate <= fromeDateMax!.Value)
                     .WhereIf(toDateMin.HasValue, e => e.ToDate >= toDateMin!.Value)
@@ -265,7 +286,10 @@ namespace AhlanFeekum.Reservations
                     .WhereIf(discountMin.HasValue, e => e.Discount >= discountMin!.Value)
                     .WhereIf(discountMax.HasValue, e => e.Discount <= discountMax!.Value)
                     .WhereIf(reservationStatus.HasValue, e => e.ReservationStatus == reservationStatus)
-                    .WhereIf(!string.IsNullOrWhiteSpace(notes), e => e.Notes.Contains(notes));
+                    .WhereIf(!string.IsNullOrWhiteSpace(notes), e => e.Notes.Contains(notes))
+                    .WhereIf(reservationPaymentMethod.HasValue, e => e.ReservationPaymentMethod == reservationPaymentMethod)
+                    .WhereIf(isPaid.HasValue, e => e.IsPaid == isPaid)
+                    .WhereIf(!string.IsNullOrWhiteSpace(description), e => e.Description.Contains(description));
         }
     }
 }

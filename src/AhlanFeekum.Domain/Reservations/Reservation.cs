@@ -34,6 +34,13 @@ namespace AhlanFeekum.Reservations
 
         [CanBeNull]
         public virtual string? Notes { get; set; }
+
+        public virtual ReservationPaymentMethod? ReservationPaymentMethod { get; set; }
+
+        public virtual bool IsPaid { get; set; }
+
+        [CanBeNull]
+        public virtual string? Description { get; set; }
         public Guid UserProfileId { get; set; }
         public Guid SitePropertyId { get; set; }
 
@@ -42,7 +49,7 @@ namespace AhlanFeekum.Reservations
 
         }
 
-        public ReservationBase(Guid id, Guid userProfileId, Guid sitePropertyId, DateOnly fromeDate, DateOnly toDate, double price, ReservationStatus reservationStatus, DateTime? checkInDate = null, DateTime? checkOutDate = null, int? numberOfGuest = null, double? discount = null, string? notes = null)
+        public ReservationBase(Guid id, Guid userProfileId, Guid sitePropertyId, DateOnly fromeDate, DateOnly toDate, double price, ReservationStatus reservationStatus, bool isPaid, DateTime? checkInDate = null, DateTime? checkOutDate = null, int? numberOfGuest = null, double? discount = null, string? notes = null, ReservationPaymentMethod? reservationPaymentMethod = null, string? description = null)
         {
 
             Id = id;
@@ -50,11 +57,14 @@ namespace AhlanFeekum.Reservations
             ToDate = toDate;
             Price = price;
             ReservationStatus = reservationStatus;
+            IsPaid = isPaid;
             CheckInDate = checkInDate;
             CheckOutDate = checkOutDate;
             NumberOfGuest = numberOfGuest;
             Discount = discount;
             Notes = notes;
+            ReservationPaymentMethod = reservationPaymentMethod;
+            Description = description;
             UserProfileId = userProfileId;
             SitePropertyId = sitePropertyId;
         }

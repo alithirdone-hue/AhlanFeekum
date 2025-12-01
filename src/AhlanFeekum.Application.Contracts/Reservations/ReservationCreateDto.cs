@@ -16,6 +16,9 @@ namespace AhlanFeekum.Reservations
         public double? Discount { get; set; } = 0;
         public ReservationStatus ReservationStatus { get; set; } = ((ReservationStatus[])Enum.GetValues(typeof(ReservationStatus)))[0];
         public string? Notes { get; set; }
+        public ReservationPaymentMethod? ReservationPaymentMethod { get; set; }
+        public bool IsPaid { get; set; } = false;
+        public string? Description { get; set; }
         public Guid UserProfileId { get; set; }
         public Guid SitePropertyId { get; set; }
     }

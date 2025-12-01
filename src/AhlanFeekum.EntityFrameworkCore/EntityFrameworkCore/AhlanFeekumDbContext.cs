@@ -15,8 +15,9 @@ using AhlanFeekum.Statuses;
 using AhlanFeekum.Tickets;
 using AhlanFeekum.UserNotifications;
 using AhlanFeekum.UserPayments;
-using AhlanFeekum.UserProfiles;
 using AhlanFeekum.UserPayments;
+using AhlanFeekum.UserProfiles;
+using AhlanFeekum.Reservations;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -364,25 +365,6 @@ public class AhlanFeekumDbContext :
         {
 
         }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<Reservation>(b =>
-            {
-                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "Reservations", AhlanFeekumConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.Property(x => x.FromeDate).HasColumnName(nameof(Reservation.FromeDate));
-                b.Property(x => x.ToDate).HasColumnName(nameof(Reservation.ToDate));
-                b.Property(x => x.CheckInDate).HasColumnName(nameof(Reservation.CheckInDate));
-                b.Property(x => x.CheckOutDate).HasColumnName(nameof(Reservation.CheckOutDate));
-                b.Property(x => x.NumberOfGuest).HasColumnName(nameof(Reservation.NumberOfGuest));
-                b.Property(x => x.Price).HasColumnName(nameof(Reservation.Price));
-                b.Property(x => x.Discount).HasColumnName(nameof(Reservation.Discount));
-                b.Property(x => x.ReservationStatus).HasColumnName(nameof(Reservation.ReservationStatus));
-                b.Property(x => x.Notes).HasColumnName(nameof(Reservation.Notes));
-                b.HasOne<UserProfile>().WithMany().IsRequired().HasForeignKey(x => x.UserProfileId).OnDelete(DeleteBehavior.NoAction);
-                b.HasOne<SiteProperty>().WithMany().IsRequired().HasForeignKey(x => x.SitePropertyId).OnDelete(DeleteBehavior.NoAction);
-            });
-        }
 
         if (builder.IsHostDatabase())
         {
@@ -536,6 +518,34 @@ public class AhlanFeekumDbContext :
                 b.Property(x => x.PaymentMethod).HasColumnName(nameof(UserPayment.PaymentMethod));
                 b.HasOne<UserProfile>().WithMany().IsRequired().HasForeignKey(x => x.UserProfileId).OnDelete(DeleteBehavior.NoAction);
                 b.HasOne<Reservation>().WithMany().IsRequired().HasForeignKey(x => x.ReservationId).OnDelete(DeleteBehavior.NoAction);
+            });
+
+        }
+
+        if (builder.IsHostDatabase())
+        {
+
+        }
+        if (builder.IsHostDatabase())
+        {
+            builder.Entity<Reservation>(b =>
+            {
+                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "Reservations", AhlanFeekumConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.Property(x => x.FromeDate).HasColumnName(nameof(Reservation.FromeDate));
+                b.Property(x => x.ToDate).HasColumnName(nameof(Reservation.ToDate));
+                b.Property(x => x.CheckInDate).HasColumnName(nameof(Reservation.CheckInDate));
+                b.Property(x => x.CheckOutDate).HasColumnName(nameof(Reservation.CheckOutDate));
+                b.Property(x => x.NumberOfGuest).HasColumnName(nameof(Reservation.NumberOfGuest));
+                b.Property(x => x.Price).HasColumnName(nameof(Reservation.Price));
+                b.Property(x => x.Discount).HasColumnName(nameof(Reservation.Discount));
+                b.Property(x => x.ReservationStatus).HasColumnName(nameof(Reservation.ReservationStatus));
+                b.Property(x => x.Notes).HasColumnName(nameof(Reservation.Notes));
+                b.Property(x => x.ReservationPaymentMethod).HasColumnName(nameof(Reservation.ReservationPaymentMethod));
+                b.Property(x => x.IsPaid).HasColumnName(nameof(Reservation.IsPaid));
+                b.Property(x => x.Description).HasColumnName(nameof(Reservation.Description));
+                b.HasOne<UserProfile>().WithMany().IsRequired().HasForeignKey(x => x.UserProfileId).OnDelete(DeleteBehavior.NoAction);
+                b.HasOne<SiteProperty>().WithMany().IsRequired().HasForeignKey(x => x.SitePropertyId).OnDelete(DeleteBehavior.NoAction);
             });
 
         }
