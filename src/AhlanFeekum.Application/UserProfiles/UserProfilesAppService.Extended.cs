@@ -556,7 +556,8 @@ namespace AhlanFeekum.UserProfiles
                     Status = UserPaymentStatus.Pending,
                     UserProfileId = _currentUser.Id.Value,
                     ReservationId = reservationId,
-                    Created = paymentIntent.Created.ToString(),
+                    Created = paymentIntent.Created,
+                    PaymentMethod = UserPayments.PaymentMethod.Card
                 };
                 await _userPaymentsAppService.CreateAsync(userPaymentCreateDto);
                 return MapPaymentIntentToDto(paymentIntent);
@@ -1009,7 +1010,8 @@ namespace AhlanFeekum.UserProfiles
                     Status = UserPaymentStatus.Pending,
                     UserProfileId = _currentUser.Id.Value,
                     ReservationId = reservationId,
-                    Created = paymentIntent.Created.ToString(),
+                    Created = paymentIntent.Created,
+                    PaymentMethod = UserPayments.PaymentMethod.Card,
                     Description = "Payment on hold - awaiting capture"
                 };
                 await _userPaymentsAppService.CreateAsync(userPaymentCreateDto);

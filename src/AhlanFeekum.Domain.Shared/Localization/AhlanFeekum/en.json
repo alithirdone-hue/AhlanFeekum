@@ -304,6 +304,12 @@
     "NewUserPayment": "New User Payment",
     "Menu:UserPayments": "User Payments",
     "StripPaymentId": "Strip Payment Id",
-    "StripClientSecret": "Strip Client Secret"
+    "StripClientSecret": "Strip Client Secret",
+    "Enum:PaymentMethod.1": "Card",
+    "Enum:PaymentMethod.2": "Cash",
+    "Enum:PaymentMethod.3": "Bank transfer",
+    "PaymentMethod": "Payment Method",
+    "MinCreated": "Min Created",
+    "MaxCreated": "Max Created"
   }
 }

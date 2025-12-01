@@ -1411,11 +1411,9 @@ namespace AhlanFeekum.Migrations
                 b.Property<string>("ConfirmationMethod")
                     .HasColumnType("nvarchar(max)")
                     .HasColumnName("ConfirmationMethod");
-                
-                b.Property<string>("Created")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)")
-                    .HasColumnName("Created");
+
+                b.Property<DateTime>("Created")
+                                       .HasColumnType("datetime2");
 
                 b.Property<DateTime>("CreationTime")
                     .HasColumnType("datetime2")
@@ -1426,7 +1424,6 @@ namespace AhlanFeekum.Migrations
                     .HasColumnName("CreatorId");
 
                 b.Property<string>("Currency")
-                    .IsRequired()
                     .HasColumnType("nvarchar(max)")
                     .HasColumnName("Currency");
 
@@ -1461,6 +1458,10 @@ namespace AhlanFeekum.Migrations
                     .HasColumnType("uniqueidentifier")
                     .HasColumnName("LastModifierId");
 
+                b.Property<int>("PaymentMethod")
+                      .HasColumnType("int")
+                      .HasColumnName("PaymentMethod");
+
                 b.Property<string>("ReceiptEmail")
                     .HasColumnType("nvarchar(max)")
                     .HasColumnName("ReceiptEmail");
@@ -1473,12 +1474,10 @@ namespace AhlanFeekum.Migrations
                     .HasColumnName("Status");
 
                 b.Property<string>("StripClientSecret")
-        .IsRequired()
         .HasColumnType("nvarchar(max)")
         .HasColumnName("StripClientSecret");
 
                 b.Property<string>("StripPaymentId")
-                    .IsRequired()
                     .HasColumnType("nvarchar(max)")
                     .HasColumnName("StripPaymentId");
 

@@ -22,6 +22,8 @@ using Volo.Abp.Content;
 
 using AhlanFeekum.UserPayments;
 
+using AhlanFeekum.UserPayments;
+
 
 
 namespace AhlanFeekum.Blazor.Pages
@@ -164,7 +166,7 @@ private IReadOnlyList<LookupDto<Guid>> ReservationsCollection { get; set; } = ne
                 culture = "&culture=" + culture;
             }
             await RemoteServiceConfigurationProvider.GetConfigurationOrDefaultOrNullAsync("Default");
-            NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/user-payments/as-excel-file?DownloadToken={token}&FilterText={HttpUtility.UrlEncode(Filter.FilterText)}{culture}&AmountMin={Filter.AmountMin}&AmountMax={Filter.AmountMax}&Currency={HttpUtility.UrlEncode(Filter.Currency)}&Description={HttpUtility.UrlEncode(Filter.Description)}&ReceiptEmail={HttpUtility.UrlEncode(Filter.ReceiptEmail)}&AmountCapturableMin={Filter.AmountCapturableMin}&AmountCapturableMax={Filter.AmountCapturableMax}&AmountReceivedMin={Filter.AmountReceivedMin}&AmountReceivedMax={Filter.AmountReceivedMax}&ConfirmationMethod={HttpUtility.UrlEncode(Filter.ConfirmationMethod)}&Status={Filter.Status}&StripPaymentId={HttpUtility.UrlEncode(Filter.StripPaymentId)}&StripClientSecret={HttpUtility.UrlEncode(Filter.StripClientSecret)}&Created={HttpUtility.UrlEncode(Filter.Created)}&UserProfileId={Filter.UserProfileId}&ReservationId={Filter.ReservationId}", forceLoad: true);
+            NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/user-payments/as-excel-file?DownloadToken={token}&FilterText={HttpUtility.UrlEncode(Filter.FilterText)}{culture}&AmountMin={Filter.AmountMin}&AmountMax={Filter.AmountMax}&Currency={HttpUtility.UrlEncode(Filter.Currency)}&Description={HttpUtility.UrlEncode(Filter.Description)}&ReceiptEmail={HttpUtility.UrlEncode(Filter.ReceiptEmail)}&AmountCapturableMin={Filter.AmountCapturableMin}&AmountCapturableMax={Filter.AmountCapturableMax}&AmountReceivedMin={Filter.AmountReceivedMin}&AmountReceivedMax={Filter.AmountReceivedMax}&ConfirmationMethod={HttpUtility.UrlEncode(Filter.ConfirmationMethod)}&Status={Filter.Status}&StripPaymentId={HttpUtility.UrlEncode(Filter.StripPaymentId)}&StripClientSecret={HttpUtility.UrlEncode(Filter.StripClientSecret)}&CreatedMin={Filter.CreatedMin?.ToString("O")}&CreatedMax={Filter.CreatedMax?.ToString("O")}&PaymentMethod={Filter.PaymentMethod}&UserProfileId={Filter.UserProfileId}&ReservationId={Filter.ReservationId}", forceLoad: true);
         }
 
         private async Task OnDataGridReadAsync(DataGridReadDataEventArgs<UserPaymentWithNavigationPropertiesDto> e)
@@ -181,7 +183,8 @@ private IReadOnlyList<LookupDto<Guid>> ReservationsCollection { get; set; } = ne
         private async Task OpenCreateUserPaymentModalAsync()
         {
             NewUserPayment = new UserPaymentCreateDto{
-                
+                Created = DateTime.Now,
+
                 UserProfileId = UserProfilesCollection.Select(i=>i.Id).FirstOrDefault(),
 ReservationId = ReservationsCollection.Select(i=>i.Id).FirstOrDefault(),
 
@@ -197,7 +200,8 @@ ReservationId = ReservationsCollection.Select(i=>i.Id).FirstOrDefault(),
         private async Task CloseCreateUserPaymentModalAsync()
         {
             NewUserPayment = new UserPaymentCreateDto{
-                
+                Created = DateTime.Now,
+
                 UserProfileId = UserProfilesCollection.Select(i=>i.Id).FirstOrDefault(),
 ReservationId = ReservationsCollection.Select(i=>i.Id).FirstOrDefault(),
 
@@ -351,9 +355,19 @@ ReservationId = ReservationsCollection.Select(i=>i.Id).FirstOrDefault(),
             Filter.StripClientSecret = stripClientSecret;
             await SearchAsync();
         }
-        protected virtual async Task OnCreatedChangedAsync(string? created)
+        protected virtual async Task OnCreatedMinChangedAsync(DateTime? createdMin)
         {
-            Filter.Created = created;
+            Filter.CreatedMin = createdMin.HasValue ? createdMin.Value.Date : createdMin;
+            await SearchAsync();
+        }
+        protected virtual async Task OnCreatedMaxChangedAsync(DateTime? createdMax)
+        {
+            Filter.CreatedMax = createdMax.HasValue ? createdMax.Value.Date.AddDays(1).AddSeconds(-1) : createdMax;
+            await SearchAsync();
+        }
+        protected virtual async Task OnPaymentMethodChangedAsync(PaymentMethod? paymentMethod)
+        {
+            Filter.PaymentMethod = paymentMethod;
             await SearchAsync();
         }
         protected virtual async Task OnUserProfileIdChangedAsync(Guid? userProfileId)

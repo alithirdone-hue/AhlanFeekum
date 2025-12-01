@@ -23,7 +23,9 @@ namespace AhlanFeekum.UserPayments
         public UserPaymentStatus? Status { get; set; }
         public string? StripPaymentId { get; set; }
         public string? StripClientSecret { get; set; }
-        public string? Created { get; set; }
+        public DateTime? CreatedMin { get; set; }
+        public DateTime? CreatedMax { get; set; }
+        public PaymentMethod? PaymentMethod { get; set; }
         public Guid? UserProfileId { get; set; }
         public Guid? ReservationId { get; set; }
 

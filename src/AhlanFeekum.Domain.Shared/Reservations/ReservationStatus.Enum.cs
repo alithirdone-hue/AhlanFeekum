@@ -11,6 +11,8 @@ namespace AhlanFeekum.Reservations
         Pending = 1,
         Approved = 2,
         NotAvailable = 3,
-        Rejected = 4
+        Rejected = 4,
+        Canceled = 4,
+        Confirmed = 5,
     }
 }

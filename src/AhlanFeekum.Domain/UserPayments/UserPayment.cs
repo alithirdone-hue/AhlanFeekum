@@ -18,8 +18,8 @@ namespace AhlanFeekum.UserPayments
     {
         public virtual long Amount { get; set; }
 
-        [NotNull]
-        public virtual string Currency { get; set; }
+        [CanBeNull]
+        public virtual string? Currency { get; set; }
 
         [CanBeNull]
         public virtual string? Description { get; set; }
@@ -36,14 +36,15 @@ namespace AhlanFeekum.UserPayments
 
         public virtual UserPaymentStatus Status { get; set; }
 
-        [NotNull]
-        public virtual string StripPaymentId { get; set; }
+        [CanBeNull]
+        public virtual string? StripPaymentId { get; set; }
 
-        [NotNull]
-        public virtual string StripClientSecret { get; set; }
+        [CanBeNull]
+        public virtual string? StripClientSecret { get; set; }
 
-        [NotNull]
-        public virtual string Created { get; set; }
+        public virtual DateTime Created { get; set; }
+
+        public virtual PaymentMethod PaymentMethod { get; set; }
         public Guid UserProfileId { get; set; }
         public Guid ReservationId { get; set; }
 
@@ -52,25 +53,22 @@ namespace AhlanFeekum.UserPayments
 
         }
 
-        public UserPaymentBase(Guid id, Guid userProfileId, Guid reservationId, long amount, string currency, long amountCapturable, long amountReceived, UserPaymentStatus status, string stripPaymentId, string stripClientSecret, string created, string? description = null, string? receiptEmail = null, string? confirmationMethod = null)
+        public UserPaymentBase(Guid id, Guid userProfileId, Guid reservationId, long amount, long amountCapturable, long amountReceived, UserPaymentStatus status, DateTime created, PaymentMethod paymentMethod, string? currency = null, string? description = null, string? receiptEmail = null, string? confirmationMethod = null, string? stripPaymentId = null, string? stripClientSecret = null)
         {
 
             Id = id;
-            Check.NotNull(currency, nameof(currency));
-            Check.NotNull(stripPaymentId, nameof(stripPaymentId));
-            Check.NotNull(stripClientSecret, nameof(stripClientSecret));
-            Check.NotNull(created, nameof(created));
             Amount = amount;
-            Currency = currency;
             AmountCapturable = amountCapturable;
             AmountReceived = amountReceived;
             Status = status;
-            StripPaymentId = stripPaymentId;
-            StripClientSecret = stripClientSecret;
             Created = created;
+            PaymentMethod = paymentMethod;
+            Currency = currency;
             Description = description;
             ReceiptEmail = receiptEmail;
             ConfirmationMethod = confirmationMethod;
+            StripPaymentId = stripPaymentId;
+            StripClientSecret = stripClientSecret;
             UserProfileId = userProfileId;
             ReservationId = reservationId;
         }

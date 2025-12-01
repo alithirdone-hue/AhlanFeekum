@@ -31,6 +31,8 @@
 @inject NavigationManager NavigationManager
 @using AhlanFeekum.UserPayments
 
+@using AhlanFeekum.UserPayments
+
 
 @* ************************* PAGE HEADER ************************* *@
 <PageHeader Title="@L["UserPayments"]" BreadcrumbItems="BreadcrumbItems" Toolbar="Toolbar">
@@ -179,8 +181,41 @@
                 </Column>
                 <Column ColumnSize="ColumnSize.Is3">
                     <Field>
-                        <FieldLabel>@L["Created"]</FieldLabel>
-                        <TextEdit Text="@Filter.Created" TextChanged="@OnCreatedChangedAsync" />                       
+                        <FieldLabel>@L["MinCreated"]</FieldLabel>
+                        <DatePicker TValue="DateTime?"
+            InputMode="DateInputMode.Date"
+            Date="@Filter.CreatedMin"
+            DateChanged="@OnCreatedMinChangedAsync"
+            Placeholder="@string.Empty" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MaxCreated"]</FieldLabel>
+                        <DatePicker TValue="DateTime?"
+            InputMode="DateInputMode.Date"
+            Date="@Filter.CreatedMax"
+            DateChanged="@OnCreatedMaxChangedAsync"
+            Placeholder="@string.Empty" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["PaymentMethod"]</FieldLabel>
+                        <Select TValue="PaymentMethod?"
+		SelectedValue="@Filter.PaymentMethod"
+		SelectedValueChanged="@OnPaymentMethodChangedAsync">
+
+<SelectItem></SelectItem>
+
+@foreach(PaymentMethod value in Enum.GetValues(typeof(PaymentMethod)))
+{
+	<SelectItem Value="value">
+		@value
+	</SelectItem>
+}
+
+</Select>                       
                     </Field>
                 </Column>
                 <Column ColumnSize="ColumnSize.Is3">
@@ -392,7 +427,19 @@
               <DataGridColumn TItem="UserPaymentWithNavigationPropertiesDto"
                       Field="UserPayment.Created"
                       Caption="@L["Created"]">
+                  <DisplayTemplate>
+                        @context.UserPayment.Created.ToShortDateString()
+                  </DisplayTemplate>
               </DataGridColumn>
+
+              <DataGridColumn TItem="UserPaymentWithNavigationPropertiesDto"
+                      Field="UserPayment.PaymentMethod"
+                      Caption="@L["PaymentMethod"]">
+                    <DisplayTemplate>
+                        @L[$"Enum:PaymentMethod.{(int)context.UserPayment.PaymentMethod}"]
+                    </DisplayTemplate>
+              </DataGridColumn>
+
 
               <DataGridColumn TItem="UserPaymentWithNavigationPropertiesDto"
                       Field="UserProfile.Name"
@@ -442,7 +489,7 @@
 
                     <Validation MessageLocalizer="@LH.Localize">
                         <Field>
-                            <FieldLabel>@L["Currency"] *</FieldLabel>
+                            <FieldLabel>@L["Currency"]</FieldLabel>
                             <TextEdit @bind-Text="@NewUserPayment.Currency"  >
                                 <Feedback>
                                     <ValidationError />
@@ -527,7 +574,7 @@
 
                     <Validation MessageLocalizer="@LH.Localize">
                         <Field>
-                            <FieldLabel>@L["StripPaymentId"] *</FieldLabel>
+                            <FieldLabel>@L["StripPaymentId"]</FieldLabel>
                             <TextEdit @bind-Text="@NewUserPayment.StripPaymentId"  >
                                 <Feedback>
                                     <ValidationError />
@@ -539,7 +586,7 @@
 
                     <Validation MessageLocalizer="@LH.Localize">
                         <Field>
-                            <FieldLabel>@L["StripClientSecret"] *</FieldLabel>
+                            <FieldLabel>@L["StripClientSecret"]</FieldLabel>
                             <TextEdit @bind-Text="@NewUserPayment.StripClientSecret"  >
                                 <Feedback>
                                     <ValidationError />
@@ -551,14 +598,27 @@
 
                     <Validation MessageLocalizer="@LH.Localize">
                         <Field>
-                            <FieldLabel>@L["Created"] *</FieldLabel>
-                            <TextEdit @bind-Text="@NewUserPayment.Created"  >
-                                <Feedback>
+                            <FieldLabel>@L["Created"]</FieldLabel>
+                            <DateEdit TValue="DateTime" InputMode="DateInputMode.Date" @bind-Date="@NewUserPayment.Created" >
+                               <Feedback>
                                     <ValidationError />
                                 </Feedback>
-                            </TextEdit>
+                            </DateEdit>
                         </Field>
                     </Validation>
+
+
+                    <Field>
+                        <FieldLabel>@L["PaymentMethod"]</FieldLabel>
+                        <Select TValue="PaymentMethod" @bind-SelectedValue="@NewUserPayment.PaymentMethod" >
+                            @foreach (var itemValue in Enum.GetValues(typeof(PaymentMethod)))
+                            {
+                                <SelectItem TValue="PaymentMethod" Value="@((PaymentMethod) itemValue)">
+                                    @L[$"Enum:PaymentMethod.{((PaymentMethod) itemValue).ToString("d")}"]
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
 
 
                     <Field>
@@ -637,7 +697,7 @@
 
                     <Validation MessageLocalizer="@LH.Localize">
                         <Field>
-                            <FieldLabel>@L["Currency"] *</FieldLabel>
+                            <FieldLabel>@L["Currency"]</FieldLabel>
                             <TextEdit @bind-Text="@EditingUserPayment.Currency"  >
                                 <Feedback>
                                     <ValidationError />
@@ -722,7 +782,7 @@
 
                     <Validation MessageLocalizer="@LH.Localize">
                         <Field>
-                            <FieldLabel>@L["StripPaymentId"] *</FieldLabel>
+                            <FieldLabel>@L["StripPaymentId"]</FieldLabel>
                             <TextEdit @bind-Text="@EditingUserPayment.StripPaymentId"  >
                                 <Feedback>
                                     <ValidationError />
@@ -734,7 +794,7 @@
 
                     <Validation MessageLocalizer="@LH.Localize">
                         <Field>
-                            <FieldLabel>@L["StripClientSecret"] *</FieldLabel>
+                            <FieldLabel>@L["StripClientSecret"]</FieldLabel>
                             <TextEdit @bind-Text="@EditingUserPayment.StripClientSecret"  >
                                 <Feedback>
                                     <ValidationError />
@@ -746,14 +806,27 @@
 
                     <Validation MessageLocalizer="@LH.Localize">
                         <Field>
-                            <FieldLabel>@L["Created"] *</FieldLabel>
-                            <TextEdit @bind-Text="@EditingUserPayment.Created"  >
-                                <Feedback>
+                            <FieldLabel>@L["Created"]</FieldLabel>
+                            <DateEdit TValue="DateTime" InputMode="DateInputMode.Date" @bind-Date="@EditingUserPayment.Created" >
+                               <Feedback>
                                     <ValidationError />
                                 </Feedback>
-                            </TextEdit>
+                            </DateEdit>
                         </Field>
                     </Validation>
+
+
+                    <Field>
+                        <FieldLabel>@L["PaymentMethod"]</FieldLabel>
+                        <Select TValue="PaymentMethod" @bind-SelectedValue="@EditingUserPayment.PaymentMethod" >
+                            @foreach (var itemValue in Enum.GetValues(typeof(PaymentMethod)))
+                            {
+                                <SelectItem TValue="PaymentMethod" Value="@((PaymentMethod) itemValue)">
+                                    @L[$"Enum:PaymentMethod.{((PaymentMethod) itemValue).ToString("d")}"]
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
 
 
                     <Field>

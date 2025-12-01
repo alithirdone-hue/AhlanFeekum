@@ -1,25 +1,28 @@
 using AhlanFeekum.Shared;
+using AhlanFeekum.UserPayments;
+using AhlanFeekum.Permissions;
 using AhlanFeekum.Reservations;
+using AhlanFeekum.Shared;
+using AhlanFeekum.Shared;
+using AhlanFeekum.UserPayments;
 using AhlanFeekum.UserProfiles;
+using AutoMapper.Internal.Mappers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Caching.Distributed;
+using MiniExcelLibs;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq.Dynamic.Core;
-using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
-using Volo.Abp.Domain.Repositories;
-using AhlanFeekum.Permissions;
-using AhlanFeekum.UserPayments;
-using MiniExcelLibs;
-using Volo.Abp.Content;
 using Volo.Abp.Authorization;
 using Volo.Abp.Caching;
-using Microsoft.Extensions.Caching.Distributed;
-using AhlanFeekum.Shared;
+using Volo.Abp.Content;
+using Volo.Abp.Domain.Repositories;
 
 namespace AhlanFeekum.UserPayments
 {
@@ -45,8 +48,8 @@ namespace AhlanFeekum.UserPayments
 
         public virtual async Task<PagedResultDto<UserPaymentWithNavigationPropertiesDto>> GetListAsync(GetUserPaymentsInput input)
         {
-            var totalCount = await _userPaymentRepository.GetCountAsync(input.FilterText, input.AmountMin, input.AmountMax, input.Currency, input.Description, input.ReceiptEmail, input.AmountCapturableMin, input.AmountCapturableMax, input.AmountReceivedMin, input.AmountReceivedMax, input.ConfirmationMethod, input.Status, input.StripPaymentId, input.StripClientSecret, input.Created, input.UserProfileId, input.ReservationId);
-            var items = await _userPaymentRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.AmountMin, input.AmountMax, input.Currency, input.Description, input.ReceiptEmail, input.AmountCapturableMin, input.AmountCapturableMax, input.AmountReceivedMin, input.AmountReceivedMax, input.ConfirmationMethod, input.Status, input.StripPaymentId, input.StripClientSecret, input.Created, input.UserProfileId, input.ReservationId, input.Sorting, input.MaxResultCount, input.SkipCount);
+            var totalCount = await _userPaymentRepository.GetCountAsync(input.FilterText, input.AmountMin, input.AmountMax, input.Currency, input.Description, input.ReceiptEmail, input.AmountCapturableMin, input.AmountCapturableMax, input.AmountReceivedMin, input.AmountReceivedMax, input.ConfirmationMethod, input.Status, input.StripPaymentId, input.StripClientSecret, input.CreatedMin, input.CreatedMax, input.PaymentMethod, input.UserProfileId, input.ReservationId);
+            var items = await _userPaymentRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.AmountMin, input.AmountMax, input.Currency, input.Description, input.ReceiptEmail, input.AmountCapturableMin, input.AmountCapturableMax, input.AmountReceivedMin, input.AmountReceivedMax, input.ConfirmationMethod, input.Status, input.StripPaymentId, input.StripClientSecret, input.CreatedMin, input.CreatedMax, input.PaymentMethod, input.UserProfileId, input.ReservationId, input.Sorting, input.MaxResultCount, input.SkipCount);
 
             return new PagedResultDto<UserPaymentWithNavigationPropertiesDto>
             {
@@ -117,7 +120,7 @@ namespace AhlanFeekum.UserPayments
             }
 
             var userPayment = await _userPaymentManager.CreateAsync(
-            input.UserProfileId, input.ReservationId, input.Amount, input.Currency, input.AmountCapturable, input.AmountReceived, input.Status, input.StripPaymentId, input.StripClientSecret, input.Created, input.Description, input.ReceiptEmail, input.ConfirmationMethod
+            input.UserProfileId, input.ReservationId, input.Amount, input.AmountCapturable, input.AmountReceived, input.Status, input.Created, input.PaymentMethod, input.Currency, input.Description, input.ReceiptEmail, input.ConfirmationMethod, input.StripPaymentId, input.StripClientSecret
             );
 
             return ObjectMapper.Map<UserPayment, UserPaymentDto>(userPayment);
@@ -137,7 +140,7 @@ namespace AhlanFeekum.UserPayments
 
             var userPayment = await _userPaymentManager.UpdateAsync(
             id,
-            input.UserProfileId, input.ReservationId, input.Amount, input.Currency, input.AmountCapturable, input.AmountReceived, input.Status, input.StripPaymentId, input.StripClientSecret, input.Created, input.Description, input.ReceiptEmail, input.ConfirmationMethod, input.ConcurrencyStamp
+            input.UserProfileId, input.ReservationId, input.Amount, input.AmountCapturable, input.AmountReceived, input.Status, input.Created, input.PaymentMethod, input.Currency, input.Description, input.ReceiptEmail, input.ConfirmationMethod, input.StripPaymentId, input.StripClientSecret, input.ConcurrencyStamp
             );
 
             return ObjectMapper.Map<UserPayment, UserPaymentDto>(userPayment);
@@ -152,7 +155,7 @@ namespace AhlanFeekum.UserPayments
                 throw new AbpAuthorizationException("Invalid download token: " + input.DownloadToken);
             }
 
-            var userPayments = await _userPaymentRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.AmountMin, input.AmountMax, input.Currency, input.Description, input.ReceiptEmail, input.AmountCapturableMin, input.AmountCapturableMax, input.AmountReceivedMin, input.AmountReceivedMax, input.ConfirmationMethod, input.Status, input.StripPaymentId, input.StripClientSecret, input.Created, input.UserProfileId, input.ReservationId);
+            var userPayments = await _userPaymentRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.AmountMin, input.AmountMax, input.Currency, input.Description, input.ReceiptEmail, input.AmountCapturableMin, input.AmountCapturableMax, input.AmountReceivedMin, input.AmountReceivedMax, input.ConfirmationMethod, input.Status, input.StripPaymentId, input.StripClientSecret, input.CreatedMin, input.CreatedMax, input.PaymentMethod, input.UserProfileId, input.ReservationId);
             var items = userPayments.Select(item => new
             {
                 Amount = item.UserPayment.Amount,
@@ -166,6 +169,7 @@ namespace AhlanFeekum.UserPayments
                 StripPaymentId = item.UserPayment.StripPaymentId,
                 StripClientSecret = item.UserPayment.StripClientSecret,
                 Created = item.UserPayment.Created,
+                PaymentMethod = item.UserPayment.PaymentMethod,
 
                 UserProfile = item.UserProfile?.Name,
                 Reservation = item.Reservation?.Notes,
@@ -188,7 +192,7 @@ namespace AhlanFeekum.UserPayments
         [Authorize(AhlanFeekumPermissions.UserPayments.Delete)]
         public virtual async Task DeleteAllAsync(GetUserPaymentsInput input)
         {
-            await _userPaymentRepository.DeleteAllAsync(input.FilterText, input.AmountMin, input.AmountMax, input.Currency, input.Description, input.ReceiptEmail, input.AmountCapturableMin, input.AmountCapturableMax, input.AmountReceivedMin, input.AmountReceivedMax, input.ConfirmationMethod, input.Status, input.StripPaymentId, input.StripClientSecret, input.Created, input.UserProfileId, input.ReservationId);
+            await _userPaymentRepository.DeleteAllAsync(input.FilterText, input.AmountMin, input.AmountMax, input.Currency, input.Description, input.ReceiptEmail, input.AmountCapturableMin, input.AmountCapturableMax, input.AmountReceivedMin, input.AmountReceivedMax, input.ConfirmationMethod, input.Status, input.StripPaymentId, input.StripClientSecret, input.CreatedMin, input.CreatedMax, input.PaymentMethod, input.UserProfileId, input.ReservationId);
         }
         public virtual async Task<AhlanFeekum.Shared.DownloadTokenResultDto> GetDownloadTokenAsync()
         {

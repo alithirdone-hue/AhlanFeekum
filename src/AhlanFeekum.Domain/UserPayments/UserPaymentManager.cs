@@ -21,19 +21,17 @@ namespace AhlanFeekum.UserPayments
         }
 
         public virtual async Task<UserPayment> CreateAsync(
-        Guid userProfileId, Guid reservationId, long amount, string currency, long amountCapturable, long amountReceived, UserPaymentStatus status, string stripPaymentId, string stripClientSecret, string created, string? description = null, string? receiptEmail = null, string? confirmationMethod = null)
+        Guid userProfileId, Guid reservationId, long amount, long amountCapturable, long amountReceived, UserPaymentStatus status, DateTime created, PaymentMethod paymentMethod, string? currency = null, string? description = null, string? receiptEmail = null, string? confirmationMethod = null, string? stripPaymentId = null, string? stripClientSecret = null)
         {
             Check.NotNull(userProfileId, nameof(userProfileId));
             Check.NotNull(reservationId, nameof(reservationId));
-            Check.NotNullOrWhiteSpace(currency, nameof(currency));
             Check.NotNull(status, nameof(status));
-            Check.NotNullOrWhiteSpace(stripPaymentId, nameof(stripPaymentId));
-            Check.NotNullOrWhiteSpace(stripClientSecret, nameof(stripClientSecret));
-            Check.NotNullOrWhiteSpace(created, nameof(created));
+            Check.NotNull(created, nameof(created));
+            Check.NotNull(paymentMethod, nameof(paymentMethod));
 
             var userPayment = new UserPayment(
              GuidGenerator.Create(),
-             userProfileId, reservationId, amount, currency, amountCapturable, amountReceived, status, stripPaymentId, stripClientSecret, created, description, receiptEmail, confirmationMethod
+             userProfileId, reservationId, amount, amountCapturable, amountReceived, status, created, paymentMethod, currency, description, receiptEmail, confirmationMethod, stripPaymentId, stripClientSecret
              );
 
             return await _userPaymentRepository.InsertAsync(userPayment);
@@ -41,32 +39,31 @@ namespace AhlanFeekum.UserPayments
 
         public virtual async Task<UserPayment> UpdateAsync(
             Guid id,
-            Guid userProfileId, Guid reservationId, long amount, string currency, long amountCapturable, long amountReceived, UserPaymentStatus status, string stripPaymentId, string stripClientSecret, string created, string? description = null, string? receiptEmail = null, string? confirmationMethod = null, [CanBeNull] string? concurrencyStamp = null
+            Guid userProfileId, Guid reservationId, long amount, long amountCapturable, long amountReceived, UserPaymentStatus status, DateTime created, PaymentMethod paymentMethod, string? currency = null, string? description = null, string? receiptEmail = null, string? confirmationMethod = null, string? stripPaymentId = null, string? stripClientSecret = null, [CanBeNull] string? concurrencyStamp = null
         )
         {
             Check.NotNull(userProfileId, nameof(userProfileId));
             Check.NotNull(reservationId, nameof(reservationId));
-            Check.NotNullOrWhiteSpace(currency, nameof(currency));
             Check.NotNull(status, nameof(status));
-            Check.NotNullOrWhiteSpace(stripPaymentId, nameof(stripPaymentId));
-            Check.NotNullOrWhiteSpace(stripClientSecret, nameof(stripClientSecret));
-            Check.NotNullOrWhiteSpace(created, nameof(created));
+            Check.NotNull(created, nameof(created));
+            Check.NotNull(paymentMethod, nameof(paymentMethod));
 
             var userPayment = await _userPaymentRepository.GetAsync(id);
 
             userPayment.UserProfileId = userProfileId;
             userPayment.ReservationId = reservationId;
             userPayment.Amount = amount;
-            userPayment.Currency = currency;
             userPayment.AmountCapturable = amountCapturable;
             userPayment.AmountReceived = amountReceived;
             userPayment.Status = status;
-            userPayment.StripPaymentId = stripPaymentId;
-            userPayment.StripClientSecret = stripClientSecret;
             userPayment.Created = created;
+            userPayment.PaymentMethod = paymentMethod;
+            userPayment.Currency = currency;
             userPayment.Description = description;
             userPayment.ReceiptEmail = receiptEmail;
             userPayment.ConfirmationMethod = confirmationMethod;
+            userPayment.StripPaymentId = stripPaymentId;
+            userPayment.StripClientSecret = stripClientSecret;
 
             userPayment.SetConcurrencyStampIfNotNull(concurrencyStamp);
             return await _userPaymentRepository.UpdateAsync(userPayment);
