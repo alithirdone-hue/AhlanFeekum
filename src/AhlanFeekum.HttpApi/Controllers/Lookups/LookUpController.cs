@@ -1,6 +1,7 @@
 using AhlanFeekum.MobileResponses;
 using AhlanFeekum.Shared;
 using AhlanFeekum.SiteProperties;
+using AhlanFeekum.UserPayments;
 using AhlanFeekum.UserProfiles;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
@@ -21,9 +22,11 @@ namespace AhlanFeekum.Controllers.Lookups
     public class LookUpController : AbpController
     {
         protected ISitePropertiesAppService _sitePropertiesAppService;
-        public LookUpController(ISitePropertiesAppService sitePropertiesAppService)
+        protected IUserPaymentsAppService _userPaymentsAppService;
+        public LookUpController(ISitePropertiesAppService sitePropertiesAppService, IUserPaymentsAppService userPaymentsAppService)
         {
             _sitePropertiesAppService = sitePropertiesAppService;
+            _userPaymentsAppService = userPaymentsAppService;
         }
 
         [HttpGet]
@@ -51,6 +54,14 @@ namespace AhlanFeekum.Controllers.Lookups
         {
             return _sitePropertiesAppService.GetStatusLookupAsync(lookupRequestDto);
         }
+
+      [HttpGet]
+        [Route("payment-methods")]
+        public virtual Task<PagedResultDto<LookupDto<int>>> GetPaymentMethodLookupAsync()
+        {
+            return _userPaymentsAppService.GetPaymentMethodLookupAsync();
+        }
+
 
     }
 }
