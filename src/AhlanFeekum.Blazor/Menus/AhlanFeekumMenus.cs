@@ -43,6 +43,6 @@ public class AhlanFeekumMenus
     public const string UserNotifications = Prefix + ".UserNotifications";
     public const string UserPayments = Prefix + ".UserPayments";
 
-
+    public const string CashPayments = Prefix + ".CashPayments";
 
 }

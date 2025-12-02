@@ -107,6 +107,12 @@ public class AhlanFeekumPermissionDefinitionProvider : PermissionDefinitionProvi
         userPaymentPermission.AddChild(AhlanFeekumPermissions.UserPayments.Create, L("Permission:Create"));
         userPaymentPermission.AddChild(AhlanFeekumPermissions.UserPayments.Edit, L("Permission:Edit"));
         userPaymentPermission.AddChild(AhlanFeekumPermissions.UserPayments.Delete, L("Permission:Delete"));
+
+
+        var cashPaymentPermission = myGroup.AddPermission(AhlanFeekumPermissions.CashPayments.Default, L("Permission:CashPayments"));
+        cashPaymentPermission.AddChild(AhlanFeekumPermissions.CashPayments.Create, L("Permission:Create"));
+        cashPaymentPermission.AddChild(AhlanFeekumPermissions.CashPayments.Edit, L("Permission:Edit"));
+        cashPaymentPermission.AddChild(AhlanFeekumPermissions.CashPayments.Delete, L("Permission:Delete"));
     }
 
     private static LocalizableString L(string name)

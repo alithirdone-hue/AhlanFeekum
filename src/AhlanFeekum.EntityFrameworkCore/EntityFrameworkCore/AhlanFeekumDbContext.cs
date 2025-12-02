@@ -9,6 +9,7 @@ using AhlanFeekum.PropertyFeatures;
 using AhlanFeekum.PropertyMedias;
 using AhlanFeekum.PropertyTypes;
 using AhlanFeekum.Reservations;
+using AhlanFeekum.Reservations;
 using AhlanFeekum.SiteProperties;
 using AhlanFeekum.SpecialAdvertisments;
 using AhlanFeekum.Statuses;
@@ -17,7 +18,7 @@ using AhlanFeekum.UserNotifications;
 using AhlanFeekum.UserPayments;
 using AhlanFeekum.UserPayments;
 using AhlanFeekum.UserProfiles;
-using AhlanFeekum.Reservations;
+using AhlanFeekum.CashPayments;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -45,6 +46,8 @@ public class AhlanFeekumDbContext :
     ITenantManagementDbContext
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
+
+    public DbSet<CashPayment> CashPayments { get; set; } = null!;
     public DbSet<UserPayment> UserPayments { get; set; } = null!;
     public DbSet<UserNotification> UserNotifications { get; set; } = null!;
     public DbSet<AhlanfeekumTerm> AhlanfeekumTerms { get; set; } = null!;
@@ -550,6 +553,35 @@ public class AhlanFeekumDbContext :
 
         }
 
+
+        if (builder.IsHostDatabase())
+        {
+
+        }
+        if (builder.IsHostDatabase())
+        {
+
+        }
+        if (builder.IsHostDatabase())
+        {
+
+        }
+        if (builder.IsHostDatabase())
+        {
+            builder.Entity<CashPayment>(b =>
+            {
+                b.ToTable(AhlanFeekumConsts.DbTablePrefix + "CashPayments", AhlanFeekumConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.Property(x => x.Amount).HasColumnName(nameof(CashPayment.Amount));
+                b.Property(x => x.Currency).HasColumnName(nameof(CashPayment.Currency)).IsRequired();
+                b.Property(x => x.PaymentDate).HasColumnName(nameof(CashPayment.PaymentDate));
+                b.Property(x => x.Description).HasColumnName(nameof(CashPayment.Description));
+                b.Property(x => x.Status).HasColumnName(nameof(CashPayment.Status));
+                b.HasOne<UserProfile>().WithMany().IsRequired().HasForeignKey(x => x.UserProfileId).OnDelete(DeleteBehavior.NoAction);
+                b.HasOne<Reservation>().WithMany().IsRequired().HasForeignKey(x => x.ReservationId).OnDelete(DeleteBehavior.NoAction);
+            });
+
+        }
     }
 
 

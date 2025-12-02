@@ -22,6 +22,8 @@ using Volo.Abp.Content;
 
 using AhlanFeekum.Reservations;
 
+using AhlanFeekum.Reservations;
+
 
 
 namespace AhlanFeekum.Blazor.Pages
@@ -164,7 +166,7 @@ private IReadOnlyList<LookupDto<Guid>> SitePropertiesCollection { get; set; } = 
                 culture = "&culture=" + culture;
             }
             await RemoteServiceConfigurationProvider.GetConfigurationOrDefaultOrNullAsync("Default");
-            NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/reservations/as-excel-file?DownloadToken={token}&FilterText={HttpUtility.UrlEncode(Filter.FilterText)}{culture}&FromeDateMin={Filter.FromeDateMin}&FromeDateMax={Filter.FromeDateMax}&ToDateMin={Filter.ToDateMin}&ToDateMax={Filter.ToDateMax}&CheckInDateMin={Filter.CheckInDateMin?.ToString("O")}&CheckInDateMax={Filter.CheckInDateMax?.ToString("O")}&CheckOutDateMin={Filter.CheckOutDateMin?.ToString("O")}&CheckOutDateMax={Filter.CheckOutDateMax?.ToString("O")}&NumberOfGuestMin={Filter.NumberOfGuestMin}&NumberOfGuestMax={Filter.NumberOfGuestMax}&PriceMin={Filter.PriceMin}&PriceMax={Filter.PriceMax}&DiscountMin={Filter.DiscountMin}&DiscountMax={Filter.DiscountMax}&ReservationStatus={Filter.ReservationStatus}&Notes={HttpUtility.UrlEncode(Filter.Notes)}&UserProfileId={Filter.UserProfileId}&SitePropertyId={Filter.SitePropertyId}", forceLoad: true);
+            NavigationManager.NavigateTo($"{remoteService?.BaseUrl.EnsureEndsWith('/') ?? string.Empty}api/app/reservations/as-excel-file?DownloadToken={token}&FilterText={HttpUtility.UrlEncode(Filter.FilterText)}{culture}&FromeDateMin={Filter.FromeDateMin}&FromeDateMax={Filter.FromeDateMax}&ToDateMin={Filter.ToDateMin}&ToDateMax={Filter.ToDateMax}&CheckInDateMin={Filter.CheckInDateMin?.ToString("O")}&CheckInDateMax={Filter.CheckInDateMax?.ToString("O")}&CheckOutDateMin={Filter.CheckOutDateMin?.ToString("O")}&CheckOutDateMax={Filter.CheckOutDateMax?.ToString("O")}&NumberOfGuestMin={Filter.NumberOfGuestMin}&NumberOfGuestMax={Filter.NumberOfGuestMax}&PriceMin={Filter.PriceMin}&PriceMax={Filter.PriceMax}&DiscountMin={Filter.DiscountMin}&DiscountMax={Filter.DiscountMax}&ReservationStatus={Filter.ReservationStatus}&Notes={HttpUtility.UrlEncode(Filter.Notes)}&ReservationPaymentMethod={Filter.ReservationPaymentMethod}&IsPaid={Filter.IsPaid}&Description={HttpUtility.UrlEncode(Filter.Description)}&UserProfileId={Filter.UserProfileId}&SitePropertyId={Filter.SitePropertyId}", forceLoad: true);
         }
 
         private async Task OnDataGridReadAsync(DataGridReadDataEventArgs<ReservationWithNavigationPropertiesDto> e)
@@ -305,7 +307,7 @@ SitePropertyId = SitePropertiesCollection.Select(i=>i.Id).FirstOrDefault(),
 
                 await ReservationsAppService.UpdateAsync(EditingReservationId, EditingReservation);
                 await GetReservationsAsync();
-                await EditReservationModal.Hide();
+                await EditReservationModal.Hide();                
                 
                 // Show success message with payment info
                 if (oldStatus != newStatus)
@@ -319,7 +321,7 @@ SitePropertyId = SitePropertiesCollection.Select(i=>i.Id).FirstOrDefault(),
                     {
                         await UiMessageService.Success(L["ReservationUpdatedAndPaymentCanceled", 
                             "Reservation updated successfully! Any held payment has been canceled."]);
-                    }
+            }
                 }
             }
             catch (Exception ex)
@@ -424,6 +426,21 @@ SitePropertyId = SitePropertiesCollection.Select(i=>i.Id).FirstOrDefault(),
         protected virtual async Task OnNotesChangedAsync(string? notes)
         {
             Filter.Notes = notes;
+            await SearchAsync();
+        }
+        protected virtual async Task OnReservationPaymentMethodChangedAsync(ReservationPaymentMethod? reservationPaymentMethod)
+        {
+            Filter.ReservationPaymentMethod = reservationPaymentMethod;
+            await SearchAsync();
+        }
+        protected virtual async Task OnIsPaidChangedAsync(bool? isPaid)
+        {
+            Filter.IsPaid = isPaid;
+            await SearchAsync();
+        }
+        protected virtual async Task OnDescriptionChangedAsync(string? description)
+        {
+            Filter.Description = description;
             await SearchAsync();
         }
         protected virtual async Task OnUserProfileIdChangedAsync(Guid? userProfileId)

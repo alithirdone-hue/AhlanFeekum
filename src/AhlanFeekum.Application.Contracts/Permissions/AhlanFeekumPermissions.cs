@@ -156,4 +156,13 @@ public static class AhlanFeekumPermissions
         public const string Create = Default + ".Create";
         public const string Delete = Default + ".Delete";
     }
+
+
+    public static class CashPayments
+    {
+        public const string Default = GroupName + ".CashPayments";
+        public const string Edit = Default + ".Edit";
+        public const string Create = Default + ".Create";
+        public const string Delete = Default + ".Delete";
+    }
 }

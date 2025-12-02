@@ -14,8 +14,9 @@ using AhlanFeekum.SpecialAdvertisments;
 using AhlanFeekum.Statuses;
 using AhlanFeekum.Tickets;
 using AhlanFeekum.UserNotifications;
-using AhlanFeekum.UserProfiles;
 using AhlanFeekum.UserPayments;
+using AhlanFeekum.UserProfiles;
+using AhlanFeekum.CashPayments;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
@@ -92,6 +93,7 @@ public class AhlanFeekumEntityFrameworkCoreModule : AbpModule
             options.AddRepository<UserNotification, UserNotifications.EfCoreUserNotificationRepository>();
            
             options.AddRepository<UserPayment, UserPayments.EfCoreUserPaymentRepository>();
+            options.AddRepository<CashPayment, CashPayments.EfCoreCashPaymentRepository>();
         });
 
         Configure<AbpDbContextOptions>(options =>

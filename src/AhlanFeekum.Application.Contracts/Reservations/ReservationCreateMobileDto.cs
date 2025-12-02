@@ -17,6 +17,6 @@ namespace AhlanFeekum.Reservations
         //public Guid UserProfileId { get; set; }
         public Guid SitePropertyId { get; set; }
 
-        public PaymentMethod PaymentMethod { get; set; } = ((PaymentMethod[])Enum.GetValues(typeof(PaymentMethod)))[0];
+        public ReservationPaymentMethod PaymentMethod { get; set; } = ((ReservationPaymentMethod[])Enum.GetValues(typeof(ReservationPaymentMethod)))[0];
     }
 }

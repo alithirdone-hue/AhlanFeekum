@@ -74,8 +74,9 @@ namespace AhlanFeekum.Reservations
             {
                 throw new UserFriendlyException(L["TheSitePropertyNotFound"]);
             }
+            string description = $"{_currentUser.UserName} - From:{input.FromeDate},To:{input.ToDate} - {siteProperty.PropertyTitle}";
             var reservation = await _reservationManager.CreateAsync(
-            _currentUser.Id.Value, input.SitePropertyId, input.FromeDate, input.ToDate, siteProperty.PricePerNight, status, null, null, input.NumberOfGuest, 0, input.Notes
+            _currentUser.Id.Value, input.SitePropertyId, input.FromeDate, input.ToDate, siteProperty.PricePerNight, ReservationStatus.Pending, false, null, null, input.NumberOfGuest, 0, input.Notes, input.PaymentMethod, description
             );
 
             return ObjectMapper.Map<ReservationWithNavigationProperties, ReservationMobileDto>(await _reservationRepository.GetWithNavigationPropertiesAsync(reservation.Id));
@@ -100,8 +101,9 @@ namespace AhlanFeekum.Reservations
                     SkipCount = 0,
                     MaxResultCount = 1000
                 };
-          //  var totalCount = await _reservationRepository.GetCountAsync(input.FilterText, input.FromeDateMin, input.FromeDateMax, input.ToDateMin, input.ToDateMax, input.CheckInDateMin, input.CheckInDateMax, input.CheckOutDateMin, input.CheckOutDateMax, input.NumberOfGuestMin, input.NumberOfGuestMax, input.PriceMin, input.PriceMax, input.DiscountMin, input.DiscountMax, input.ReservationStatus, input.Notes, input.UserProfileId, input.SitePropertyId);
-            var items = await _reservationRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.FromeDateMin, input.FromeDateMax, input.ToDateMin, input.ToDateMax, input.CheckInDateMin, input.CheckInDateMax, input.CheckOutDateMin, input.CheckOutDateMax, input.NumberOfGuestMin, input.NumberOfGuestMax, input.PriceMin, input.PriceMax, input.DiscountMin, input.DiscountMax, input.ReservationStatus, input.Notes, input.UserProfileId, input.SitePropertyId, input.Sorting, input.MaxResultCount, input.SkipCount);
+            //  var totalCount = await _reservationRepository.GetCountAsync(input.FilterText, input.FromeDateMin, input.FromeDateMax, input.ToDateMin, input.ToDateMax, input.CheckInDateMin, input.CheckInDateMax, input.CheckOutDateMin, input.CheckOutDateMax, input.NumberOfGuestMin, input.NumberOfGuestMax, input.PriceMin, input.PriceMax, input.DiscountMin, input.DiscountMax, input.ReservationStatus, input.Notes, input.UserProfileId, input.SitePropertyId);
+            var items = await _reservationRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.FromeDateMin, input.FromeDateMax, input.ToDateMin, input.ToDateMax, input.CheckInDateMin, input.CheckInDateMax, input.CheckOutDateMin, input.CheckOutDateMax, input.NumberOfGuestMin, input.NumberOfGuestMax, input.PriceMin, input.PriceMax, input.DiscountMin, input.DiscountMax, input.ReservationStatus, input.Notes, input.ReservationPaymentMethod, input.IsPaid, input.Description, input.UserProfileId, input.SitePropertyId, input.Sorting, input.MaxResultCount, input.SkipCount);
+            //var items = await _reservationRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.FromeDateMin, input.FromeDateMax, input.ToDateMin, input.ToDateMax, input.CheckInDateMin, input.CheckInDateMax, input.CheckOutDateMin, input.CheckOutDateMax, input.NumberOfGuestMin, input.NumberOfGuestMax, input.PriceMin, input.PriceMax, input.DiscountMin, input.DiscountMax, input.ReservationStatus, input.Notes, input.UserProfileId, input.SitePropertyId, input.Sorting, input.MaxResultCount, input.SkipCount);
             return ObjectMapper.Map<List<ReservationWithNavigationProperties>, List<ReservationMobileDto>>(items);
             //return new PagedResultDto<ReservationWithNavigationPropertiesDto>
             //{
@@ -131,7 +133,8 @@ namespace AhlanFeekum.Reservations
                 MaxResultCount = 1000
             };
             //  var totalCount = await _reservationRepository.GetCountAsync(input.FilterText, input.FromeDateMin, input.FromeDateMax, input.ToDateMin, input.ToDateMax, input.CheckInDateMin, input.CheckInDateMax, input.CheckOutDateMin, input.CheckOutDateMax, input.NumberOfGuestMin, input.NumberOfGuestMax, input.PriceMin, input.PriceMax, input.DiscountMin, input.DiscountMax, input.ReservationStatus, input.Notes, input.UserProfileId, input.SitePropertyId);
-            var items = await _reservationRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.FromeDateMin, input.FromeDateMax, input.ToDateMin, input.ToDateMax, input.CheckInDateMin, input.CheckInDateMax, input.CheckOutDateMin, input.CheckOutDateMax, input.NumberOfGuestMin, input.NumberOfGuestMax, input.PriceMin, input.PriceMax, input.DiscountMin, input.DiscountMax, input.ReservationStatus, input.Notes, input.UserProfileId, input.SitePropertyId, input.Sorting, input.MaxResultCount, input.SkipCount);
+            var items = await _reservationRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.FromeDateMin, input.FromeDateMax, input.ToDateMin, input.ToDateMax, input.CheckInDateMin, input.CheckInDateMax, input.CheckOutDateMin, input.CheckOutDateMax, input.NumberOfGuestMin, input.NumberOfGuestMax, input.PriceMin, input.PriceMax, input.DiscountMin, input.DiscountMax, input.ReservationStatus, input.Notes, input.ReservationPaymentMethod, input.IsPaid, input.Description, input.UserProfileId, input.SitePropertyId, input.Sorting, input.MaxResultCount, input.SkipCount);
+            //var items = await _reservationRepository.GetListWithNavigationPropertiesAsync(input.FilterText, input.FromeDateMin, input.FromeDateMax, input.ToDateMin, input.ToDateMax, input.CheckInDateMin, input.CheckInDateMax, input.CheckOutDateMin, input.CheckOutDateMax, input.NumberOfGuestMin, input.NumberOfGuestMax, input.PriceMin, input.PriceMax, input.DiscountMin, input.DiscountMax, input.ReservationStatus, input.Notes, input.UserProfileId, input.SitePropertyId, input.Sorting, input.MaxResultCount, input.SkipCount);
             return ObjectMapper.Map<List<ReservationWithNavigationProperties>, List<ReservationMobileDto>>(items);
             //return new PagedResultDto<ReservationWithNavigationPropertiesDto>
             //{

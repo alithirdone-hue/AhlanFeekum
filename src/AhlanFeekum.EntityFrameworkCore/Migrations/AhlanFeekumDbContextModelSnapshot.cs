@@ -158,6 +158,88 @@ namespace AhlanFeekum.Migrations
 
                 b.ToTable("AppFileDescriptors", (string)null);
             });
+            modelBuilder.Entity("AhlanFeekum.CashPayments.CashPayment", b =>
+            {
+                b.Property<Guid>("Id")
+                    .HasColumnType("uniqueidentifier");
+
+                b.Property<long>("Amount")
+                    .HasColumnType("bigint")
+                    .HasColumnName("Amount");
+
+                b.Property<string>("ConcurrencyStamp")
+                    .IsConcurrencyToken()
+                    .IsRequired()
+                    .HasMaxLength(40)
+                    .HasColumnType("nvarchar(40)")
+                    .HasColumnName("ConcurrencyStamp");
+
+                b.Property<DateTime>("CreationTime")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("CreationTime");
+
+                b.Property<Guid?>("CreatorId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("CreatorId");
+
+                b.Property<string>("Currency")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("Currency");
+
+                b.Property<Guid?>("DeleterId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("DeleterId");
+
+                b.Property<DateTime?>("DeletionTime")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("DeletionTime");
+
+                b.Property<string>("Description")
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("Description");
+
+                b.Property<string>("ExtraProperties")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)")
+                    .HasColumnName("ExtraProperties");
+
+                b.Property<bool>("IsDeleted")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("bit")
+                    .HasDefaultValue(false)
+                    .HasColumnName("IsDeleted");
+
+                b.Property<DateTime?>("LastModificationTime")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("LastModificationTime");
+
+                b.Property<Guid?>("LastModifierId")
+                    .HasColumnType("uniqueidentifier")
+                    .HasColumnName("LastModifierId");
+
+                b.Property<DateTime>("PaymentDate")
+                    .HasColumnType("datetime2")
+                    .HasColumnName("PaymentDate");
+
+                b.Property<Guid>("ReservationId")
+                    .HasColumnType("uniqueidentifier");
+
+                b.Property<int>("Status")
+                    .HasColumnType("int")
+                    .HasColumnName("Status");
+
+                b.Property<Guid>("UserProfileId")
+                    .HasColumnType("uniqueidentifier");
+
+                b.HasKey("Id");
+
+                b.HasIndex("ReservationId");
+
+                b.HasIndex("UserProfileId");
+
+                b.ToTable("AppCashPayments", (string)null);
+            });
 
             modelBuilder.Entity("AhlanFeekum.FavoriteProperties.FavoriteProperty", b =>
             {
@@ -3353,6 +3435,21 @@ namespace AhlanFeekum.Migrations
 
                     b.ToTable("AbpTenantConnectionStrings", (string)null);
                 });
+
+            modelBuilder.Entity("AhlanFeekum.CashPayments.CashPayment", b =>
+            {
+                b.HasOne("AhlanFeekum.Reservations.Reservation", null)
+                    .WithMany()
+                    .HasForeignKey("ReservationId")
+                    .OnDelete(DeleteBehavior.NoAction)
+                    .IsRequired();
+
+                b.HasOne("AhlanFeekum.UserProfiles.UserProfile", null)
+                    .WithMany()
+                    .HasForeignKey("UserProfileId")
+                    .OnDelete(DeleteBehavior.NoAction)
+                    .IsRequired();
+            });
 
             modelBuilder.Entity("AhlanFeekum.FavoriteProperties.FavoriteProperty", b =>
             {

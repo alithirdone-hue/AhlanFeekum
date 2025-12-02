@@ -16,8 +16,9 @@ using AhlanFeekum.SpecialAdvertisments;
 using AhlanFeekum.Statuses;
 using AhlanFeekum.Tickets;
 using AhlanFeekum.UserNotifications;
-using AhlanFeekum.UserProfiles;
 using AhlanFeekum.UserPayments;
+using AhlanFeekum.UserProfiles;
+using AhlanFeekum.CashPayments;
 using AutoMapper;
 using System;
 using Volo.Abp.AutoMapper;
@@ -220,5 +221,12 @@ public class AhlanFeekumApplicationAutoMapperProfile : Profile
         CreateMap<Reservation, LookupDto<Guid>>().ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.Notes));
 
         CreateMap<UserPaymentDto, UserPaymentUpdateDto>();
+
+
+        CreateMap<CashPayment, CashPaymentDto>();
+        CreateMap<CashPayment, CashPaymentExcelDto>();
+        CreateMap<CashPaymentWithNavigationProperties, CashPaymentWithNavigationPropertiesDto>();
+        CreateMap<Reservation, LookupDto<Guid>>().ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.Description));
+        CreateMap<CashPaymentDto, CashPaymentUpdateDto>();
     }
 }

@@ -31,6 +31,8 @@
 @inject NavigationManager NavigationManager
 @using AhlanFeekum.Reservations
 
+@using AhlanFeekum.Reservations
+
 
 @* ************************* PAGE HEADER ************************* *@
 <PageHeader Title="@L["Reservations"]" BreadcrumbItems="BreadcrumbItems" Toolbar="Toolbar">
@@ -221,6 +223,45 @@
                     <Field>
                         <FieldLabel>@L["Notes"]</FieldLabel>
                         <TextEdit Text="@Filter.Notes" TextChanged="@OnNotesChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["ReservationPaymentMethod"]</FieldLabel>
+                        <Select TValue="ReservationPaymentMethod?"
+		SelectedValue="@Filter.ReservationPaymentMethod"
+		SelectedValueChanged="@OnReservationPaymentMethodChangedAsync">
+
+<SelectItem></SelectItem>
+
+@foreach(ReservationPaymentMethod value in Enum.GetValues(typeof(ReservationPaymentMethod)))
+{
+	<SelectItem Value="value">
+		@value
+	</SelectItem>
+}
+
+</Select>                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["IsPaid"]</FieldLabel>
+                        <Select TValue="bool?"
+		SelectedValue="@Filter.IsPaid"
+		SelectedValueChanged="@OnIsPaidChangedAsync">
+
+<SelectItem></SelectItem>
+<SelectItem Value="true">@L["Yes"]</SelectItem>
+<SelectItem Value="false">@L["No"]</SelectItem>
+
+</Select>                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["Description"]</FieldLabel>
+                        <TextEdit Text="@Filter.Description" TextChanged="@OnDescriptionChangedAsync" />                       
                     </Field>
                 </Column>
                 <Column ColumnSize="ColumnSize.Is3">
@@ -431,6 +472,36 @@
               </DataGridColumn>
 
               <DataGridColumn TItem="ReservationWithNavigationPropertiesDto"
+                      Field="Reservation.ReservationPaymentMethod"
+                      Caption="@L["ReservationPaymentMethod"]">
+                    <DisplayTemplate>
+                        @L[$"Enum:ReservationPaymentMethod.{(int)context.Reservation.ReservationPaymentMethod}"]
+                    </DisplayTemplate>
+              </DataGridColumn>
+
+
+              <DataGridColumn TItem="ReservationWithNavigationPropertiesDto"
+                      Field="Reservation.IsPaid"
+                      Caption="@L["IsPaid"]">
+                    <DisplayTemplate>
+                        @if (context.Reservation.IsPaid)
+                        {
+                            <Icon TextColor="TextColor.Success" Name="@IconName.Check" />
+                        }
+                        else
+                        {
+                            <Icon TextColor="TextColor.Danger" Name="@IconName.Times" />
+                        }
+                    </DisplayTemplate>
+              </DataGridColumn>
+
+
+              <DataGridColumn TItem="ReservationWithNavigationPropertiesDto"
+                      Field="Reservation.Description"
+                      Caption="@L["Description"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="ReservationWithNavigationPropertiesDto"
                       Field="UserProfile.Name"
                       Caption="@L["UserProfile"]">
               </DataGridColumn>
@@ -565,6 +636,36 @@
                         <Field>
                             <FieldLabel>@L["Notes"]</FieldLabel>
                             <TextEdit @bind-Text="@NewReservation.Notes"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Field>
+                        <FieldLabel>@L["ReservationPaymentMethod"]</FieldLabel>
+                        <Select TValue="ReservationPaymentMethod?" @bind-SelectedValue="@NewReservation.ReservationPaymentMethod" >
+                        <SelectItem TValue="ReservationPaymentMethod?" Value="(ReservationPaymentMethod?)null"></SelectItem>
+                            @foreach (var itemValue in Enum.GetValues(typeof(ReservationPaymentMethod)))
+                            {
+                                <SelectItem TValue="ReservationPaymentMethod?" Value="@((ReservationPaymentMethod) itemValue)">
+                                    @L[$"Enum:ReservationPaymentMethod.{((ReservationPaymentMethod) itemValue).ToString("d")}"]
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    <Field>
+                        <Check TValue="bool" @bind-Checked="@NewReservation.IsPaid" >@L["IsPaid"]</Check>
+                    </Field>
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Description"]</FieldLabel>
+                            <TextEdit @bind-Text="@NewReservation.Description"  >
                                 <Feedback>
                                     <ValidationError />
                                 </Feedback>
@@ -736,6 +837,36 @@
                         <Field>
                             <FieldLabel>@L["Notes"]</FieldLabel>
                             <TextEdit @bind-Text="@EditingReservation.Notes"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Field>
+                        <FieldLabel>@L["ReservationPaymentMethod"]</FieldLabel>
+                        <Select TValue="ReservationPaymentMethod?" @bind-SelectedValue="@EditingReservation.ReservationPaymentMethod" >
+                        <SelectItem TValue="ReservationPaymentMethod?" Value="(ReservationPaymentMethod?)null"></SelectItem>
+                            @foreach (var itemValue in Enum.GetValues(typeof(ReservationPaymentMethod)))
+                            {
+                                <SelectItem TValue="ReservationPaymentMethod?" Value="@((ReservationPaymentMethod) itemValue)">
+                                    @L[$"Enum:ReservationPaymentMethod.{((ReservationPaymentMethod) itemValue).ToString("d")}"]
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    <Field>
+                        <Check TValue="bool" @bind-Checked="@EditingReservation.IsPaid" >@L["IsPaid"]</Check>
+                    </Field>
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Description"]</FieldLabel>
+                            <TextEdit @bind-Text="@EditingReservation.Description"  >
                                 <Feedback>
                                     <ValidationError />
                                 </Feedback>

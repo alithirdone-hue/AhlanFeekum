@@ -214,6 +214,16 @@ icon: "fa fa-file-alt",
                 icon: "fa fa-file-alt",
                 requiredPermissionName: AhlanFeekumPermissions.UserPayments.Default)
         );
+
+
+        context.Menu.AddItem(
+            new ApplicationMenuItem(
+                AhlanFeekumMenus.CashPayments,
+                l["Menu:CashPayments"],
+                url: "/cash-payments",
+                icon: "fa fa-file-alt",
+                requiredPermissionName: AhlanFeekumPermissions.CashPayments.Default)
+        );
         return Task.CompletedTask;
     }
 }

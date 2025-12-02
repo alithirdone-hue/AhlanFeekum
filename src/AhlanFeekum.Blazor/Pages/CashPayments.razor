@@ -1,0 +1,590 @@
+
+
+@page "/cash-payments"
+
+@attribute [Authorize(AhlanFeekumPermissions.CashPayments.Default)]
+@using AhlanFeekum.CashPayments
+@using AhlanFeekum.Localization
+@using AhlanFeekum.Shared
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Components.Web
+@using Blazorise
+@using Blazorise.Components
+@using Blazorise.DataGrid
+@using Volo.Abp.BlazoriseUI
+@using Volo.Abp.BlazoriseUI.Components
+@using Volo.Abp.ObjectMapping
+@using Volo.Abp.AspNetCore.Components.Messages
+@using Volo.Abp.AspNetCore.Components.Web.Theming.Layout
+
+@using AhlanFeekum.Permissions
+@using Volo.Abp.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components
+@using Volo.Abp.Http.Client
+@inherits AhlanFeekumComponentBase
+@inject ICashPaymentsAppService CashPaymentsAppService
+
+@inject IUiMessageService UiMessageService
+@inject AbpBlazorMessageLocalizerHelper<AhlanFeekumResource> LH
+@inject IRemoteServiceConfigurationProvider RemoteServiceConfigurationProvider
+@inject NavigationManager NavigationManager
+@using AhlanFeekum.CashPayments
+
+
+@* ************************* PAGE HEADER ************************* *@
+<PageHeader Title="@L["CashPayments"]" BreadcrumbItems="BreadcrumbItems" Toolbar="Toolbar">
+
+</PageHeader>
+
+@* ************************* SEARCH ************************* *@
+<Card>
+    <CardBody>
+@*//<suite-custom-code-block-1>*@
+@*//</suite-custom-code-block-1>*@
+        <Row>
+            <div class="col-md-8 col-lg-10">
+                <div class="mb-3">
+                    <Form id="CashPaymentSearchForm">
+                        <Addons>
+                            <Addon AddonType="AddonType.Body">
+                                <TextEdit @bind-Text="@Filter.FilterText"
+                                        Autofocus="true"
+                                        Placeholder="@L["Search"]">
+                                </TextEdit>
+                            </Addon>
+                            <Addon AddonType="AddonType.End">
+                                <SubmitButton Form="CashPaymentSearchForm" Clicked="GetCashPaymentsAsync">
+                                    <Icon Name="IconName.Search" Class="me-1"></Icon>@L["Search"]
+                                </SubmitButton>
+                            </Addon>
+                        </Addons>
+                    </Form>
+                </div>
+            </div>
+                
+                   <div class="col-md-4 col-lg-2">
+            <div class="mb-3">
+               <Button Color="Color.Primary" Outline Style="width:100%" id="AdvancedFilterSectionToggler"
+                         Clicked="@(() => ShowAdvancedFilters = !ShowAdvancedFilters)">@L["Filters"]
+                         <i aria-hidden="true" class="fa ms-1 @(!ShowAdvancedFilters ? "fa-angle-down" : "fa-angle-up")"></i>
+               </Button>
+            </div>
+       </div>
+        
+        <div style="display: @(!ShowAdvancedFilters ? "none" : "block")"  class="mt-3">
+            <Row>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MinAmount"]</FieldLabel>
+                        <NumericEdit TValue="long?" 
+             Value="@Filter.AmountMin"
+             ValueChanged="@OnAmountMinChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MaxAmount"]</FieldLabel>
+                        <NumericEdit TValue="long?" 
+             Value="@Filter.AmountMax"
+             ValueChanged="@OnAmountMaxChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["Currency"]</FieldLabel>
+                        <TextEdit Text="@Filter.Currency" TextChanged="@OnCurrencyChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MinPaymentDate"]</FieldLabel>
+                        <DatePicker TValue="DateTime?"
+            InputMode="DateInputMode.Date"
+            Date="@Filter.PaymentDateMin"
+            DateChanged="@OnPaymentDateMinChangedAsync"
+            Placeholder="@string.Empty" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["MaxPaymentDate"]</FieldLabel>
+                        <DatePicker TValue="DateTime?"
+            InputMode="DateInputMode.Date"
+            Date="@Filter.PaymentDateMax"
+            DateChanged="@OnPaymentDateMaxChangedAsync"
+            Placeholder="@string.Empty" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["Description"]</FieldLabel>
+                        <TextEdit Text="@Filter.Description" TextChanged="@OnDescriptionChangedAsync" />                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["Status"]</FieldLabel>
+                        <Select TValue="CashPaymentStatus?"
+		SelectedValue="@Filter.Status"
+		SelectedValueChanged="@OnStatusChangedAsync">
+
+<SelectItem></SelectItem>
+
+@foreach(CashPaymentStatus value in Enum.GetValues(typeof(CashPaymentStatus)))
+{
+	<SelectItem Value="value">
+		@value
+	</SelectItem>
+}
+
+</Select>                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["UserProfile"]</FieldLabel>
+                        <Select TValue="Guid?"
+		SelectedValue="@Filter.UserProfileId"
+		SelectedValueChanged="@OnUserProfileIdChangedAsync">
+
+<SelectItem></SelectItem>
+
+@foreach(var item in UserProfilesCollection)
+{
+	<SelectItem TValue="Guid" Value="@item.Id">
+		@item.DisplayName
+	</SelectItem>
+}
+
+</Select>                       
+                    </Field>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3">
+                    <Field>
+                        <FieldLabel>@L["Reservation"]</FieldLabel>
+                        <Select TValue="Guid?"
+		SelectedValue="@Filter.ReservationId"
+		SelectedValueChanged="@OnReservationIdChangedAsync">
+
+<SelectItem></SelectItem>
+
+@foreach(var item in ReservationsCollection)
+{
+	<SelectItem TValue="Guid" Value="@item.Id">
+		@item.DisplayName
+	</SelectItem>
+}
+
+</Select>                       
+                    </Field>
+                </Column>
+            </Row>
+@*//<suite-custom-code-block-2>*@
+@*//</suite-custom-code-block-2>*@
+        </div>
+
+        </Row>
+
+@*//<suite-custom-code-block-3>*@
+@*//</suite-custom-code-block-3>*@
+    </CardBody>
+</Card>
+
+@* ************************* DATA GRID ************************* *@
+<Card>
+    <CardBody>        
+        @if (SelectedCashPayments.Any())
+        {
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                @if (AllCashPaymentsSelected)
+                {
+                    <p class="lead mb-0">
+                        @L["AllItemsAreSelected", TotalCount]
+                    </p>
+                }
+                else
+                {
+                    <p class="lead mb-0">
+                        @if (SelectedCashPayments.Count > 1)
+                        {
+                            @L["NumberOfItemsOnThisPageAreSelected", SelectedCashPayments.Count]
+                        }
+                        else
+                        {
+                            @L["OneItemOnThisPageIsSelected"]
+                        }
+                    </p>
+                }
+                    
+                <div>
+                    @if ((SelectedCashPayments.Count == PageSize || SelectedCashPayments.Count == CashPaymentList.Count) && TotalCount > SelectedCashPayments.Count)
+                    {
+                        if (!AllCashPaymentsSelected)
+                        {
+                            <Button Clicked="SelectAllItems" Class="mx-1 btn-outline-secondary">@L["SelectAllItems", TotalCount]</Button>
+                        }
+                        else
+                        {
+                            <Button Clicked="ClearSelection" Class="mx-1 btn-outline-secondary">@L["ClearSelection"]</Button>
+                        }
+                    }
+                    
+                    <Button Color="Color.Danger" Class="mx-1" Size="Size.Medium" Clicked="DeleteSelectedCashPaymentsAsync">
+                        <Icon Name="@IconName.Delete" /> @L["Delete"]
+                    </Button>
+                </div>
+            </div>
+            
+            <hr class="my-1 mx-0"/>
+        }
+        <DataGrid TItem="CashPaymentWithNavigationPropertiesDto"
+                  Data="CashPaymentList"
+                  
+                  SelectionMode="DataGridSelectionMode.Multiple"
+                  SelectedRows="SelectedCashPayments"
+                  RowSelectable="@((args) => CanDeleteCashPayment)"
+                  SelectedRowsChanged="SelectedCashPaymentRowsChanged"
+                  
+                  
+                  
+                  ReadData="OnDataGridReadAsync"
+                  TotalItems="TotalCount"
+                  ShowPager="true"
+                  Responsive="true"
+                  PageSize="PageSize"
+                  Class="datagrid-detail">
+            <LoadingTemplate>
+                <Row Class="w-100 align-items-center" Style="height: 150px;">
+                    <Column>
+                       <RadarSpinner />
+                    </Column>
+                </Row>
+            </LoadingTemplate>
+            <EmptyTemplate>
+                <Row Class="w-100 align-items-center" Style="height: 150px;">
+                    <Column>
+                        <Heading Size="HeadingSize.Is4" TextAlignment="TextAlignment.Center">@L["NoDataAvailable"]</Heading>
+                    </Column>
+                </Row>
+            </EmptyTemplate>   
+            <DataGridColumns>
+                
+                @if (CanDeleteCashPayment && CashPaymentList.Any())
+                {
+                    <DataGridMultiSelectColumn TItem="CashPaymentWithNavigationPropertiesDto" DisplayOrder="-1" Width="30px"></DataGridMultiSelectColumn>
+                }
+                
+                <DataGridEntityActionsColumn TItem="CashPaymentWithNavigationPropertiesDto" @ref="@EntityActionsColumn">
+                    <DisplayTemplate>
+                        <EntityActions TItem="CashPaymentWithNavigationPropertiesDto" EntityActionsColumn="@EntityActionsColumn">
+                            <EntityAction TItem="CashPaymentWithNavigationPropertiesDto"
+                                          Visible="@CanEditCashPayment"
+                                          Clicked="async () => await OpenEditCashPaymentModalAsync(context)"
+                                          Text="@L["Edit"]"></EntityAction>
+                            <EntityAction TItem="CashPaymentWithNavigationPropertiesDto"
+                                          Visible="@CanDeleteCashPayment"
+                                          Clicked="() => DeleteCashPaymentAsync(context)"
+                                          ConfirmationMessage="@(()=> L["DeleteConfirmationMessage"])"
+                                          Text="@L["Delete"]"></EntityAction>
+@*//<suite-custom-code-block-4>*@
+@*//</suite-custom-code-block-4>*@
+                        </EntityActions>
+                    </DisplayTemplate>
+                </DataGridEntityActionsColumn>
+               
+              <DataGridColumn TItem="CashPaymentWithNavigationPropertiesDto"
+                      Field="CashPayment.Amount"
+                      Caption="@L["Amount"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="CashPaymentWithNavigationPropertiesDto"
+                      Field="CashPayment.Currency"
+                      Caption="@L["Currency"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="CashPaymentWithNavigationPropertiesDto"
+                      Field="CashPayment.PaymentDate"
+                      Caption="@L["PaymentDate"]">
+                  <DisplayTemplate>
+                        @context.CashPayment.PaymentDate.ToShortDateString()
+                  </DisplayTemplate>
+              </DataGridColumn>
+
+              <DataGridColumn TItem="CashPaymentWithNavigationPropertiesDto"
+                      Field="CashPayment.Description"
+                      Caption="@L["Description"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="CashPaymentWithNavigationPropertiesDto"
+                      Field="CashPayment.Status"
+                      Caption="@L["Status"]">
+                    <DisplayTemplate>
+                        @L[$"Enum:CashPaymentStatus.{(int)context.CashPayment.Status}"]
+                    </DisplayTemplate>
+              </DataGridColumn>
+
+
+              <DataGridColumn TItem="CashPaymentWithNavigationPropertiesDto"
+                      Field="UserProfile.Name"
+                      Caption="@L["UserProfile"]">
+              </DataGridColumn>
+
+              <DataGridColumn TItem="CashPaymentWithNavigationPropertiesDto"
+                      Field="Reservation.Description"
+                      Caption="@L["Reservation"]">
+              </DataGridColumn>
+
+            </DataGridColumns>
+            
+            
+        </DataGrid>
+    </CardBody>
+</Card>
+
+@* ************************* CREATE MODAL ************************* *@
+<Modal @ref="CreateCashPaymentModal" Closing="@CreateCashPaymentModal.CancelClosingModalWhenFocusLost">
+    <ModalContent Centered="true">
+@*//<suite-custom-code-block-5>*@
+@*//</suite-custom-code-block-5>*@
+        <Form id="CreateCashPaymentForm">
+            <ModalHeader>
+                <ModalTitle>@L["NewCashPayment"]</ModalTitle>
+                <CloseButton Clicked="CloseCreateCashPaymentModalAsync" />
+            </ModalHeader>
+            <ModalBody>
+                <Validations @ref="@NewCashPaymentValidations"
+                            Mode="ValidationMode.Auto"
+                            Model="@NewCashPayment"
+                            ValidateOnLoad="false">
+                    
+                    
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Amount"]</FieldLabel>
+                            <NumericPicker TValue="long" @bind-Value="@NewCashPayment.Amount"  Decimals="0" >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                             </NumericPicker>
+                        </Field>
+                     </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Currency"] *</FieldLabel>
+                            <TextEdit @bind-Text="@NewCashPayment.Currency"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["PaymentDate"]</FieldLabel>
+                            <DateEdit TValue="DateTime" InputMode="DateInputMode.Date" @bind-Date="@NewCashPayment.PaymentDate" >
+                               <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </DateEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Description"]</FieldLabel>
+                            <TextEdit @bind-Text="@NewCashPayment.Description"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Field>
+                        <FieldLabel>@L["Status"]</FieldLabel>
+                        <Select TValue="CashPaymentStatus" @bind-SelectedValue="@NewCashPayment.Status" >
+                            @foreach (var itemValue in Enum.GetValues(typeof(CashPaymentStatus)))
+                            {
+                                <SelectItem TValue="CashPaymentStatus" Value="@((CashPaymentStatus) itemValue)">
+                                    @L[$"Enum:CashPaymentStatus.{((CashPaymentStatus) itemValue).ToString("d")}"]
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    <Field>
+                        <FieldLabel>@L["UserProfile"]</FieldLabel>
+                        <Select TValue="Guid" @bind-SelectedValue="@NewCashPayment.UserProfileId">
+                            @foreach (var userProfile in UserProfilesCollection)
+                            {
+                                <SelectItem TValue="Guid" Value="@(userProfile.Id)">
+                                    @(userProfile.DisplayName)
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    <Field>
+                        <FieldLabel>@L["Reservation"]</FieldLabel>
+                        <Select TValue="Guid" @bind-SelectedValue="@NewCashPayment.ReservationId">
+                            @foreach (var reservation in ReservationsCollection)
+                            {
+                                <SelectItem TValue="Guid" Value="@(reservation.Id)">
+                                    @(reservation.DisplayName)
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    
+                    
+                </Validations>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary"
+                        Clicked="CloseCreateCashPaymentModalAsync">
+                    @L["Cancel"]
+                </Button>
+                <SubmitButton Form="CreateCashPaymentForm" Clicked="CreateCashPaymentAsync"/>
+@*//<suite-custom-code-block-6>*@
+@*//</suite-custom-code-block-6>*@
+            </ModalFooter>
+        </Form>
+@*//<suite-custom-code-block-7>*@
+@*//</suite-custom-code-block-7>*@
+    </ModalContent>
+</Modal>
+
+@* ************************* EDIT MODAL ************************* *@
+<Modal @ref="EditCashPaymentModal" Closing="@EditCashPaymentModal.CancelClosingModalWhenFocusLost">
+    <ModalContent Centered="true">
+@*//<suite-custom-code-block-8>*@
+@*//</suite-custom-code-block-8>*@
+        <Form id="EditCashPaymentForm">
+            <ModalHeader>
+                <ModalTitle>@L["Update"]</ModalTitle>
+                <CloseButton Clicked="CloseEditCashPaymentModalAsync" />
+            </ModalHeader>
+            <ModalBody>
+                <Validations @ref="@EditingCashPaymentValidations"
+                            Mode="ValidationMode.Auto"
+                            Model="@EditingCashPayment"
+                            ValidateOnLoad="false">
+                    
+                    
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Amount"]</FieldLabel>
+                            <NumericPicker TValue="long" @bind-Value="@EditingCashPayment.Amount"  Decimals="0" >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                             </NumericPicker>
+                        </Field>
+                     </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Currency"] *</FieldLabel>
+                            <TextEdit @bind-Text="@EditingCashPayment.Currency"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["PaymentDate"]</FieldLabel>
+                            <DateEdit TValue="DateTime" InputMode="DateInputMode.Date" @bind-Date="@EditingCashPayment.PaymentDate" >
+                               <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </DateEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Description"]</FieldLabel>
+                            <TextEdit @bind-Text="@EditingCashPayment.Description"  >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+
+
+                    <Field>
+                        <FieldLabel>@L["Status"]</FieldLabel>
+                        <Select TValue="CashPaymentStatus" @bind-SelectedValue="@EditingCashPayment.Status" >
+                            @foreach (var itemValue in Enum.GetValues(typeof(CashPaymentStatus)))
+                            {
+                                <SelectItem TValue="CashPaymentStatus" Value="@((CashPaymentStatus) itemValue)">
+                                    @L[$"Enum:CashPaymentStatus.{((CashPaymentStatus) itemValue).ToString("d")}"]
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    <Field>
+                        <FieldLabel>@L["UserProfile"]</FieldLabel>
+                        <Select TValue="Guid" @bind-SelectedValue="@EditingCashPayment.UserProfileId">
+                            @foreach (var userProfile in UserProfilesCollection)
+                            {
+                                <SelectItem TValue="Guid" Value="@(userProfile.Id)">
+                                    @(userProfile.DisplayName)
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    <Field>
+                        <FieldLabel>@L["Reservation"]</FieldLabel>
+                        <Select TValue="Guid" @bind-SelectedValue="@EditingCashPayment.ReservationId">
+                            @foreach (var reservation in ReservationsCollection)
+                            {
+                                <SelectItem TValue="Guid" Value="@(reservation.Id)">
+                                    @(reservation.DisplayName)
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
+
+                    
+                    
+                </Validations>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary"
+                        Clicked="CloseEditCashPaymentModalAsync">
+                    @L["Cancel"]
+                </Button>
+                <SubmitButton Form="EditCashPaymentForm" Clicked="UpdateCashPaymentAsync" />
+@*//<suite-custom-code-block-9>*@
+@*//</suite-custom-code-block-9>*@
+            </ModalFooter>
+        </Form>
+@*//<suite-custom-code-block-10>*@
+@*//</suite-custom-code-block-10>*@
+    </ModalContent>
+</Modal>
+

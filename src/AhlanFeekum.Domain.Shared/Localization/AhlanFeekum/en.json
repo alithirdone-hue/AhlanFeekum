@@ -314,6 +314,15 @@
     "Enum:ReservationPaymentMethod.1": "Card",
     "Enum:ReservationPaymentMethod.2": "Cash",
     "ReservationPaymentMethod": "Reservation Payment Method",
-    "IsPaid": "Is Paid"
+    "IsPaid": "Is Paid",
+    "Enum:CashPaymentStatus.1": "Pending",
+    "Enum:CashPaymentStatus.2": "succeeded",
+    "Permission:CashPayments": "Cash Payments",
+    "PaymentDate": "Payment Date",
+    "CashPayments": "Cash Payments",
+    "MinPaymentDate": "Min Payment Date",
+    "MaxPaymentDate": "Max Payment Date",
+    "NewCashPayment": "New Cash Payment",
+    "Menu:CashPayments": "Cash Payments"
   }
 }
