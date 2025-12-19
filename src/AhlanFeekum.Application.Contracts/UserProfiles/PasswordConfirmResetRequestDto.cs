@@ -5,7 +5,7 @@ namespace AhlanFeekum.UserProfiles
     public class PasswordConfirmResetRequestDto
     {
         [Required]
-        [EmailAddress]
+       // [EmailAddress]
         public string EmailOrPhone { get; set; } = null!;
 
         [Required]

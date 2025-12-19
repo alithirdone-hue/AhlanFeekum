@@ -55,6 +55,7 @@ using Volo.Abp.UI;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
+using Microsoft.AspNetCore.Identity;
 
 namespace AhlanFeekum.Blazor;
 
@@ -210,6 +211,18 @@ public class AhlanFeekumBlazorModule : AbpModule
         //    options.JsonSerializerOptions.Converters.Add(new TimeOnlyJsonConverter());
         //});
         context.Services.AddSingleton<IActionResultExecutor<ObjectResult>, AhlanFeekumWrapResultExecutor>();
+
+        // Configure password policy
+        Configure<IdentityOptions>(options =>
+        {
+            // Password settings
+            options.Password.RequireDigit = false;              // Require at least one digit
+            options.Password.RequireLowercase = false;          // Require at least one lowercase letter
+            options.Password.RequireUppercase = false;          // Require at least one uppercase letter
+            options.Password.RequireNonAlphanumeric = false;   // Don't require special characters
+            options.Password.RequiredLength = 6;              // Minimum password length
+            options.Password.RequiredUniqueChars = 0;          // Don't require unique characters
+        });
 
 
     }

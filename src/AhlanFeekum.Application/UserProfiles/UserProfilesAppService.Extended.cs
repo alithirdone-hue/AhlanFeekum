@@ -49,10 +49,10 @@ namespace AhlanFeekum.UserProfiles
 
         private IUserPaymentsAppService _userPaymentsAppService { get; set; }
         private IReservationRepository _reservationRepository { get; set; }
-        private IReservationsAppService _reservationsAppService { get; set; }
+      //  private IReservationsAppService _reservationsAppService { get; set; }
         private IUserPaymentRepository _userPaymentRepository { get; set; }
         public UserProfilesAppService(IUserProfileRepository userProfileRepository, UserProfileManager userProfileManager, IDistributedCache<UserProfileDownloadTokenCacheItem, string> downloadTokenCache, IRepository<Volo.Abp.Identity.IdentityRole, Guid> identityRoleRepository, IRepository<Volo.Abp.Identity.IdentityUser, Guid> identityUserRepository, UserManager userManager,
-            Microsoft.Extensions.Configuration.IConfiguration configuration, HttpClient httpClient, IEmailSender emailSender, ICurrentUser currentUser, ILogger<UserProfilesAppService> logger, IUserPaymentsAppService userPaymentsAppService, IReservationsAppService reservationsAppService, IReservationRepository reservationRepository, IUserPaymentRepository userPaymentRepository)
+            Microsoft.Extensions.Configuration.IConfiguration configuration, HttpClient httpClient, IEmailSender emailSender, ICurrentUser currentUser, ILogger<UserProfilesAppService> logger, IUserPaymentsAppService userPaymentsAppService, IReservationRepository reservationRepository, IUserPaymentRepository userPaymentRepository)
             : base(userProfileRepository, userProfileManager, downloadTokenCache, identityRoleRepository, identityUserRepository)
         {
             _userManager = userManager;
@@ -62,7 +62,7 @@ namespace AhlanFeekum.UserProfiles
             _currentUser = currentUser;
             _logger = logger;
             _userPaymentsAppService = userPaymentsAppService;
-            _reservationsAppService = reservationsAppService;
+        //    _reservationsAppService = reservationsAppService;
             _reservationRepository = reservationRepository;
             _userPaymentRepository = userPaymentRepository;
         }
@@ -160,8 +160,9 @@ namespace AhlanFeekum.UserProfiles
             }
             else
             {
+                return await SendSecretKeyForResetPhoneAsync(input.EmailOrPhone, securityCode);
                 //SMS SEND SECURITY CODE
-                return mobileResponse;
+               // return mobileResponse;
             }
         }
 
@@ -374,6 +375,8 @@ namespace AhlanFeekum.UserProfiles
                     mobileResponse.Data = null;
                     return mobileResponse;
                 }
+                if (input.StartsWith("+"))
+                    input = input.Substring(1);
                 Random random = new Random();
                 int securityNum = random.Next(1000, 10000);
 
@@ -417,6 +420,83 @@ namespace AhlanFeekum.UserProfiles
                     
                     var response = await httpClient.PostAsync(apiUrl, content);
                     
+                    if (response.IsSuccessStatusCode)
+                    {
+                        mobileResponse.Code = 200;
+                        mobileResponse.Message = "Success";
+                        mobileResponse.Data = "Security code sent via WhatsApp";
+                        return mobileResponse;
+                    }
+                    else
+                    {
+                        var errorContent = await response.Content.ReadAsStringAsync();
+                        throw new Exception($"WhatsApp API error: {response.StatusCode} - {errorContent}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+                mobileResponse.Code = 501;
+                mobileResponse.Message = "Failed to send WhatsApp message.";
+                mobileResponse.Data = null;
+                return mobileResponse;
+            }
+
+
+            mobileResponse.Code = 501;
+            mobileResponse.Message = "Failed to send WhatsApp message.";
+            mobileResponse.Data = null;
+            return mobileResponse;
+
+        }
+
+        [AllowAnonymous]
+        [RemoteService(false)]
+        public async Task<MobileResponseDto> SendSecretKeyForResetPhoneAsync(string input, string securityCode)
+        {
+            MobileResponseDto mobileResponse = new MobileResponseDto();
+            try
+            {
+                if (input.IsNullOrWhiteSpace())
+                {
+                    mobileResponse.Code = 400;
+                    mobileResponse.Message = "Phone is required";
+                    mobileResponse.Data = null;
+                    return mobileResponse;
+                }
+                if(input.StartsWith("+"))
+                    input = input.Substring(1);
+
+                // Send security code via WhatsApp API
+                var whatsappSection = _configuration.GetSection("WhatsApp");
+                var apiKey = whatsappSection["ApiKey"];
+                var apiUrl = whatsappSection["ApiUrl"]; ;
+                var fromNumber = whatsappSection["DefaultPhoneNumber"];
+
+                // Prepare WhatsApp message
+                var whatsappMessage = new
+                {
+                    messageType = "text",
+                    requestType = "POST",
+                    token = apiKey,
+                    from = fromNumber,
+                    to = input,
+                    text = $" is: {securityCode}"
+                };
+
+
+              
+                // Send WhatsApp message
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+
+                    var json = System.Text.Json.JsonSerializer.Serialize(whatsappMessage);
+                    var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+                    var response = await httpClient.PostAsync(apiUrl, content);
+
                     if (response.IsSuccessStatusCode)
                     {
                         mobileResponse.Code = 200;
