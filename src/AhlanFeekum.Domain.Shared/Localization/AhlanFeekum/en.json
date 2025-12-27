@@ -323,6 +323,8 @@
     "MinPaymentDate": "Min Payment Date",
     "MaxPaymentDate": "Max Payment Date",
     "NewCashPayment": "New Cash Payment",
-    "Menu:CashPayments": "Cash Payments"
+    "Menu:CashPayments": "Cash Payments",
+    "ReservationApprovedAddPayment": "you should add either cash payment or strip payment for this reservation",
+    "ReservationApprovedAndPaymentCaptured": "Reservation Approved And Payment Successded"
   }
 }

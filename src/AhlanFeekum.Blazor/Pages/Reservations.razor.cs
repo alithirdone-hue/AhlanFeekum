@@ -23,6 +23,9 @@ using Volo.Abp.Content;
 using AhlanFeekum.Reservations;
 
 using AhlanFeekum.Reservations;
+using AhlanFeekum.UserPayments;
+using AhlanFeekum.CashPayments;
+using AhlanFeekum.UserProfiles;
 
 
 
@@ -273,6 +276,9 @@ SitePropertyId = SitePropertiesCollection.Select(i=>i.Id).FirstOrDefault(),
                 var oldStatus = currentReservation.ReservationStatus;
                 var newStatus = EditingReservation.ReservationStatus;
 
+                PagedResultDto<UserPaymentWithNavigationPropertiesDto> pagedResultDtoUserPayment = new PagedResultDto<UserPaymentWithNavigationPropertiesDto>();
+                PagedResultDto<CashPaymentWithNavigationPropertiesDto> pagedResultDtoCashPayment = new PagedResultDto<CashPaymentWithNavigationPropertiesDto>();
+
                 // Show confirmation dialog if status changed
                 if (oldStatus != newStatus)
                 {
@@ -280,6 +286,29 @@ SitePropertyId = SitePropertiesCollection.Select(i=>i.Id).FirstOrDefault(),
                     
                     if (newStatus == ReservationStatus.Approved)
                     {
+                        GetUserPaymentsInput getUserPaymentsInput = new GetUserPaymentsInput()
+                        {
+                            SkipCount = 0,
+                            MaxResultCount = 1,
+                            ReservationId = EditingReservationId
+                        };
+                       pagedResultDtoUserPayment = await UserPaymentsAppService.GetListAsync(getUserPaymentsInput);
+                        if(pagedResultDtoUserPayment == null || pagedResultDtoUserPayment.TotalCount == 0)
+                        {
+                            GetCashPaymentsInput getCashPaymentsInput = new GetCashPaymentsInput()
+                            {
+                                SkipCount = 0,
+                                MaxResultCount = 1,
+                                ReservationId = EditingReservationId
+                            };
+                            pagedResultDtoCashPayment = await CashPaymentsAppService.GetListAsync(getCashPaymentsInput);
+                            if (pagedResultDtoCashPayment == null || pagedResultDtoCashPayment.TotalCount == 0)
+                                {
+                                    await UiMessageService.Error(L["ReservationApprovedAddPayment",
+                                                        "You Should Add a successful payment before approve reservation"]);
+                                    return;
+                                }
+                            }
                         confirmMessage = L["ConfirmApproveReservation", 
                             "Are you sure you want to approve this reservation? The payment will be captured and the customer will be charged."];
                     }
@@ -306,6 +335,78 @@ SitePropertyId = SitePropertiesCollection.Select(i=>i.Id).FirstOrDefault(),
                 }
 
                 await ReservationsAppService.UpdateAsync(EditingReservationId, EditingReservation);
+                
+                // Update related payments after reservation update
+                if (oldStatus != newStatus)
+                {
+                    //// Reuse payment data if already fetched, otherwise fetch it
+                    //PagedResultDto<UserPaymentWithNavigationPropertiesDto> userPaymentsResult = pagedResultDtoUserPayment;
+                    //PagedResultDto<CashPaymentWithNavigationPropertiesDto> cashPaymentsResult = pagedResultDtoCashPayment;
+                    
+                    //// Fetch payments if not already fetched (for Rejected/Canceled statuses)
+                    //if (userPaymentsResult == null || userPaymentsResult.TotalCount == 0)
+                    //{
+                    //    GetUserPaymentsInput getUserPaymentsInput = new GetUserPaymentsInput()
+                    //    {
+                    //        SkipCount = 0,
+                    //        MaxResultCount = 1,
+                    //        ReservationId = EditingReservationId
+                    //    };
+                    //    userPaymentsResult = await UserPaymentsAppService.GetListAsync(getUserPaymentsInput);
+                    //}
+                    
+                    //if (cashPaymentsResult == null || cashPaymentsResult.TotalCount == 0)
+                    //{
+                    //    GetCashPaymentsInput getCashPaymentsInput = new GetCashPaymentsInput()
+                    //    {
+                    //        SkipCount = 0,
+                    //        MaxResultCount = 1,
+                    //        ReservationId = EditingReservationId
+                    //    };
+                    //    cashPaymentsResult = await CashPaymentsAppService.GetListAsync(getCashPaymentsInput);
+                    //}
+                    
+                    // Handle UserPayment
+                    if (pagedResultDtoUserPayment != null && pagedResultDtoUserPayment.TotalCount > 0)
+                    {
+                        var userPayment = pagedResultDtoUserPayment.Items.FirstOrDefault();
+                        if (userPayment != null && !string.IsNullOrEmpty(userPayment.UserPayment.StripPaymentId))
+                        {
+                            if (newStatus == ReservationStatus.Approved)
+                            {
+                                // Capture the payment
+                                await UserProfilesAppService.CapturePaymentAsync(userPayment.UserPayment.StripPaymentId);
+                            }
+                            else if (newStatus == ReservationStatus.Rejected || newStatus == ReservationStatus.Canceled)
+                            {
+                                // Cancel the payment
+                                await UserProfilesAppService.CancelPaymentAsync(userPayment.UserPayment.StripPaymentId);
+                            }
+                        }
+                    }
+                    
+                    // Handle CashPayment
+                    if (pagedResultDtoCashPayment != null && pagedResultDtoCashPayment.TotalCount > 0)
+                    {
+                        var cashPayment = pagedResultDtoCashPayment.Items.FirstOrDefault();
+                        if (cashPayment != null)
+                        {
+                            var updateCashPayment = ObjectMapper.Map<CashPaymentDto, CashPaymentUpdateDto>(cashPayment.CashPayment);
+                            
+                            if (newStatus == ReservationStatus.Approved)
+                            {
+                                updateCashPayment.Status = CashPaymentStatus.succeeded;
+                            }
+                            else
+                            {
+                                updateCashPayment.Status = CashPaymentStatus.Pending;
+                            }
+                            
+                            await CashPaymentsAppService.UpdateAsync(cashPayment.CashPayment.Id, updateCashPayment);
+                        }
+                    }
+                }
+                
                 await GetReservationsAsync();
                 await EditReservationModal.Hide();                
                 
@@ -321,7 +422,7 @@ SitePropertyId = SitePropertiesCollection.Select(i=>i.Id).FirstOrDefault(),
                     {
                         await UiMessageService.Success(L["ReservationUpdatedAndPaymentCanceled", 
                             "Reservation updated successfully! Any held payment has been canceled."]);
-            }
+                    }
                 }
             }
             catch (Exception ex)

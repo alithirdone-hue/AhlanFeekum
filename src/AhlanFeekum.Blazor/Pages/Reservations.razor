@@ -3,9 +3,12 @@
 @page "/reservations"
 
 @attribute [Authorize(AhlanFeekumPermissions.Reservations.Default)]
+@using AhlanFeekum.CashPayments
 @using AhlanFeekum.Reservations
 @using AhlanFeekum.Localization
 @using AhlanFeekum.Shared
+@using AhlanFeekum.UserPayments
+@using AhlanFeekum.UserProfiles
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.Extensions.Localization
 @using Microsoft.AspNetCore.Components.Web
@@ -24,6 +27,9 @@
 @using Volo.Abp.Http.Client
 @inherits AhlanFeekumComponentBase
 @inject IReservationsAppService ReservationsAppService
+@inject IUserPaymentsAppService UserPaymentsAppService
+@inject ICashPaymentsAppService CashPaymentsAppService
+@inject IUserProfilesAppService UserProfilesAppService
 
 @inject IUiMessageService UiMessageService
 @inject AbpBlazorMessageLocalizerHelper<AhlanFeekumResource> LH
@@ -475,7 +481,10 @@
                       Field="Reservation.ReservationPaymentMethod"
                       Caption="@L["ReservationPaymentMethod"]">
                     <DisplayTemplate>
-                        @L[$"Enum:ReservationPaymentMethod.{(int)context.Reservation.ReservationPaymentMethod}"]
+                        @if(context.Reservation.ReservationPaymentMethod != null)
+                        {
+                            @L[$"Enum:ReservationPaymentMethod.{(int)context.Reservation.ReservationPaymentMethod}"]
+                        }
                     </DisplayTemplate>
               </DataGridColumn>
 
@@ -520,7 +529,7 @@
 
 @* ************************* CREATE MODAL ************************* *@
 <Modal @ref="CreateReservationModal" Closing="@CreateReservationModal.CancelClosingModalWhenFocusLost">
-    <ModalContent Centered="true">
+    <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
 @*//<suite-custom-code-block-5>*@
 @*//</suite-custom-code-block-5>*@
         <Form id="CreateReservationForm">
@@ -721,7 +730,7 @@
 
 @* ************************* EDIT MODAL ************************* *@
 <Modal @ref="EditReservationModal" Closing="@EditReservationModal.CancelClosingModalWhenFocusLost">
-    <ModalContent Centered="true">
+    <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
 @*//<suite-custom-code-block-8>*@
 @*//</suite-custom-code-block-8>*@
         <Form id="EditReservationForm">

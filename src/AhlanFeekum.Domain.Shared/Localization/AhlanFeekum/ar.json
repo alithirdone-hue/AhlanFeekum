@@ -285,7 +285,10 @@
     "Menu:UserNotifications": "إشعارات المستخدمين",
     "Update": "تعديل",
     "Create": "انشاء",
-    "PropertyMedia": "الصورة "
+    "PropertyMedia": "الصورة ",
+    "ReservationApprovedAddPayment": "يجب اضافة دفعة مالية خاصة بهذا الحجز (كاش او بطاقة)",
+    "ReservationApprovedAndPaymentCaptured": "تم تأكيد الحجز ونجاح الدفعة"
+
 
   }
 }
