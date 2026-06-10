@@ -36,7 +36,7 @@ namespace AhlanFeekum.WhatsApp
         [RemoteService(false)]
         public async Task<bool> SendMessage(string message)
         {
-            var defaultPhoneNumber = _configuration["WhatsApp:DefaultPhoneNumber"] ?? "+963931846622";
+            var defaultPhoneNumber = _configuration["WhatsApp:DefaultPhoneNumber"] ?? "+963958632360";
             return await SendMessage(message, defaultPhoneNumber);
         }
 

@@ -396,7 +396,7 @@ namespace AhlanFeekum.UserProfiles
                     token = apiKey,
                     from = fromNumber,
                     to = input,
-                    text = $"copy this secret key is: {securityNum}"
+                    text = $"To continue AhlanFeekum process enter {securityNum}"
                 };
 
                 // Cache the security code
@@ -484,7 +484,7 @@ namespace AhlanFeekum.UserProfiles
                     token = apiKey,
                     from = fromNumber,
                     to = input,
-                    text = $" is: {securityCode}"
+                    text = $"To continue AhlanFeekum process enter {securityCode}"
                 };
 
 
