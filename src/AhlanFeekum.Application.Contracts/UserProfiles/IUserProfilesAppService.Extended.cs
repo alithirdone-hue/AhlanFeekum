@@ -38,5 +38,10 @@ namespace AhlanFeekum.UserProfiles
 
         Task<MobileResponseDto> CheckUserExistEmailOrPhone(string input);
 
+        /// <summary>
+        /// Deletes/deactivates the current user account. Performs a soft delete on UserProfile and deactivates IdentityUser to prevent login.
+        /// </summary>
+        Task<MobileResponseDto> DeleteCurrentUserAsync();
+
     }
 }

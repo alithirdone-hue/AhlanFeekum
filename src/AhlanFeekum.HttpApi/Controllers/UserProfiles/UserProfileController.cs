@@ -111,5 +111,17 @@ namespace AhlanFeekum.Controllers.UserProfiles
             return _userProfilesAppService.CheckUserExistEmailOrPhone(PhoneOrEmail);
         }
 
+        /// <summary>
+        /// Deletes/deactivates the current user account.
+        /// - Soft deletes the UserProfile (preserves all data and relationships)
+        /// - Deactivates the IdentityUser (prevents login)
+        /// - Safe operation that maintains data integrity
+        /// </summary>
+        [HttpDelete("delete-user")]
+        public virtual Task<MobileResponseDto> DeleteUser()
+        {
+            return _userProfilesAppService.DeleteCurrentUserAsync();
+        }
+
     }
 }
